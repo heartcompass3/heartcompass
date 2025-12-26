@@ -11,7 +11,7 @@
   "dependencies": {
     "astro": "^5.0.0",
     "@astrojs/tailwind": "^6.0.0",
-    "@keystatic/astro": "^6.0.0",
+   "@keystatic/astro": "^5.0.6"
     "keystatic": "^0.5.0"
   },
   "devDependencies": {
