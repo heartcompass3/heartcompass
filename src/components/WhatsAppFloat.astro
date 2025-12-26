@@ -1,0 +1,25 @@
+---
+import site from '../content/pages/site.json';
+const phone = site.whatsAppPhone;
+const base = (msg) => `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+---
+<div class="fixed bottom-4 left-4 z-[9999]">
+  <details class="group">
+    <summary class="list-none cursor-pointer">
+      <a href={base(site.whatsAppDefaultMessage)} target="_blank" rel="noopener" class="flex items-center gap-3 px-4 py-3 rounded-full shadow-xl text-sm font-bold gradient-gold text-white">
+        WhatsApp
+        <span aria-hidden="true">↗</span>
+      </a>
+    </summary>
+    <div class="mt-3 w-[280px] bg-white rounded-3xl shadow-elegant border border-accent/15 p-4 hidden group-open:block">
+      <div class="text-primary font-bold mb-3">שאלות מהירות</div>
+      <div class="space-y-2">
+        {site.whatsAppQuickQuestions.map(q => (
+          <a href={base(q)} target="_blank" rel="noopener" class="block px-3 py-3 rounded-2xl bg-secondary hover:bg-accent/5 border border-accent/10 font-body font-semibold text-primary/80">
+            {q}
+          </a>
+        ))}
+      </div>
+    </div>
+  </details>
+</div>
