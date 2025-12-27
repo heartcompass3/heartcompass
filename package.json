@@ -9,16 +9,20 @@
     "keystatic": "keystatic dev"
   },
   "dependencies": {
-    "astro": "^5.0.0",
+    "@astrojs/markdoc": "^0.15.10",
+    "@astrojs/react": "^4.4.2",
     "@astrojs/tailwind": "^6.0.0",
     "@astrojs/vercel": "^9.0.2",
     "@keystatic/astro": "^5.0.6",
-    "@keystatic/core": "^0.5.48"
+    "@keystatic/core": "^0.5.48",
+    "astro": "^5.0.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.0",
-    "postcss": "^8.4.0",
     "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.4.0",
     "typescript": "^5.0.0"
   }
 }

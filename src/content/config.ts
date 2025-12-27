@@ -1,49 +1,23 @@
 import { defineCollection, z } from 'astro:content';
 
+const posts = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    date: z.coerce.date(),
+    excerpt: z.string(),
+    tags: z.array(z.string()).optional().default([]),
+    coverImage: z.string().optional(),
+  }),
+});
+
 const pages = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
-    slug: z.string().optional(),
-    published: z.boolean().default(true),
-
-    seoTitle: z.string().optional(),
-    seoDescription: z.string().optional(),
-    ogImage: z.string().optional(),
-
-    ctaText: z.string().optional(),
-    ctaHref: z.string().optional(),
+    hidden: z.boolean().optional().default(false),
   }),
 });
 
-const guides = defineCollection({
-  type: 'content',
-  schema: z.object({
-    title: z.string(),
-    description: z.string().optional(),
-    date: z.coerce.date(),
-    tags: z.array(z.string()).default([]),
-    published: z.boolean().default(true),
-
-    seoTitle: z.string().optional(),
-    seoDescription: z.string().optional(),
-    ogImage: z.string().optional(),
-  }),
-});
-
-const site = defineCollection({
-  type: 'content',
-  schema: z.object({
-    siteName: z.string(),
-    siteDescription: z.string(),
-    phone: z.string().optional(),
-    email: z.string().optional(),
-    whatsapp: z.string().optional(),
-
-    defaultSeoTitle: z.string().optional(),
-    defaultSeoDescription: z.string().optional(),
-  }),
-});
-
-export const collections = { pages, guides, site };
+export const collections = { posts, pages };

@@ -1,4 +1,4 @@
----
+-----
 siteName: "מצפן הלב"
 siteDescription: "אימון רגשי תודעתי לשחרור דפוסים וחסמים"
 email: "heartcompass3@gmail.com"
@@ -8,3 +8,4 @@ defaultSeoDescription: "תהליך עומק לשחרור חסמים, זוגיו�
 ---
 
 הגדרות אתר.
+
