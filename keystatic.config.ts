@@ -61,7 +61,12 @@ export default config({
         slug: fields.slug({ name: { label: 'Slug' } }),
         description: fields.text({ label: 'תיאור (SEO)', multiline: true }),
         hidden: fields.checkbox({ label: 'מוחבא (לא יופיע בתפריט)', defaultValue: false }),
-        body: fields.markdown({ label: 'תוכן' }),
+        body: fields.document({
+          label: 'תוכן',
+          formatting: true,
+          dividers: true,
+          links: true,
+        }),
       },
     }),
 
@@ -80,7 +85,13 @@ export default config({
           publicPath: '/uploads',
         }),
         tags: fields.array(fields.text({ label: 'תגית' }), { label: 'תגיות' }),
-        body: fields.markdown({ label: 'תוכן' }),
+        published: fields.checkbox({ label: 'פורסם', defaultValue: true }),
+        body: fields.document({
+          label: 'תוכן המאמר',
+          formatting: true,
+          dividers: true,
+          links: true,
+        }),
       },
     }),
 
@@ -97,6 +108,7 @@ export default config({
           directory: 'public/files',
           publicPath: '/files',
         }),
+        published: fields.checkbox({ label: 'פורסם', defaultValue: true }),
       },
     }),
   },
