@@ -1,8 +1,32 @@
-// keystatic.config.ts
 import { config, fields, collection, singleton } from '@keystatic/core';
 
+/**
+ * Keystatic storage mode:
+ * - Local in development (no OAuth needed)
+ * - GitHub in production (Vercel) using GitHub App OAuth
+ *
+ * Required env vars for GitHub mode (set in Vercel):
+ * - KEYSTATIC_GITHUB_CLIENT_ID
+ * - KEYSTATIC_GITHUB_CLIENT_SECRET
+ * - KEYSTATIC_SECRET
+ * - PUBLIC_KEYSTATIC_GITHUB_APP_SLUG (Astro)
+ */
+const isGithubMode =
+  !!process.env.KEYSTATIC_GITHUB_CLIENT_ID &&
+  !!process.env.KEYSTATIC_GITHUB_CLIENT_SECRET &&
+  !!process.env.KEYSTATIC_SECRET &&
+  !!process.env.PUBLIC_KEYSTATIC_GITHUB_APP_SLUG;
+
+const storage = isGithubMode
+  ? {
+      kind: 'github' as const,
+      repo: 'heartcompass3/heartcompass',
+      branch: process.env.KEYSTATIC_GITHUB_BRANCH || 'main',
+    }
+  : { kind: 'local' as const };
+
 export default config({
-  storage: { kind: 'local' },
+  storage,
 
   ui: {
     brand: { name: 'מצפן הלב' },
