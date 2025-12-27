@@ -1,11 +1,10 @@
 ---
-title: "אודות"
-description: "אודות מצפן הלב"
-published: true
-seoTitle: "אודות | מצפן הלב"
-seoDescription: "מי אני, מה השיטה, ואיך נראה תהליך עבודה."
-ctaText: "צור קשר"
-ctaHref: "/contact"
+siteName: "מצפן הלב"
+siteDescription: "אימון רגשי תודעתי לשחרור דפוסים וחסמים"
+email: "heartcompass3@gmail.com"
+whatsapp: "https://wa.me/972544580285"
+defaultSeoTitle: "מצפן הלב | אימון רגשי תודעתי"
+defaultSeoDescription: "תהליך עומק לשחרור חסמים, זוגיות, קריירה והתפתחות אישית."
 ---
 
-תוכן זמני. נחליף בהמשך.
+הגדרות אתר.
