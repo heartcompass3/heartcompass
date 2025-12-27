@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import WhatsAppFloat from '../components/WhatsAppFloat.astro';
+import site from '../content/pages/site.json';
+const title = `צור קשר | ${site.brand}`;
+const description = 'תיאום שיחה קצרה. בוא נעשה סדר ונבדוק מה הצעד הבא.';
+---
+<BaseLayout title={title} description={description}>
+  <Navigation />
+  <main class="animate-fade-in py-24 bg-background min-h-screen">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="bg-white rounded-[3.5rem] shadow-2xl overflow-hidden border border-white flex flex-col md:flex-row min-h-[650px]">
+        <div class="bg-primary text-white p-16 md:w-5/12 relative overflow-hidden flex flex-col items-center text-center justify-center">
+          <div class="absolute top-0 right-0 w-80 h-80 bg-accent rounded-full -mr-20 -mt-20 opacity-20 blur-[80px]"></div>
+          <h1 class="text-5xl font-black font-display mb-8 leading-tight relative z-10">בואו נפתח <br/><span class="text-accent">דף חדש.</span></h1>
+          <div class="relative z-10 text-xl font-bold font-display dir-ltr tracking-wide mt-10">{site.email}</div>
+          <div class="mt-6">
+            <a href={`mailto:${site.email}`} class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-white/10 hover:bg-white/15 transition-colors">שליחת מייל <span aria-hidden="true">←</span></a>
+          </div>
+        </div>
+
+        <div class="p-16 md:w-7/12 bg-white flex flex-col justify-center relative">
+          <div class="space-y-8 relative z-10">
+            <h2 class="text-3xl font-black text-primary font-display">תיאום שיחה קצרה</h2>
+            <p class="text-primary/70 font-body text-lg">כדי לא להעמיס, כרגע הדרך הכי מהירה היא WhatsApp. כתבתי לך כמה שאלות מוכנות בכפתור הירוק למטה.</p>
+            <a href={site.primaryCtaHref} class="inline-flex items-center gap-3 px-10 py-5 rounded-2xl gradient-gold text-white font-bold shadow-gold">{site.primaryCtaLabel} <span aria-hidden="true">←</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <Footer />
+  <WhatsAppFloat />
+</BaseLayout>
