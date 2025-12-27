@@ -7,4 +7,10 @@ export default defineConfig({
   output: 'server',
   adapter: vercel(),
   integrations: [react(), keystatic()],
+  vite: {
+    define: {
+      'process.env': {}, // <- זה פותר "process is not defined"
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV ?? 'development'),
+    },
+  },
 });
