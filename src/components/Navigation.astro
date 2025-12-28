@@ -17,17 +17,6 @@ const methodItems = [
   navItem('/method/career', 'קריירה ועסקים בשיטת מ.ס.ע'),
   navItem('/method/personal', 'התפתחות אישית בשיטת מ.ס.ע'),
 ];
-
-// Hard WhatsApp CTA for header
-const phone = site.whatsAppPhone;
-const waBase = (msg) => `https://wa.me/${phone}?text=${encodeURIComponent(msg || '')}`;
-const hasWhatsAppConfig =
-  !!phone && typeof phone === 'string' && phone.trim().length > 0 &&
-  !!site.whatsAppDefaultMessage;
-
-const ctaHref = hasWhatsAppConfig ? waBase(site.whatsAppDefaultMessage) : (site.primaryCtaHref || '/contact');
-const ctaLabel = site.primaryCtaLabel || 'בוא נדבר';
-const ctaIsExternal = typeof ctaHref === 'string' && ctaHref.startsWith('http');
 ---
 
 <nav class="sticky top-0 z-[100] glass border-b border-accent/20 shadow-sm w-full">
@@ -54,11 +43,15 @@ const ctaIsExternal = typeof ctaHref === 'string' && ctaHref.startsWith('http');
         </div>
       </a>
 
+      <!-- Desktop nav (no CTA) -->
       <div class="hidden md:flex items-center gap-8 lg:gap-10">
         {main.map((item) => (
           item.href === '/method' ? (
             <div class="relative group">
-              <a href={item.href} class={`text-lg font-bold transition-all duration-300 font-body relative px-2 py-1 outline-none ${item.active ? 'text-primary' : 'text-primary/70 hover:text-accent'}`}>
+              <a
+                href={item.href}
+                class={`text-lg font-bold transition-all duration-300 font-body relative px-2 py-1 outline-none ${item.active ? 'text-primary' : 'text-primary/70 hover:text-accent'}`}
+              >
                 השיטה
               </a>
 
@@ -67,7 +60,10 @@ const ctaIsExternal = typeof ctaHref === 'string' && ctaHref.startsWith('http');
                 <div class="w-[280px] rounded-2xl bg-white shadow-elegant border border-accent/15">
                   <div class="p-3">
                     {methodItems.map(mi => (
-                      <a href={mi.href} class="block px-4 py-3 rounded-xl hover:bg-accent/5 font-body font-bold text-primary/80 hover:text-primary transition-colors">
+                      <a
+                        href={mi.href}
+                        class="block px-4 py-3 rounded-xl hover:bg-accent/5 font-body font-bold text-primary/80 hover:text-primary transition-colors"
+                      >
                         {mi.label}
                       </a>
                     ))}
@@ -76,20 +72,17 @@ const ctaIsExternal = typeof ctaHref === 'string' && ctaHref.startsWith('http');
               </div>
             </div>
           ) : (
-            <a href={item.href} class={`text-lg font-bold transition-all duration-300 font-body relative px-2 py-1 outline-none ${item.active ? 'text-primary' : 'text-primary/70 hover:text-accent'}`}>{item.label}</a>
+            <a
+              href={item.href}
+              class={`text-lg font-bold transition-all duration-300 font-body relative px-2 py-1 outline-none ${item.active ? 'text-primary' : 'text-primary/70 hover:text-accent'}`}
+            >
+              {item.label}
+            </a>
           )
         ))}
-
-        <a
-          href={ctaHref}
-          class="gradient-gold text-white px-6 py-2.5 rounded-full font-body text-base font-bold hover:shadow-gold transition-all duration-300 shadow-md flex items-center gap-2 transform hover:-translate-y-0.5"
-          {...(ctaIsExternal ? { target: "_blank", rel: "noopener" } : {})}
-        >
-          {ctaLabel}
-          <span aria-hidden="true">←</span>
-        </a>
       </div>
 
+      <!-- Mobile nav -->
       <details class="md:hidden">
         <summary class="list-none text-primary p-2 hover:bg-accent/10 rounded-xl transition-colors cursor-pointer select-none">
           <span class="sr-only">תפריט</span>
@@ -98,22 +91,25 @@ const ctaIsExternal = typeof ctaHref === 'string' && ctaHref.startsWith('http');
         <div class="bg-white border-t border-accent/20 absolute top-full left-0 w-full shadow-2xl z-[200] animate-fade-in">
           <div class="px-6 py-6 space-y-2 flex flex-col">
             {main.filter(i => i.href !== '/method').map((item) => (
-              <a href={item.href} class="w-full text-right px-4 py-4 rounded-xl text-xl font-bold border-b border-accent/10 transition-colors hover:bg-accent/5">{item.label}</a>
+              <a
+                href={item.href}
+                class="w-full text-right px-4 py-4 rounded-xl text-xl font-bold border-b border-accent/10 transition-colors hover:bg-accent/5"
+              >
+                {item.label}
+              </a>
             ))}
+
             <div class="pt-2">
               <div class="text-sm font-bold text-primary/60 px-4 py-2">השיטה</div>
               {methodItems.map(mi => (
-                <a href={mi.href} class="w-full text-right px-4 py-3 rounded-xl text-lg font-bold border-b border-accent/10 transition-colors hover:bg-accent/5">{mi.label}</a>
+                <a
+                  href={mi.href}
+                  class="w-full text-right px-4 py-3 rounded-xl text-lg font-bold border-b border-accent/10 transition-colors hover:bg-accent/5"
+                >
+                  {mi.label}
+                </a>
               ))}
             </div>
-
-            <a
-              href={ctaHref}
-              class="mt-4 w-full text-center px-6 py-4 rounded-2xl gradient-gold text-white font-bold shadow-gold"
-              {...(ctaIsExternal ? { target: "_blank", rel: "noopener" } : {})}
-            >
-              {ctaLabel}
-            </a>
           </div>
         </div>
       </details>
