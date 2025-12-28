@@ -1,23 +1,70 @@
 ---
 import site from '../content/pages/site.json';
+
 const year = new Date().getFullYear();
+const links = [
+  { href: '/', label: 'ראשי' },
+  { href: '/about', label: 'מי אני' },
+  { href: '/method', label: 'השיטה' },
+  { href: '/blog', label: 'מאמרים' },
+  { href: '/contact', label: 'צור קשר' },
+];
 ---
-<footer class="bg-primary text-white py-20 border-t border-teal-light relative overflow-hidden">
-  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between gap-16 text-center md:text-right items-center md:items-start relative z-10">
-    <div class="max-w-xs mx-auto md:mx-0">
-      <div class="flex items-center justify-center md:justify-start gap-4 mb-8">
-        <div class="w-12 h-12 gradient-gold rounded-full flex items-center justify-center shadow-lg">
-          <img src="/assets/logo.png" alt="לוגו" class="w-7 h-7" />
+
+<footer class="mt-16 border-t border-accent/20">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8 py-10">
+    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-10">
+
+      <!-- Brand -->
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 shrink-0">
+          <div class="w-full h-full rounded-full gradient-gold flex items-center justify-center p-[2px] shadow-lg">
+            <!-- כאן הקסם: רקע לבן מאחורי לוגו צבעוני כדי שלא יצא צהוב על כהה -->
+            <div class="w-full h-full rounded-full bg-white flex items-center justify-center border border-accent/30">
+              <img
+                src="/assets/logo.png"
+                alt="לוגו מצפן הלב"
+                loading="eager"
+                class="h-9 w-auto object-contain"
+              />
+            </div>
+          </div>
         </div>
-        <span class="font-black text-3xl font-display tracking-tight">{site.brand}</span>
+
+        <div class="flex flex-col">
+          <div class="text-xl font-black text-primary font-display leading-none">{site.brand}</div>
+          <div class="text-xs text-primary/70 font-body font-bold tracking-widest mt-1">{site.tagline}</div>
+        </div>
       </div>
-      <p class="text-gray-300 font-body text-base leading-relaxed mb-8">אימון רגשי תודעתי בנתניה ובזום.</p>
-      <div class="text-sm text-gray-400 font-body">{site.fullName}</div>
+
+      <!-- Links -->
+      <nav class="flex flex-wrap gap-x-6 gap-y-3">
+        {links.map((l) => (
+          <a href={l.href} class="font-body font-bold text-primary/70 hover:text-accent transition-colors">
+            {l.label}
+          </a>
+        ))}
+      </nav>
+
+      <!-- CTA -->
+      <div class="flex items-center">
+        <a
+          href={site.primaryCtaHref}
+          class="gradient-gold text-white px-6 py-2.5 rounded-full font-body text-base font-bold hover:shadow-gold transition-all duration-300 shadow-md"
+        >
+          {site.primaryCtaLabel}
+        </a>
+      </div>
     </div>
 
-    <div class="text-sm text-gray-400 font-body self-end flex flex-col gap-2 md:items-start items-center">
-      <span>© {year} {site.fullName} - {site.brand}.</span>
-      <a href="/accessibility" class="hover:text-accent underline decoration-accent/30">הצהרת נגישות</a>
+    <div class="mt-10 pt-6 border-t border-accent/15 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div class="text-sm text-primary/60 font-body font-bold">
+        © {year} {site.brand}. כל הזכויות שמורות.
+      </div>
+
+      <div class="text-sm text-primary/50 font-body">
+        נבנה באהבה ובדיוק.
+      </div>
     </div>
   </div>
 </footer>
