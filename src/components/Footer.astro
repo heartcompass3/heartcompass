@@ -3,14 +3,6 @@ import site from '../content/pages/site.json';
 
 const year = new Date().getFullYear();
 
-const links = [
-  { href: '/', label: 'ראשי' },
-  { href: '/about', label: 'מי אני' },
-  { href: '/method', label: 'השיטה' },
-  { href: '/blog', label: 'מאמרים' },
-  { href: '/contact', label: 'צור קשר' },
-];
-
 // WhatsApp
 const phone = site.whatsAppPhone;
 const waBase = (msg) => `https://wa.me/${phone}?text=${encodeURIComponent(msg || '')}`;
@@ -19,18 +11,21 @@ const hasWhatsAppConfig =
   !!site.whatsAppDefaultMessage;
 
 const ctaHref = hasWhatsAppConfig ? waBase(site.whatsAppDefaultMessage) : (site.primaryCtaHref || '/contact');
-const ctaIsExternal = ctaHref.startsWith('https://wa.me/');
+const ctaIsExternal = typeof ctaHref === 'string' && ctaHref.startsWith('https://wa.me/');
+const ctaLabel = site.primaryCtaLabel || 'בוא נדבר';
 
+// Socials + external blog (ONLY in footer)
 const email = site.email;
 const facebook = site.facebookUrl;
 const instagram = site.instagramUrl;
-const blogExternal = site.blogExternalUrl; // ONLY in footer
+const blogExternal = site.blogExternalUrl;
 ---
 
 <footer class="mt-16 border-t border-accent/20">
   <div class="max-w-7xl mx-auto px-6 lg:px-8 py-10">
     <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-10">
 
+      <!-- Brand -->
       <div class="flex items-center gap-4">
         <div class="w-12 h-12 shrink-0">
           <div class="w-full h-full rounded-full gradient-gold flex items-center justify-center p-[2px] shadow-lg">
@@ -45,35 +40,81 @@ const blogExternal = site.blogExternalUrl; // ONLY in footer
           <div class="text-xs text-primary/70 font-body font-bold tracking-widest mt-1">{site.tagline}</div>
 
           {email && (
-            <a href={`mailto:${email}`} class="mt-2 text-sm font-body font-bold text-primary/60 hover:text-accent transition-colors">
+            <a
+              href={`mailto:${email}`}
+              class="mt-2 text-sm font-body font-bold text-primary/60 hover:text-accent transition-colors dir-ltr"
+            >
               {email}
             </a>
           )}
         </div>
       </div>
 
+      <!-- Links -->
       <nav class="flex flex-wrap gap-x-6 gap-y-3">
-        {links.map((l) => (
-          <a href={l.href} class="font-body font-bold text-primary/70 hover:text-accent transition-colors">{l.label}</a>
-        ))}
-
-        {blogExternal && (
-          <a href={blogExternal} target="_blank" rel="noopener noreferrer" class="font-body font-bold text-primary/70 hover:text-accent transition-colors">
-            הבלוג שלי
-          </a>
-        )}
+        <a href="/" class="font-body font-bold text-primary/70 hover:text-accent transition-colors">ראשי</a>
+        <a href="/about" class="font-body font-bold text-primary/70 hover:text-accent transition-colors">מי אני</a>
+        <a href="/method" class="font-body font-bold text-primary/70 hover:text-accent transition-colors">השיטה</a>
+        <a href="/blog" class="font-body font-bold text-primary/70 hover:text-accent transition-colors">מאמרים</a>
+        <a href="/contact" class="font-body font-bold text-primary/70 hover:text-accent transition-colors">צור קשר</a>
       </nav>
 
+      <!-- Social icons + Blog + CTA -->
       <div class="flex flex-col items-start gap-4">
+
         <div class="flex items-center gap-3">
-          {facebook && (
-            <a href={facebook} target="_blank" rel="noopener noreferrer" class="font-body font-bold text-primary/70 hover:text-accent transition-colors">
-              פייסבוק
+          {blogExternal && (
+            <a
+              href={blogExternal}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-accent/15 bg-white hover:bg-accent/5 text-primary/80 font-body font-bold transition-colors shadow-sm"
+              aria-label="הבלוג החיצוני"
+            >
+              <!-- simple "document" icon -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M7 3h7l4 4v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="2" />
+                <path d="M14 3v5h5" stroke="currentColor" stroke-width="2" />
+                <path d="M8 13h8M8 17h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              </svg>
+              בלוג
             </a>
           )}
+
+          {facebook && (
+            <a
+              href={facebook}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="w-11 h-11 rounded-full border border-accent/15 bg-white hover:bg-accent/5 shadow-sm flex items-center justify-center text-primary/80 transition-colors"
+              aria-label="פייסבוק"
+              title="פייסבוק"
+            >
+              <!-- Facebook icon -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M14 8h2V5h-2c-2.2 0-4 1.8-4 4v2H8v3h2v7h3v-7h3l1-3h-4V9c0-.6.4-1 1-1Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </a>
+          )}
+
           {instagram && (
-            <a href={instagram} target="_blank" rel="noopener noreferrer" class="font-body font-bold text-primary/70 hover:text-accent transition-colors">
-              אינסטגרם
+            <a
+              href={instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="w-11 h-11 rounded-full border border-accent/15 bg-white hover:bg-accent/5 shadow-sm flex items-center justify-center text-primary/80 transition-colors"
+              aria-label="אינסטגרם"
+              title="אינסטגרם"
+            >
+              <!-- Instagram icon -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M17.5 6.5h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+              </svg>
             </a>
           )}
         </div>
@@ -83,9 +124,10 @@ const blogExternal = site.blogExternalUrl; // ONLY in footer
           class="gradient-gold text-white px-6 py-2.5 rounded-full font-body text-base font-bold hover:shadow-gold transition-all duration-300 shadow-md"
           {...(ctaIsExternal ? { target: "_blank", rel: "noopener" } : {})}
         >
-          {site.primaryCtaLabel || 'בוא נדבר'}
+          {ctaLabel}
         </a>
       </div>
+
     </div>
 
     <div class="mt-10 pt-6 border-t border-accent/15 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
