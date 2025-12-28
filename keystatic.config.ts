@@ -1,38 +1,15 @@
 import { config, fields, collection, singleton } from '@keystatic/core';
 
-/**
- * Keystatic storage mode:
- * - Local in development (no OAuth needed)
- * - GitHub in production (Vercel) using GitHub App OAuth
- *
- * Required env vars for GitHub mode (set in Vercel):
- * - KEYSTATIC_GITHUB_CLIENT_ID
- * - KEYSTATIC_GITHUB_CLIENT_SECRET
- * - KEYSTATIC_SECRET
- * - PUBLIC_KEYSTATIC_GITHUB_APP_SLUG (Astro)
- */
-const isGithubMode =
-  !!process.env.KEYSTATIC_GITHUB_CLIENT_ID &&
-  !!process.env.KEYSTATIC_GITHUB_CLIENT_SECRET &&
-  !!process.env.KEYSTATIC_SECRET &&
-  !!process.env.PUBLIC_KEYSTATIC_GITHUB_APP_SLUG;
-
-const storage = isGithubMode
-  ? {
-      kind: 'github' as const,
-      repo: 'heartcompass3/heartcompass',
-      branch: process.env.KEYSTATIC_GITHUB_BRANCH || 'main',
-    }
-  : { kind: 'local' as const };
-
 export default config({
-  storage,
+  // חשוב: זה מה שמאפשר שמירה בפרודקשן (Vercel) באמצעות commit ל-GitHub
+  storage: {
+    kind: 'github',
+    repo: 'heartcompass3/heartcompass',
+    branch: 'main',
+  },
 
   ui: {
-    brand: { name: 'מצפן הלב' },
-    navigation: {
-      תוכן: ['site', 'pages', 'posts', 'guides'],
-    },
+    brandName: 'מצפן הלב',
   },
 
   singletons: {
@@ -40,37 +17,27 @@ export default config({
       label: 'הגדרות אתר',
       path: 'src/content/site',
       schema: {
-        siteUrl: fields.url({ label: 'כתובת אתר', defaultValue: 'https://heartcompass.co.il' }),
-        brand: fields.text({ label: 'שם המותג', defaultValue: 'מצפן הלב' }),
-        fullName: fields.text({ label: 'שם מלא', defaultValue: 'יוסי מדלסי' }),
-        tagline: fields.text({ label: 'תג לוגו', defaultValue: 'אימון רגשי תודעתי' }),
+        siteUrl: fields.text({ label: 'כתובת האתר', validation: { isRequired: true } }),
+        brand: fields.text({ label: 'שם המותג', validation: { isRequired: true } }),
+        fullName: fields.text({ label: 'שם מלא', validation: { isRequired: true } }),
 
-        heroBadge: fields.text({ label: 'תגית עליונה', defaultValue: 'משנים דפוסים מהשורש' }),
-        heroTitleLine1: fields.text({ label: 'כותרת שורה 1', defaultValue: 'לבחור מתוך תשוקה,' }),
-        heroTitleLine2: fields.text({ label: 'כותרת שורה 2', defaultValue: 'לא מתוך הפחד.' }),
-        heroSubheadline: fields.text({
-          label: 'תת כותרת',
-          defaultValue: 'תהליך עומק לשחרור חסמים, מציאת זוגיות ופריצת דרך בקריירה ועסקים',
-        }),
+        // Hero
+        heroBadge: fields.text({ label: 'תגית עליונה' }),
+        heroTitleLine1: fields.text({ label: 'כותרת שורה 1', validation: { isRequired: true } }),
+        heroTitleLine2: fields.text({ label: 'כותרת שורה 2' }),
+        heroSubheadline: fields.text({ label: 'תת כותרת' }),
         heroDescription: fields.text({
-          label: 'פסקת פתיחה',
+          label: 'תיאור קצר בדף הבית',
           multiline: true,
-          defaultValue:
-            'התשובות כבר קיימות אצלך, אבל הרעש של הפחד והריצוי מסתיר אותן. במצפן הלב אנחנו מנמיכים את הרעש, ומשחררים את החסם כדי שתוכל להתקדם.',
         }),
 
-        primaryCtaLabel: fields.text({ label: 'טקסט כפתור ראשי', defaultValue: "בוא נדבר תכל'ס" }),
-        primaryCtaHref: fields.text({ label: 'קישור כפתור ראשי', defaultValue: '/contact' }),
+        // CTA
+        primaryCtaText: fields.text({ label: 'טקסט כפתור ראשי', validation: { isRequired: true } }),
+        primaryCtaLink: fields.text({ label: 'קישור כפתור ראשי', validation: { isRequired: true } }),
 
-        whatsAppPhone: fields.text({ label: 'טלפון וואטסאפ (ללא +)', defaultValue: '972544580285' }),
-        whatsAppDefaultMessage: fields.text({
-          label: 'הודעת וואטסאפ ברירת מחדל',
-          defaultValue: 'היי יוסי, אני רוצה לשאול כמה שאלות לפני שנקבע שיחה.',
-        }),
-        whatsAppQuickQuestions: fields.array(fields.text({ label: 'שאלה' }), {
-          label: 'שאלות מהירות',
-          itemLabel: (props) => props.value || 'שאלה',
-        }),
+        // Social / Contact
+        whatsappNumber: fields.text({ label: 'מספר וואטסאפ (רק ספרות)' }),
+        instagramUrl: fields.text({ label: 'קישור אינסטגרם' }),
       },
     }),
   },
@@ -78,51 +45,95 @@ export default config({
   collections: {
     pages: collection({
       label: 'דפים',
-      path: 'src/content/pages/*',
       slugField: 'slug',
-      format: { contentField: 'body' },
+      path: 'src/content/pages/*',
+      format: { contentField: 'content' },
       schema: {
-        title: fields.text({ label: 'כותרת' }),
+        title: fields.text({ label: 'כותרת', validation: { isRequired: true } }),
         slug: fields.slug({ name: { label: 'Slug' } }),
-        description: fields.text({ label: 'תיאור (SEO)', multiline: true }),
-        hidden: fields.checkbox({ label: 'מוחבא מהתפריט', defaultValue: false }),
-        body: fields.markdoc({ label: 'תוכן', extension: 'md' }),
+        description: fields.text({ label: 'תיאור קצר', multiline: true }),
+        seoTitle: fields.text({ label: 'SEO Title' }),
+        seoDescription: fields.text({ label: 'SEO Description', multiline: true }),
+        content: fields.document({
+          label: 'תוכן הדף',
+          formatting: {
+            headingLevels: [2, 3, 4],
+            blockTypes: {
+              blockquote: true,
+              code: false,
+            },
+            inlineMarks: {
+              bold: true,
+              italic: true,
+              code: false,
+              strikethrough: false,
+              underline: false,
+            },
+            listTypes: {
+              ordered: true,
+              unordered: true,
+            },
+          },
+        }),
+        isDraft: fields.checkbox({ label: 'טיוטה' }),
       },
     }),
 
     posts: collection({
       label: 'מאמרים',
-      path: 'src/content/posts/*',
       slugField: 'slug',
-      format: { contentField: 'body' },
+      path: 'src/content/posts/*',
+      format: { contentField: 'content' },
       schema: {
-        title: fields.text({ label: 'כותרת' }),
+        title: fields.text({ label: 'כותרת', validation: { isRequired: true } }),
         slug: fields.slug({ name: { label: 'Slug' } }),
-        date: fields.date({ label: 'תאריך' }),
         excerpt: fields.text({ label: 'תקציר', multiline: true }),
-        coverImage: fields.image({
-          label: 'תמונת קאבר',
-          directory: 'public/uploads',
-          publicPath: '/uploads',
+        publishedAt: fields.date({ label: 'תאריך פרסום' }),
+        tags: fields.array(fields.text({ label: 'תג' }), { label: 'תגיות', itemLabel: (p) => p.value }),
+        content: fields.document({
+          label: 'תוכן המאמר',
+          formatting: {
+            headingLevels: [2, 3, 4],
+            blockTypes: {
+              blockquote: true,
+              code: false,
+            },
+            inlineMarks: {
+              bold: true,
+              italic: true,
+              code: false,
+              strikethrough: false,
+              underline: false,
+            },
+            listTypes: {
+              ordered: true,
+              unordered: true,
+            },
+          },
         }),
-        tags: fields.array(fields.text({ label: 'תגית' }), { label: 'תגיות' }),
-        body: fields.markdoc({ label: 'תוכן', extension: 'md' }),
+        isDraft: fields.checkbox({ label: 'טיוטה' }),
       },
     }),
 
     guides: collection({
       label: 'מדריכים',
-      path: 'src/content/guides/*',
       slugField: 'slug',
+      path: 'src/content/guides/*',
+      format: { contentField: 'content' },
       schema: {
-        title: fields.text({ label: 'כותרת' }),
+        title: fields.text({ label: 'כותרת', validation: { isRequired: true } }),
         slug: fields.slug({ name: { label: 'Slug' } }),
-        description: fields.text({ label: 'תיאור (SEO)', multiline: true }),
-        file: fields.file({
-          label: 'קובץ (PDF/אודיו)',
-          directory: 'public/files',
-          publicPath: '/files',
+        summary: fields.text({ label: 'סיכום קצר', multiline: true }),
+        content: fields.document({
+          label: 'תוכן המדריך',
+          formatting: {
+            headingLevels: [2, 3, 4],
+            blockTypes: { blockquote: true, code: false },
+            inlineMarks: { bold: true, italic: true, code: false, underline: false, strikethrough: false },
+            listTypes: { ordered: true, unordered: true },
+          },
         }),
+        isDraft: fields.checkbox({ label: 'טיוטה' }),
       },
     }),
   },
