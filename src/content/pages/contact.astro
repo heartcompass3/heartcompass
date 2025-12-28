@@ -4,9 +4,20 @@ import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppFloat from '../components/WhatsAppFloat.astro';
 import site from '../content/pages/site.json';
+
 const title = `צור קשר | ${site.brand}`;
 const description = 'תיאום שיחה קצרה. בוא נעשה סדר ונבדוק מה הצעד הבא.';
+
+const phone = site.whatsAppPhone;
+const waBase = (msg) => `https://wa.me/${phone}?text=${encodeURIComponent(msg || '')}`;
+const hasWhatsAppConfig =
+  !!phone && typeof phone === 'string' && phone.trim().length > 0 &&
+  !!site.whatsAppDefaultMessage;
+
+const waHref = hasWhatsAppConfig ? waBase(site.whatsAppDefaultMessage) : site.primaryCtaHref;
+const waIsExternal = typeof waHref === 'string' && waHref.startsWith('https://wa.me/');
 ---
+
 <BaseLayout title={title} description={description}>
   <Navigation />
   <main class="animate-fade-in py-24 bg-background min-h-screen">
@@ -17,7 +28,10 @@ const description = 'תיאום שיחה קצרה. בוא נעשה סדר ונב
           <h1 class="text-5xl font-black font-display mb-8 leading-tight relative z-10">בואו נפתח <br/><span class="text-accent">דף חדש.</span></h1>
           <div class="relative z-10 text-xl font-bold font-display dir-ltr tracking-wide mt-10">{site.email}</div>
           <div class="mt-6">
-            <a href={`mailto:${site.email}`} class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-white/10 hover:bg-white/15 transition-colors">שליחת מייל <span aria-hidden="true">←</span></a>
+            <a href={`mailto:${site.email}`} class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-white/10 hover:bg-white/15 transition-colors">
+              שליחת מייל
+              <span aria-hidden="true">←</span>
+            </a>
           </div>
         </div>
 
@@ -25,12 +39,21 @@ const description = 'תיאום שיחה קצרה. בוא נעשה סדר ונב
           <div class="space-y-8 relative z-10">
             <h2 class="text-3xl font-black text-primary font-display">תיאום שיחה קצרה</h2>
             <p class="text-primary/70 font-body text-lg">כדי לא להעמיס, כרגע הדרך הכי מהירה היא WhatsApp. כתבתי לך כמה שאלות מוכנות בכפתור הירוק למטה.</p>
-            <a href={site.primaryCtaHref} class="inline-flex items-center gap-3 px-10 py-5 rounded-2xl gradient-gold text-white font-bold shadow-gold">{site.primaryCtaLabel} <span aria-hidden="true">←</span></a>
+
+            <a
+              href={waHref}
+              class="inline-flex items-center gap-3 px-10 py-5 rounded-2xl gradient-gold text-white font-bold shadow-gold"
+              {...(waIsExternal ? { target: "_blank", rel: "noopener" } : {})}
+            >
+              {site.primaryCtaLabel}
+              <span aria-hidden="true">←</span>
+            </a>
           </div>
         </div>
       </div>
     </div>
   </main>
+
   <Footer />
   <WhatsAppFloat />
 </BaseLayout>
