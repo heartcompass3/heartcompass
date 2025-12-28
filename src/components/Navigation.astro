@@ -1,7 +1,9 @@
 ---
 import site from '../content/pages/site.json';
+
 const currentPath = Astro.url.pathname;
 const navItem = (href, label) => ({ href, label, active: currentPath === href });
+
 const main = [
   navItem('/', 'ראשי'),
   navItem('/about', 'מי אני'),
@@ -9,11 +11,37 @@ const main = [
   navItem('/blog', 'מאמרים'),
   navItem('/contact', 'צור קשר'),
 ];
+
 const methodItems = [
   navItem('/method/couples', 'אימון זוגי בשיטת מ.ס.ע'),
   navItem('/method/career', 'קריירה ועסקים בשיטת מ.ס.ע'),
   navItem('/method/personal', 'התפתחות אישית בשיטת מ.ס.ע'),
 ];
+
+// WhatsApp helpers (same logic style as WhatsAppFloat)
+const phone = site.whatsAppPhone;
+const waBase = (msg) => `https://wa.me/${phone}?text=${encodeURIComponent(msg || '')}`;
+
+// Decide CTA destination
+const defaultCtaHref = site.primaryCtaHref || '/contact';
+const defaultCtaLabel = site.primaryCtaLabel || 'בוא נדבר';
+
+const isTalkCta =
+  defaultCtaLabel.includes('בוא') ||
+  defaultCtaLabel.includes('נדבר') ||
+  defaultCtaLabel.toLowerCase().includes('whatsapp') ||
+  defaultCtaHref === '/contact';
+
+const hasWhatsAppConfig =
+  !!phone && typeof phone === 'string' && phone.trim().length > 0 &&
+  !!site.whatsAppDefaultMessage;
+
+const ctaHref =
+  (isTalkCta && hasWhatsAppConfig)
+    ? waBase(site.whatsAppDefaultMessage)
+    : defaultCtaHref;
+
+const ctaIsExternal = ctaHref.startsWith('https://wa.me/');
 ---
 
 <nav class="sticky top-0 z-[100] glass border-b border-accent/20 shadow-sm w-full">
@@ -23,7 +51,6 @@ const methodItems = [
       <a href="/" class="flex items-center gap-4 group focus:outline-none" aria-label="חזרה לדף הבית">
         <div class="relative w-12 h-12 md:w-14 md:h-14 shrink-0 transition-transform duration-500 group-hover:rotate-[30deg]">
           <div class="w-full h-full rounded-full gradient-gold flex items-center justify-center p-[2px] shadow-lg">
-            <!-- כאן השינוי: רקע פנימי בהיר כדי לשמור על צבעוניות הלוגו -->
             <div class="w-full h-full rounded-full bg-white flex items-center justify-center border border-accent/30">
               <img
                 src="/assets/logo.png"
@@ -59,8 +86,12 @@ const methodItems = [
           )
         ))}
 
-        <a href={site.primaryCtaHref} class="gradient-gold text-white px-6 py-2.5 rounded-full font-body text-base font-bold hover:shadow-gold transition-all duration-300 shadow-md flex items-center gap-2 transform hover:-translate-y-0.5">
-          {site.primaryCtaLabel}
+        <a
+          href={ctaHref}
+          class="gradient-gold text-white px-6 py-2.5 rounded-full font-body text-base font-bold hover:shadow-gold transition-all duration-300 shadow-md flex items-center gap-2 transform hover:-translate-y-0.5"
+          {...(ctaIsExternal ? { target: "_blank", rel: "noopener" } : {})}
+        >
+          {defaultCtaLabel}
           <span aria-hidden="true">←</span>
         </a>
       </div>
