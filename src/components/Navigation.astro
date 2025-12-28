@@ -19,6 +19,8 @@ const methodItems = [
 <nav class="sticky top-0 z-[100] glass border-b border-accent/20 shadow-sm w-full">
   <div class="max-w-7xl mx-auto px-6 lg:px-8">
     <div class="flex justify-between items-center h-20 md:h-24">
+
+      <!-- Logo + Brand -->
       <a href="/" class="flex items-center gap-4 group focus:outline-none" aria-label="חזרה לדף הבית">
         <div class="relative w-12 h-12 md:w-14 md:h-14 shrink-0 transition-transform duration-500 group-hover:rotate-[30deg]">
           <div class="w-full h-full rounded-full gradient-gold flex items-center justify-center p-[2px] shadow-lg">
@@ -26,61 +28,108 @@ const methodItems = [
               <img
                 src="/assets/logo.png"
                 alt="לוגו מצפן הלב"
-                class="h-9 md:h-10 w-auto object-contain drop-shadow-sm"
                 loading="eager"
+                class="
+                  h-9 md:h-10 w-auto object-contain
+                  brightness-0 invert saturate-100
+                  drop-shadow-sm
+                "
               />
             </div>
           </div>
         </div>
+
         <div class="flex flex-col justify-center h-full items-start">
-          <span class="text-2xl md:text-3xl font-black text-primary font-display leading-none tracking-tight drop-shadow-sm">{site.brand}</span>
-          <span class="text-xs md:text-sm text-gold-dark font-body font-bold tracking-widest mt-0.5 whitespace-nowrap">{site.tagline}</span>
+          <span class="text-2xl md:text-3xl font-black text-primary font-display leading-none tracking-tight drop-shadow-sm">
+            {site.brand}
+          </span>
+          <span class="text-xs md:text-sm text-gold-dark font-body font-bold tracking-widest mt-0.5 whitespace-nowrap">
+            {site.tagline}
+          </span>
         </div>
       </a>
 
+      <!-- Desktop Nav -->
       <div class="hidden md:flex items-center gap-8 lg:gap-10">
         {main.map((item) => (
           item.href === '/method' ? (
             <div class="relative group">
-              <a href={item.href} class={`text-lg font-bold transition-all duration-300 font-body relative px-2 py-1 outline-none ${item.active ? 'text-primary' : 'text-primary/70 hover:text-accent'}`}>השיטה</a>
+              <a
+                href={item.href}
+                class={`text-lg font-bold transition-all duration-300 font-body relative px-2 py-1 outline-none ${
+                  item.active ? 'text-primary' : 'text-primary/70 hover:text-accent'
+                }`}
+              >
+                השיטה
+              </a>
+
               <div class="absolute right-0 mt-3 w-[280px] rounded-2xl bg-white shadow-elegant border border-accent/15 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
                 <div class="p-3">
                   {methodItems.map(mi => (
-                    <a href={mi.href} class="block px-4 py-3 rounded-xl hover:bg-accent/5 font-body font-bold text-primary/80 hover:text-primary transition-colors">{mi.label}</a>
+                    <a
+                      href={mi.href}
+                      class="block px-4 py-3 rounded-xl hover:bg-accent/5 font-body font-bold text-primary/80 hover:text-primary transition-colors"
+                    >
+                      {mi.label}
+                    </a>
                   ))}
                 </div>
               </div>
             </div>
           ) : (
-            <a href={item.href} class={`text-lg font-bold transition-all duration-300 font-body relative px-2 py-1 outline-none ${item.active ? 'text-primary' : 'text-primary/70 hover:text-accent'}`}>{item.label}</a>
+            <a
+              href={item.href}
+              class={`text-lg font-bold transition-all duration-300 font-body relative px-2 py-1 outline-none ${
+                item.active ? 'text-primary' : 'text-primary/70 hover:text-accent'
+              }`}
+            >
+              {item.label}
+            </a>
           )
         ))}
 
-        <a href={site.primaryCtaHref} class="gradient-gold text-white px-6 py-2.5 rounded-full font-body text-base font-bold hover:shadow-gold transition-all duration-300 shadow-md flex items-center gap-2 transform hover:-translate-y-0.5">
+        <a
+          href={site.primaryCtaHref}
+          class="gradient-gold text-white px-6 py-2.5 rounded-full font-body text-base font-bold hover:shadow-gold transition-all duration-300 shadow-md flex items-center gap-2 transform hover:-translate-y-0.5"
+        >
           {site.primaryCtaLabel}
           <span aria-hidden="true">←</span>
         </a>
       </div>
 
+      <!-- Mobile Menu -->
       <details class="md:hidden">
         <summary class="list-none text-primary p-2 hover:bg-accent/10 rounded-xl transition-colors cursor-pointer select-none">
           <span class="sr-only">תפריט</span>
           <span class="text-3xl">☰</span>
         </summary>
+
         <div class="bg-white border-t border-accent/20 absolute top-full left-0 w-full shadow-2xl z-[200] animate-fade-in">
           <div class="px-6 py-6 space-y-2 flex flex-col">
             {main.filter(i => i.href !== '/method').map((item) => (
-              <a href={item.href} class="w-full text-right px-4 py-4 rounded-xl text-xl font-bold border-b border-accent/10 transition-colors hover:bg-accent/5">{item.label}</a>
+              <a
+                href={item.href}
+                class="w-full text-right px-4 py-4 rounded-xl text-xl font-bold border-b border-accent/10 transition-colors hover:bg-accent/5"
+              >
+                {item.label}
+              </a>
             ))}
+
             <div class="pt-2">
               <div class="text-sm font-bold text-primary/60 px-4 py-2">השיטה</div>
               {methodItems.map(mi => (
-                <a href={mi.href} class="w-full text-right px-4 py-3 rounded-xl text-lg font-bold border-b border-accent/10 transition-colors hover:bg-accent/5">{mi.label}</a>
+                <a
+                  href={mi.href}
+                  class="w-full text-right px-4 py-3 rounded-xl text-lg font-bold border-b border-accent/10 transition-colors hover:bg-accent/5"
+                >
+                  {mi.label}
+                </a>
               ))}
             </div>
           </div>
         </div>
       </details>
+
     </div>
   </div>
 </nav>
