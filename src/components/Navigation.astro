@@ -1,7 +1,7 @@
 ---
 import site from '../content/pages/site.json';
-
 const currentPath = Astro.url.pathname;
+
 const navItem = (href, label) => ({ href, label, active: currentPath === href });
 
 const main = [
@@ -18,29 +18,14 @@ const methodItems = [
   navItem('/method/personal', 'התפתחות אישית בשיטת מ.ס.ע'),
 ];
 
-// WhatsApp helpers (same logic style as WhatsAppFloat)
+// WhatsApp CTA (aligned with WhatsAppFloat)
 const phone = site.whatsAppPhone;
 const waBase = (msg) => `https://wa.me/${phone}?text=${encodeURIComponent(msg || '')}`;
-
-// Decide CTA destination
-const defaultCtaHref = site.primaryCtaHref || '/contact';
-const defaultCtaLabel = site.primaryCtaLabel || 'בוא נדבר';
-
-const isTalkCta =
-  defaultCtaLabel.includes('בוא') ||
-  defaultCtaLabel.includes('נדבר') ||
-  defaultCtaLabel.toLowerCase().includes('whatsapp') ||
-  defaultCtaHref === '/contact';
-
 const hasWhatsAppConfig =
   !!phone && typeof phone === 'string' && phone.trim().length > 0 &&
   !!site.whatsAppDefaultMessage;
 
-const ctaHref =
-  (isTalkCta && hasWhatsAppConfig)
-    ? waBase(site.whatsAppDefaultMessage)
-    : defaultCtaHref;
-
+const ctaHref = hasWhatsAppConfig ? waBase(site.whatsAppDefaultMessage) : (site.primaryCtaHref || '/contact');
 const ctaIsExternal = ctaHref.startsWith('https://wa.me/');
 ---
 
@@ -91,7 +76,7 @@ const ctaIsExternal = ctaHref.startsWith('https://wa.me/');
           class="gradient-gold text-white px-6 py-2.5 rounded-full font-body text-base font-bold hover:shadow-gold transition-all duration-300 shadow-md flex items-center gap-2 transform hover:-translate-y-0.5"
           {...(ctaIsExternal ? { target: "_blank", rel: "noopener" } : {})}
         >
-          {defaultCtaLabel}
+          {site.primaryCtaLabel || 'בוא נדבר'}
           <span aria-hidden="true">←</span>
         </a>
       </div>

@@ -2,6 +2,7 @@
 import site from '../content/pages/site.json';
 
 const year = new Date().getFullYear();
+
 const links = [
   { href: '/', label: 'ראשי' },
   { href: '/about', label: 'מי אני' },
@@ -9,24 +10,32 @@ const links = [
   { href: '/blog', label: 'מאמרים' },
   { href: '/contact', label: 'צור קשר' },
 ];
+
+// WhatsApp
+const phone = site.whatsAppPhone;
+const waBase = (msg) => `https://wa.me/${phone}?text=${encodeURIComponent(msg || '')}`;
+const hasWhatsAppConfig =
+  !!phone && typeof phone === 'string' && phone.trim().length > 0 &&
+  !!site.whatsAppDefaultMessage;
+
+const ctaHref = hasWhatsAppConfig ? waBase(site.whatsAppDefaultMessage) : (site.primaryCtaHref || '/contact');
+const ctaIsExternal = ctaHref.startsWith('https://wa.me/');
+
+const email = site.email;
+const facebook = site.facebookUrl;
+const instagram = site.instagramUrl;
+const blogExternal = site.blogExternalUrl; // ONLY in footer
 ---
 
 <footer class="mt-16 border-t border-accent/20">
   <div class="max-w-7xl mx-auto px-6 lg:px-8 py-10">
     <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-10">
 
-      <!-- Brand -->
       <div class="flex items-center gap-4">
         <div class="w-12 h-12 shrink-0">
           <div class="w-full h-full rounded-full gradient-gold flex items-center justify-center p-[2px] shadow-lg">
-            <!-- כאן הקסם: רקע לבן מאחורי לוגו צבעוני כדי שלא יצא צהוב על כהה -->
             <div class="w-full h-full rounded-full bg-white flex items-center justify-center border border-accent/30">
-              <img
-                src="/assets/logo.png"
-                alt="לוגו מצפן הלב"
-                loading="eager"
-                class="h-9 w-auto object-contain"
-              />
+              <img src="/assets/logo.png" alt="לוגו מצפן הלב" loading="eager" class="h-9 w-auto object-contain" />
             </div>
           </div>
         </div>
@@ -34,37 +43,54 @@ const links = [
         <div class="flex flex-col">
           <div class="text-xl font-black text-primary font-display leading-none">{site.brand}</div>
           <div class="text-xs text-primary/70 font-body font-bold tracking-widest mt-1">{site.tagline}</div>
+
+          {email && (
+            <a href={`mailto:${email}`} class="mt-2 text-sm font-body font-bold text-primary/60 hover:text-accent transition-colors">
+              {email}
+            </a>
+          )}
         </div>
       </div>
 
-      <!-- Links -->
       <nav class="flex flex-wrap gap-x-6 gap-y-3">
         {links.map((l) => (
-          <a href={l.href} class="font-body font-bold text-primary/70 hover:text-accent transition-colors">
-            {l.label}
-          </a>
+          <a href={l.href} class="font-body font-bold text-primary/70 hover:text-accent transition-colors">{l.label}</a>
         ))}
+
+        {blogExternal && (
+          <a href={blogExternal} target="_blank" rel="noopener noreferrer" class="font-body font-bold text-primary/70 hover:text-accent transition-colors">
+            הבלוג שלי
+          </a>
+        )}
       </nav>
 
-      <!-- CTA -->
-      <div class="flex items-center">
+      <div class="flex flex-col items-start gap-4">
+        <div class="flex items-center gap-3">
+          {facebook && (
+            <a href={facebook} target="_blank" rel="noopener noreferrer" class="font-body font-bold text-primary/70 hover:text-accent transition-colors">
+              פייסבוק
+            </a>
+          )}
+          {instagram && (
+            <a href={instagram} target="_blank" rel="noopener noreferrer" class="font-body font-bold text-primary/70 hover:text-accent transition-colors">
+              אינסטגרם
+            </a>
+          )}
+        </div>
+
         <a
-          href={site.primaryCtaHref}
+          href={ctaHref}
           class="gradient-gold text-white px-6 py-2.5 rounded-full font-body text-base font-bold hover:shadow-gold transition-all duration-300 shadow-md"
+          {...(ctaIsExternal ? { target: "_blank", rel: "noopener" } : {})}
         >
-          {site.primaryCtaLabel}
+          {site.primaryCtaLabel || 'בוא נדבר'}
         </a>
       </div>
     </div>
 
     <div class="mt-10 pt-6 border-t border-accent/15 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-      <div class="text-sm text-primary/60 font-body font-bold">
-        © {year} {site.brand}. כל הזכויות שמורות.
-      </div>
-
-      <div class="text-sm text-primary/50 font-body">
-        נבנה באהבה ובדיוק.
-      </div>
+      <div class="text-sm text-primary/60 font-body font-bold">© {year} {site.brand}. כל הזכויות שמורות.</div>
+      <div class="text-sm text-primary/50 font-body">נבנה באהבה ובדיוק.</div>
     </div>
   </div>
 </footer>

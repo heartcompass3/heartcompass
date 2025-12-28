@@ -1,5 +1,5 @@
 {
-  "siteUrl": "https://heartcompass.co.il",
+  "siteUrl": "https://heartcompass.vercel.app",
   "brand": "מצפן הלב",
   "fullName": "יוסי מדלסי",
   "tagline": "אימון רגשי תודעתי",
@@ -8,8 +8,15 @@
   "heroTitleLine2": "לא מתוך הפחד.",
   "heroSubheadline": "תהליך עומק לשחרור חסמים, מציאת זוגיות ופריצת דרך בקריירה ועסקים",
   "heroDescription": "התשובות כבר קיימות אצלך, אבל הרעש של הפחד והריצוי מסתיר אותן. במצפן הלב אנחנו מנמיכים את הרעש, ומשחררים את החסם כדי שתוכל להתקדם.",
+
   "primaryCtaLabel": "בוא נדבר תכל'ס",
   "primaryCtaHref": "/contact",
+
+  "email": "heartcompass3@gmail.com",
+  "blogExternalUrl": "https://heartcompass3.blogspot.com/",
+  "facebookUrl": "https://www.facebook.com/share/1AGLnvhmiF/",
+  "instagramUrl": "https://www.instagram.com/heartcompass3/",
+
   "whatsAppPhone": "972544580285",
   "whatsAppDefaultMessage": "היי יוסי, אני רוצה לשאול כמה שאלות לפני שנקבע שיחה.",
   "whatsAppQuickQuestions": [
