@@ -18,7 +18,7 @@ const methodItems = [
   navItem('/method/personal', 'התפתחות אישית בשיטת מ.ס.ע'),
 ];
 
-// WhatsApp CTA (aligned with WhatsAppFloat)
+// Hard WhatsApp CTA for header
 const phone = site.whatsAppPhone;
 const waBase = (msg) => `https://wa.me/${phone}?text=${encodeURIComponent(msg || '')}`;
 const hasWhatsAppConfig =
@@ -26,7 +26,8 @@ const hasWhatsAppConfig =
   !!site.whatsAppDefaultMessage;
 
 const ctaHref = hasWhatsAppConfig ? waBase(site.whatsAppDefaultMessage) : (site.primaryCtaHref || '/contact');
-const ctaIsExternal = ctaHref.startsWith('https://wa.me/');
+const ctaLabel = site.primaryCtaLabel || 'בוא נדבר';
+const ctaIsExternal = typeof ctaHref === 'string' && ctaHref.startsWith('http');
 ---
 
 <nav class="sticky top-0 z-[100] glass border-b border-accent/20 shadow-sm w-full">
@@ -57,12 +58,20 @@ const ctaIsExternal = ctaHref.startsWith('https://wa.me/');
         {main.map((item) => (
           item.href === '/method' ? (
             <div class="relative group">
-              <a href={item.href} class={`text-lg font-bold transition-all duration-300 font-body relative px-2 py-1 outline-none ${item.active ? 'text-primary' : 'text-primary/70 hover:text-accent'}`}>השיטה</a>
-              <div class="absolute right-0 mt-3 w-[280px] rounded-2xl bg-white shadow-elegant border border-accent/15 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
-                <div class="p-3">
-                  {methodItems.map(mi => (
-                    <a href={mi.href} class="block px-4 py-3 rounded-xl hover:bg-accent/5 font-body font-bold text-primary/80 hover:text-primary transition-colors">{mi.label}</a>
-                  ))}
+              <a href={item.href} class={`text-lg font-bold transition-all duration-300 font-body relative px-2 py-1 outline-none ${item.active ? 'text-primary' : 'text-primary/70 hover:text-accent'}`}>
+                השיטה
+              </a>
+
+              <!-- Clickable dropdown: no hover gap + high z-index -->
+              <div class="absolute right-0 top-full pt-3 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity z-[200]">
+                <div class="w-[280px] rounded-2xl bg-white shadow-elegant border border-accent/15">
+                  <div class="p-3">
+                    {methodItems.map(mi => (
+                      <a href={mi.href} class="block px-4 py-3 rounded-xl hover:bg-accent/5 font-body font-bold text-primary/80 hover:text-primary transition-colors">
+                        {mi.label}
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -76,7 +85,7 @@ const ctaIsExternal = ctaHref.startsWith('https://wa.me/');
           class="gradient-gold text-white px-6 py-2.5 rounded-full font-body text-base font-bold hover:shadow-gold transition-all duration-300 shadow-md flex items-center gap-2 transform hover:-translate-y-0.5"
           {...(ctaIsExternal ? { target: "_blank", rel: "noopener" } : {})}
         >
-          {site.primaryCtaLabel || 'בוא נדבר'}
+          {ctaLabel}
           <span aria-hidden="true">←</span>
         </a>
       </div>
@@ -97,6 +106,14 @@ const ctaIsExternal = ctaHref.startsWith('https://wa.me/');
                 <a href={mi.href} class="w-full text-right px-4 py-3 rounded-xl text-lg font-bold border-b border-accent/10 transition-colors hover:bg-accent/5">{mi.label}</a>
               ))}
             </div>
+
+            <a
+              href={ctaHref}
+              class="mt-4 w-full text-center px-6 py-4 rounded-2xl gradient-gold text-white font-bold shadow-gold"
+              {...(ctaIsExternal ? { target: "_blank", rel: "noopener" } : {})}
+            >
+              {ctaLabel}
+            </a>
           </div>
         </div>
       </details>
