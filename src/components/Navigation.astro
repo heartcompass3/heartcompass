@@ -1,22 +1,39 @@
 ---
-import site from '../content/pages/site.json';
-const currentPath = Astro.url.pathname;
+import site from '../content/pages/site.json'
+import { sanity } from '../lib/sanity'
 
-const navItem = (href, label) => ({ href, label, active: currentPath === href });
+const currentPath = Astro.url.pathname
 
-const main = [
-  navItem('/', 'ראשי'),
-  navItem('/about', 'מי אני'),
-  navItem('/method', 'השיטה'),
-  navItem('/blog', 'מאמרים'),
-  navItem('/contact', 'צור קשר'),
-];
+const settings = await sanity.fetch(
+  `*[_type=="siteSettings"][0]{ nav[]{ label, href, children[]{ label, href } } }`
+)
 
-const methodItems = [
-  navItem('/method/couples', 'אימון זוגי בשיטת מ.ס.ע'),
-  navItem('/method/career', 'קריירה ועסקים בשיטת מ.ס.ע'),
-  navItem('/method/personal', 'התפתחות אישית בשיטת מ.ס.ע'),
-];
+const normalizeHref = (href) => {
+  if (!href) return ''
+  // אם שמו URL מלא, נחלץ רק את ה-pathname
+  try {
+    if (href.startsWith('http://') || href.startsWith('https://')) {
+      return new URL(href).pathname || '/'
+    }
+  } catch {}
+  return href
+}
+
+const nav = (settings?.nav ?? [])
+  .map((item) => ({
+    ...item,
+    href: normalizeHref(item.href),
+    children: (item.children ?? [])
+      .map((c) => ({ ...c, href: normalizeHref(c.href) }))
+      .filter((c) => c?.label && c?.href),
+  }))
+  .filter((i) => i?.label && i?.href || (i?.label && i?.children?.length))
+
+const isActive = (href) => {
+  if (!href) return false
+  if (href === '/') return currentPath === '/'
+  return currentPath === href || currentPath.startsWith(href + '/')
+}
 ---
 
 <nav class="sticky top-0 z-[100] glass border-b border-accent/20 shadow-sm w-full">
@@ -43,28 +60,34 @@ const methodItems = [
         </div>
       </a>
 
-      <!-- Desktop nav (no CTA) -->
+      <!-- Desktop nav -->
       <div class="hidden md:flex items-center gap-8 lg:gap-10">
-        {main.map((item) => (
-          item.href === '/method' ? (
+        {nav.map((item) => {
+          const hasChildren = Array.isArray(item.children) && item.children.length > 0
+          const active = isActive(item.href)
+
+          return hasChildren ? (
             <div class="relative group">
               <a
-                href={item.href}
-                class={`text-lg font-bold transition-all duration-300 font-body relative px-2 py-1 outline-none ${item.active ? 'text-primary' : 'text-primary/70 hover:text-accent'}`}
+                href={item.href || '#'}
+                class={`text-lg font-bold transition-all duration-300 font-body relative px-2 py-1 outline-none ${
+                  active ? 'text-primary' : 'text-primary/70 hover:text-accent'
+                }`}
               >
-                השיטה
+                {item.label}
               </a>
 
-              <!-- Clickable dropdown: no hover gap + high z-index -->
               <div class="absolute right-0 top-full pt-3 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity z-[200]">
-                <div class="w-[280px] rounded-2xl bg-white shadow-elegant border border-accent/15">
+                <div class="w-[320px] rounded-2xl bg-white shadow-elegant border border-accent/15">
                   <div class="p-3">
-                    {methodItems.map(mi => (
+                    {item.children.map((child) => (
                       <a
-                        href={mi.href}
-                        class="block px-4 py-3 rounded-xl hover:bg-accent/5 font-body font-bold text-primary/80 hover:text-primary transition-colors"
+                        href={child.href}
+                        class={`block px-4 py-3 rounded-xl hover:bg-accent/5 font-body font-bold transition-colors ${
+                          isActive(child.href) ? 'text-primary' : 'text-primary/80 hover:text-primary'
+                        }`}
                       >
-                        {mi.label}
+                        {child.label}
                       </a>
                     ))}
                   </div>
@@ -74,12 +97,14 @@ const methodItems = [
           ) : (
             <a
               href={item.href}
-              class={`text-lg font-bold transition-all duration-300 font-body relative px-2 py-1 outline-none ${item.active ? 'text-primary' : 'text-primary/70 hover:text-accent'}`}
+              class={`text-lg font-bold transition-all duration-300 font-body relative px-2 py-1 outline-none ${
+                active ? 'text-primary' : 'text-primary/70 hover:text-accent'
+              }`}
             >
               {item.label}
             </a>
           )
-        ))}
+        })}
       </div>
 
       <!-- Mobile nav -->
@@ -88,28 +113,37 @@ const methodItems = [
           <span class="sr-only">תפריט</span>
           <span class="text-3xl">☰</span>
         </summary>
+
         <div class="bg-white border-t border-accent/20 absolute top-full left-0 w-full shadow-2xl z-[200] animate-fade-in">
           <div class="px-6 py-6 space-y-2 flex flex-col">
-            {main.filter(i => i.href !== '/method').map((item) => (
-              <a
-                href={item.href}
-                class="w-full text-right px-4 py-4 rounded-xl text-xl font-bold border-b border-accent/10 transition-colors hover:bg-accent/5"
-              >
-                {item.label}
-              </a>
-            ))}
+            {nav.map((item) => {
+              const hasChildren = Array.isArray(item.children) && item.children.length > 0
 
-            <div class="pt-2">
-              <div class="text-sm font-bold text-primary/60 px-4 py-2">השיטה</div>
-              {methodItems.map(mi => (
+              return hasChildren ? (
+                <div class="pt-2">
+                  <div class="text-sm font-bold text-primary/60 px-4 py-2">{item.label}</div>
+                  {item.children.map((child) => (
+                    <a
+                      href={child.href}
+                      class={`w-full text-right px-4 py-3 rounded-xl text-lg font-bold border-b border-accent/10 transition-colors hover:bg-accent/5 ${
+                        isActive(child.href) ? 'text-primary' : ''
+                      }`}
+                    >
+                      {child.label}
+                    </a>
+                  ))}
+                </div>
+              ) : (
                 <a
-                  href={mi.href}
-                  class="w-full text-right px-4 py-3 rounded-xl text-lg font-bold border-b border-accent/10 transition-colors hover:bg-accent/5"
+                  href={item.href}
+                  class={`w-full text-right px-4 py-4 rounded-xl text-xl font-bold border-b border-accent/10 transition-colors hover:bg-accent/5 ${
+                    isActive(item.href) ? 'text-primary' : ''
+                  }`}
                 >
-                  {mi.label}
+                  {item.label}
                 </a>
-              ))}
-            </div>
+              )
+            })}
           </div>
         </div>
       </details>
