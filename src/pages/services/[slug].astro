@@ -1,0 +1,30 @@
+---
+import SanityLayout from '../../layouts/SanityLayout.astro'
+import PortableText from '../../components/PortableText.astro'
+import { sanity } from '../../lib/sanity'
+
+const { slug } = Astro.params
+
+const doc = await sanity.fetch(
+  `*[_type=="service" && slug.current==$slug][0]{
+    title,
+    subtitle,
+    lead,
+    body
+  }`,
+  { slug }
+)
+
+if (!doc) {
+  return new Response('Not found', { status: 404 })
+}
+---
+
+<SanityLayout>
+  <main style="max-width: 900px; margin: 0 auto; padding: 24px;">
+    <h1>{doc.title}</h1>
+    {doc.subtitle && <h2>{doc.subtitle}</h2>}
+    {doc.lead && <p>{doc.lead}</p>}
+    <PortableText value={doc.body} />
+  </main>
+</SanityLayout>

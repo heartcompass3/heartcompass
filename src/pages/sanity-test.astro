@@ -1,0 +1,13 @@
+---
+import { sanity } from '../lib/sanity'
+
+const pages = await sanity.fetch(`*[_type == "page"]{ title, slug }`)
+---
+
+<h1>Sanity test</h1>
+
+<ul>
+  {pages.map((p) => (
+    <li>{p.title} – {p.slug?.current}</li>
+  ))}
+</ul>

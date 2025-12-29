@@ -1,0 +1,36 @@
+---
+const { seo } = Astro.props
+
+const title = seo?.title || 'מצפן הלב'
+const description = seo?.description || ''
+const canonical = seo?.canonical || Astro.url.href
+const noindex = seo?.noindex === true
+const ogImageUrl = seo?.ogImageUrl
+---
+
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+
+    {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonical} />
+
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    {description && <meta name="twitter:description" content={description} />}
+    {ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,8 @@
+---
+import { toHTML } from '@portabletext/to-html'
+
+const { value } = Astro.props
+const html = value ? toHTML(value) : ''
+---
+
+{html ? <Fragment set:html={html} /> : null}

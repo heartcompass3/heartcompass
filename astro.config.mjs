@@ -1,12 +1,7 @@
-import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel/serverless';
-import keystatic from '@keystatic/astro';
+import { defineConfig } from 'astro/config'
+import vercel from '@astrojs/vercel/serverless'
 
 export default defineConfig({
   output: 'server',
   adapter: vercel(),
-
-  integrations: [
-    keystatic(),
-  ],
-});
+})

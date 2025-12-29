@@ -16,6 +16,9 @@
     "@astrojs/vercel": "^9.0.2",
     "@keystatic/astro": "^5.0.6",
     "@keystatic/core": "^0.5.48",
+    "@portabletext/to-html": "^5.0.0",
+    "@sanity/client": "^7.13.2",
+    "@sanity/image-url": "^2.0.2",
     "astro": "^5.0.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
