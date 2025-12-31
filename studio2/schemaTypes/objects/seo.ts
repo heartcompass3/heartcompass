@@ -1,4 +1,4 @@
-import { defineType, defineField } from 'sanity'
+import {defineType, defineField} from 'sanity'
 
 export default defineType({
   name: 'seo',
@@ -7,31 +7,32 @@ export default defineType({
   fields: [
     defineField({
       name: 'title',
-      title: 'כותרת SEO',
+      title: 'כותרת (Title)',
       type: 'string',
+      validation: (Rule) => Rule.max(60).warning('מומלץ עד 60 תווים'),
     }),
     defineField({
       name: 'description',
-      title: 'תיאור',
+      title: 'תיאור (Description)',
       type: 'text',
       rows: 3,
-      validation: (Rule) => Rule.max(160),
+      validation: (Rule) => Rule.max(160).warning('מומלץ עד 160 תווים'),
     }),
     defineField({
       name: 'ogImage',
-      title: 'תמונת OG',
+      title: 'תמונת OG (שיתוף)',
       type: 'image',
-      options: { hotspot: true },
+      options: {hotspot: true},
     }),
     defineField({
       name: 'noindex',
-      title: 'לא לאנדוקס בגוגל',
+      title: 'לא לאנדקס (noindex)',
       type: 'boolean',
       initialValue: false,
     }),
     defineField({
       name: 'canonical',
-      title: 'Canonical (אם צריך)',
+      title: 'Canonical URL (אופציונלי)',
       type: 'url',
     }),
   ],

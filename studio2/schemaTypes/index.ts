@@ -1,23 +1,21 @@
-import blockContent from './blockContent'
-import category from './category'
 import post from './post'
 import author from './author'
+import category from './category'
+import blockContent from './blockContent'
 
-import seo from './objects/seo'
-import navItem from './objects/navItem'
-
-import page from './documents/page'
-import service from './documents/service'
-import siteSettings from './documents/siteSettings'
+import {documents} from './documents'
+import {objects} from './objects'
 
 export const schemaTypes = [
+  // הקיים (אם תרצה להשאיר בלוג כרגע)
   post,
   author,
   category,
   blockContent,
-  seo,
-  navItem,
-  page,
-  service,
-  siteSettings,
+
+  // החדש שלנו (Pages)
+  ...documents,
+
+  // אובייקטים (SEO/Hero/Sections)
+  ...objects,
 ]

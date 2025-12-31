@@ -1,44 +1,58 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
-import PortableText from '../components/PortableText.astro'
-import { sanity, urlFor } from '../lib/sanity'
+import { sanity } from '../lib/sanity'
 
-const { slug } = Astro.params
+// slug מגיע כ-array: ["method","couples"] וכו'
+const slugParts = Astro.params.slug ? Astro.params.slug.split('/') : []
+const slug = slugParts.join('/')
 
-const doc = await sanity.fetch(
-  `*[_type=="page" && slug.current==$slug][0]{
+// דף בית: אם מגיעים ל- "/" אז slug יהיה ריק
+const effectiveSlug = slug || 'home'
+
+// מושכים דף לפי slug
+const page = await sanity.fetch(
+  `*[_type=="page" && slug.current == $slug][0]{
     title,
     excerpt,
     body,
-    seo{
-      title,
-      description,
-      noindex,
-      canonical,
-      ogImage
-    }
+    seo
   }`,
-  { slug }
+  { slug: effectiveSlug }
 )
 
-if (!doc) return new Response('Not found', { status: 404 })
+// אם אין דף בסאניטי — מחזירים 404 אמיתי
+if (!page) {
+  return new Response('Not found', { status: 404 })
+}
 
-const ogImage = doc?.seo?.ogImage
-  ? urlFor(doc.seo.ogImage).width(1200).height(630).url()
-  : undefined
-
-const title = doc?.seo?.title || doc.title
-const description = doc?.seo?.description || doc.excerpt || undefined
-const canonical = doc?.seo?.canonical || undefined
-const noindex = doc?.seo?.noindex || false
+// רינדור מינימלי ל-body (Portable Text בסיסי)
+const renderBlocks = (blocks = []) => {
+  return blocks
+    .filter(b => b?._type === 'block' && Array.isArray(b.children))
+    .map(b => b.children.map(c => c.text).join(''))
+    .filter(Boolean)
+}
+const paragraphs = renderBlocks(page.body)
 ---
 
-<BaseLayout title={title} description={description} canonical={canonical} noindex={noindex} ogImage={ogImage}>
-  <main class="mx-auto max-w-5xl px-4 py-10">
-    <h1 class="text-3xl font-bold">{doc.title}</h1>
-    {doc.excerpt && <p class="mt-3 text-muted-foreground">{doc.excerpt}</p>}
-    <div class="prose prose-zinc mt-8 max-w-none">
-      <PortableText value={doc.body} />
+<BaseLayout title={page?.seo?.title || page.title} description={page?.seo?.description || page.excerpt || ''}>
+  <main class="max-w-5xl mx-auto px-6 lg:px-8 py-12">
+    <h1 class="text-4xl md:text-5xl font-black text-primary font-display leading-tight">
+      {page.title}
+    </h1>
+
+    {page.excerpt && (
+      <p class="mt-4 text-lg md:text-xl text-primary/70 font-body leading-relaxed">
+        {page.excerpt}
+      </p>
+    )}
+
+    <div class="mt-10 space-y-6">
+      {paragraphs.map((p) => (
+        <p class="text-lg text-primary/80 font-body leading-relaxed">
+          {p}
+        </p>
+      ))}
     </div>
   </main>
 </BaseLayout>

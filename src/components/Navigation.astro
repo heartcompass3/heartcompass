@@ -4,22 +4,48 @@ import { sanity } from '../lib/sanity'
 
 const currentPath = Astro.url.pathname
 
+// 1) מביאים תפריט ראשי מהגדרות אתר (אם קיים)
 const settings = await sanity.fetch(
   `*[_type=="siteSettings"][0]{ nav[]{ label, href, children[]{ label, href } } }`
 )
 
+// 2) מביאים אוטומטית את דפי השיטה לפי slug method/*
+const methodPages = await sanity.fetch(
+  `*[_type=="page" && defined(slug.current) && slug.current match "method/*"]{
+    title,
+    "slug": slug.current,
+    "href": "/" + slug.current
+  } | order(slug asc)`
+)
+
 const normalizeHref = (href) => {
   if (!href) return ''
-  // אם שמו URL מלא, נחלץ רק את ה-pathname
-  try {
-    if (href.startsWith('http://') || href.startsWith('https://')) {
-      return new URL(href).pathname || '/'
+  const raw = String(href).trim()
+
+  // URL מלא -> pathname
+  if (raw.startsWith('http://') || raw.startsWith('https://')) {
+    try {
+      return new URL(raw).pathname || '/'
+    } catch {
+      return '/'
     }
-  } catch {}
-  return href
+  }
+
+  // פנימי בלי / -> נוסיף /
+  if (!raw.startsWith('/')) return '/' + raw
+
+  // ניקוי כפילות // בתחילת נתיב
+  return raw.replace(/^\/+/, '/')
 }
 
-const nav = (settings?.nav ?? [])
+const isActive = (href) => {
+  if (!href) return false
+  if (href === '/') return currentPath === '/'
+  return currentPath === href || currentPath.startsWith(href + '/')
+}
+
+// nav מהגדרות אתר (אם אין – יהיה ריק)
+const rawNav = (settings?.nav ?? [])
   .map((item) => ({
     ...item,
     href: normalizeHref(item.href),
@@ -27,13 +53,41 @@ const nav = (settings?.nav ?? [])
       .map((c) => ({ ...c, href: normalizeHref(c.href) }))
       .filter((c) => c?.label && c?.href),
   }))
-  .filter((i) => i?.label && i?.href || (i?.label && i?.children?.length))
+  .filter((i) => i?.label && i?.href)
 
-const isActive = (href) => {
-  if (!href) return false
-  if (href === '/') return currentPath === '/'
-  return currentPath === href || currentPath.startsWith(href + '/')
+// children אוטומטי מה-pages method/*
+const autoMethodChildren = (methodPages ?? [])
+  .filter((p) => p?.title && p?.href && p?.slug)
+  // מוציאים את דף האב (method) אם יש טעות והוא נכנס לרשימה
+  .filter((p) => p.slug !== 'method')
+  .map((p) => ({ label: p.title, href: normalizeHref(p.href) }))
+
+// מזהים את פריט "השיטה": /method
+const METHOD_PARENT_HREF = '/method'
+
+// מעדכנים את פריט "השיטה" הקיים כך שייקח children אוטומטי
+let nav = rawNav.map((item) => {
+  if (normalizeHref(item.href) === METHOD_PARENT_HREF) {
+    return { ...item, href: METHOD_PARENT_HREF, children: autoMethodChildren }
+  }
+  return item
+})
+
+// אם אין בכלל "השיטה" בתפריט – נוסיף
+const hasMethodItem = nav.some((i) => normalizeHref(i.href) === METHOD_PARENT_HREF)
+if (!hasMethodItem) {
+  nav = [...nav, { label: 'השיטה', href: METHOD_PARENT_HREF, children: autoMethodChildren }]
 }
+
+// ניקוי כפילויות לפי href
+const seen = new Set()
+nav = nav.filter((item) => {
+  const href = normalizeHref(item?.href)
+  if (!href) return false
+  if (seen.has(href)) return false
+  seen.add(href)
+  return true
+})
 ---
 
 <nav class="sticky top-0 z-[100] glass border-b border-accent/20 shadow-sm w-full">
@@ -69,7 +123,7 @@ const isActive = (href) => {
           return hasChildren ? (
             <div class="relative group">
               <a
-                href={item.href || '#'}
+                href={item.href}
                 class={`text-lg font-bold transition-all duration-300 font-body relative px-2 py-1 outline-none ${
                   active ? 'text-primary' : 'text-primary/70 hover:text-accent'
                 }`}
