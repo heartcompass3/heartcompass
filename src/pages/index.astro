@@ -1,129 +1,130 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Navigation from '../components/Navigation.astro';
-import Footer from '../components/Footer.astro';
-import WhatsAppFloat from '../components/WhatsAppFloat.astro';
-import site from '../content/pages/site.json';
-const title = `${site.brand} | ${site.tagline}`;
-const description = 'אימון רגשי תודעתי לשחרור חסמים מהשורש. זוגיות, קריירה ועסקים, והתפתחות אישית בשיטת מ.ס.ע.';
+import BaseLayout from '../layouts/BaseLayout.astro'
+import PortableText from '../components/PortableText.astro'
+
+import { sanity } from '../lib/sanity'
+
+// שאילתה לדף הבית (Singleton)
+const query = `
+*[_type == "homePage"][0]{
+  seo,
+  hero{
+    badge,
+    titleLine1,
+    titleLine2,
+    titleLine3,
+    subheadline,
+    description,
+    primaryCtaLabel,
+    primaryCtaHref
+  },
+  h1Title,
+  bridgeText,
+  cardGrid,
+  methodSection,
+  faq,
+  bottomCta
+}
+`
+
+const home = await sanity.fetch(query)
+
+if (!home) {
+  throw new Error('HomePage document not found in Sanity')
+}
 ---
-<BaseLayout title={title} description={description}>
-  <Navigation />
-  <main class="animate-fade-in bg-background overflow-x-hidden">
-    <header class="relative flex flex-col md:flex-row min-h-[92vh] max-w-[100vw] overflow-hidden">
-      <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        <div class="absolute top-[-5%] right-[-5%] w-[50vw] h-[50vw] bg-accent/5 rounded-full blur-[80px]"></div>
-        <div class="absolute bottom-[-5%] left-[-5%] w-[40vw] h-[40vw] bg-primary/5 rounded-full blur-[80px]"></div>
-      </div>
-      <div class="w-full md:w-1/2 flex items-center justify-center p-8 md:p-16 relative z-10">
-        <article class="max-w-xl text-center md:text-right">
-          <div class="inline-flex items-center gap-3 mb-8 bg-white/80 backdrop-blur-md px-5 py-2 rounded-full border border-accent/30 shadow-sm">
-            <span class="flex h-3 w-3 relative">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-3 w-3 bg-accent"></span>
-            </span>
-            <span class="text-primary font-bold tracking-wide text-sm font-body uppercase">{site.heroBadge}</span>
-          </div>
-          <h1 class="text-5xl md:text-8xl font-black text-primary font-display mb-8 leading-[1.05] tracking-tight drop-shadow-sm">
-            {site.heroTitleLine1}<br />{site.heroTitleLine2}
-          </h1>
-          <h2 class="text-xl md:text-2xl font-bold text-accent font-display mb-8">{site.heroSubheadline}</h2>
-          <p class="text-lg md:text-xl text-primary/80 font-body leading-relaxed mb-12 max-w-lg">{site.heroDescription}</p>
-          <div class="flex flex-col sm:flex-row gap-5">
-            <a href={site.primaryCtaHref} class="px-10 py-5 gradient-gold text-white rounded-2xl font-bold text-xl hover:shadow-gold transition-all shadow-md flex items-center justify-center gap-3 focus:ring-4 focus:ring-accent/40 outline-none transform hover:-translate-y-1">{site.primaryCtaLabel} <span aria-hidden="true">←</span></a>
-            <a href="/about" class="px-10 py-5 bg-white text-primary border border-primary/20 rounded-2xl font-bold text-xl hover:border-primary transition-all flex items-center justify-center shadow-md">נעים להכיר, יוסי</a>
-          </div>
-        </article>
-      </div>
-      <div class="w-full md:w-1/2 relative min-h-[50vh] md:min-h-full p-6 md:p-12 flex items-center justify-center z-10">
-        <div class="relative w-full h-full rounded-[3rem] overflow-hidden shadow-2xl border-4 border-background/50 outline outline-4 outline-accent/20 group">
-          <img src="/assets/yossi-hero.jpg" alt={site.fullName} class="w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-105" loading="eager" />
-        </div>
-      </div>
-    </header>
 
-    <section class="py-28 bg-background relative">
-      <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-        <div class="text-center mb-16">
-          <h2 class="text-5xl font-black font-display text-primary mb-6">במה אנחנו נוגעים?</h2>
-          <p class="text-primary/70 max-w-2xl mx-auto font-body text-xl">שלושת עמודי התווך לחיים מלאים וחופשיים</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-          {[
-            { title: 'אימון זוגי', desc: 'לשחרר תקיעות, ריבים חוזרים ופחד מאינטימיות. לבנות קשר מתוך ביטחון ובהירות.', href: '/method/couples' },
-            { title: 'קריירה ועסקים', desc: 'לעבור מצומת לצעד. לפרוץ דחיינות, חשיבת יתר ותקיעות, ולבנות תנועה אמיצה קדימה.', href: '/method/career' },
-            { title: 'התפתחות אישית', desc: 'לחזור לעצמך. שחרור דפוסים שמנהלים אותך, ובהירות לגבי מה נכון לך באמת.', href: '/method/personal' },
-          ].map((spec) => (
-            <a href={spec.href} class="relative p-12 rounded-[2.5rem] bg-white border border-accent/10 shadow-lg flex flex-col items-center text-center overflow-hidden hover:-translate-y-2 transition-all">
-              <div class="relative w-24 h-24 rounded-3xl gradient-gold flex items-center justify-center mb-10 shadow-xl text-white">
-                <span class="text-3xl font-black">✦</span>
-              </div>
-              <h3 class="relative text-2xl font-extrabold mb-4 font-display text-primary">{spec.title}</h3>
-              <p class="relative text-primary/80 font-body leading-relaxed text-lg font-medium">{spec.desc}</p>
-              <div class="mt-8 font-bold text-accent">לקריאה מלאה ←</div>
-            </a>
-          ))}
-        </div>
-      </div>
-    </section>
+<BaseLayout
+  title={home.seo?.title}
+  description={home.seo?.description}
+  canonical={home.seo?.canonical}
+  noindex={home.seo?.noindex}
+  ogImage={home.seo?.ogImageUrl}
+>
 
-    <section class="py-28 bg-primary text-white overflow-hidden relative">
-      <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-accent rounded-full blur-[120px] -mr-60 -mt-60 opacity-20"></div>
-      <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-teal-lighter rounded-full blur-[120px] -ml-60 -mb-60 opacity-40"></div>
-      <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-        <div class="flex flex-col md:flex-row gap-20 items-center">
-          <div class="md:w-1/3 text-center md:text-right">
-            <h2 class="text-7xl font-black font-display mb-8 text-white leading-[0.9] drop-shadow-2xl">מודל <br /><span class="text-accent">מ.ס.ע</span></h2>
-            <p class="text-xl text-gray-300 font-body leading-relaxed mb-10 font-light">חשוב להדגיש: אימון מוגדר מטרה ויעד. המודל עובד בשלושה שלבים מדויקים.</p>
-          </div>
-          <div class="md:w-2/3 grid grid-cols-1 gap-8">
-            {[
-              { letter: 'מ', title: 'מיפוי', subtitle: 'זיהוי החסמים', desc: 'מיפוי הדפוסים, החסמים והאמונות המגבילות שעוצרות מלהגיע למטרה, ליעד ולייעוד.' },
-              { letter: 'ס', title: 'סילוק', subtitle: 'ניקוי השטח', desc: 'סילוק החסמים שזיהינו בעזרת כלים עוקפי תודעה, והנמכת הרעש הפנימי שמטשטש את הכיוון.' },
-              { letter: 'ע', title: 'עצמאות', subtitle: 'הגעה ליעד', desc: 'בהירות, החלטה וביצוע. כשהאני הבוגר מחזיק בהגה בלי להיגרר לדפוסים ישנים.' },
-            ].map((step) => (
-              <div class="bg-white/5 backdrop-blur-md p-8 rounded-[2rem] border border-white/10 hover:bg-white/10 transition-all duration-300 flex flex-col items-center text-center gap-6 group hover:-translate-y-2">
-                <div class="w-20 h-20 gradient-gold text-white rounded-2xl flex items-center justify-center font-black text-3xl shadow-lg shrink-0 group-hover:scale-110 transition-transform">{step.letter}</div>
-                <div>
-                  <h3 class="text-2xl font-bold mb-2 font-display text-white group-hover:text-orange-300 transition-colors">
-                    {step.title} <span class="text-lg opacity-70 font-normal block md:inline">| {step.subtitle}</span>
-                  </h3>
-                  <p class="text-lg text-white/80 font-body leading-relaxed">{step.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
+  <!-- HERO (לא H1) -->
+  <section class="relative overflow-hidden">
+    <div class="container mx-auto px-6 py-24 text-center">
 
-    <section class="py-20 bg-white">
-      <div class="max-w-4xl mx-auto px-6">
-        <div class="text-center mb-12">
-          <h2 class="text-3xl font-black text-primary font-display mb-4">שאלות נפוצות</h2>
-          <p class="text-primary/60 font-body">קצת סדר לפני שיוצאים לדרך</p>
-        </div>
-        <div class="space-y-6">
-          <div class="bg-background p-8 rounded-3xl border border-accent/10 hover:border-accent/30 transition-colors shadow-sm">
-            <h3 class="font-bold text-xl text-primary mb-3 font-display flex gap-3 items-center">
-              <span class="text-accent">?</span> למי זה מתאים?
-            </h3>
-            <div class="text-primary/80 font-body leading-relaxed pr-9">
-              <p>לאנשים שמתפקדים היטב מבחוץ, אבל בפנים מזהים תקיעות חוזרת בזוגיות, בקריירה או בתחושת הערך. כאלה שמבינים שהפתרון דורש עומק, ולא רק עוד טיפ.</p>
-            </div>
-          </div>
-          <div class="bg-background p-8 rounded-3xl border border-accent/10 hover:border-accent/30 transition-colors shadow-sm">
-            <h3 class="font-bold text-xl text-primary mb-3 font-display flex gap-3 items-center">
-              <span class="text-accent">?</span> על מה מבוססת השיטה?
-            </h3>
-            <div class="text-primary/80 font-body leading-relaxed pr-9">
-              <p>השיטה מחברת פסיכולוגיית עומק עם מנגנוני הישרדות של המוח, ומתרגמת את זה לתהליך אימון מעשי שמכוון יעד. פחות לדבר על מה כבר יודעים, יותר לפרק את החסם שמנהל את הרגע.</p>
-            </div>
-          </div>
-        </div>
+      {home.hero?.badge && (
+        <span class="inline-block mb-6 text-sm font-display tracking-wide text-accent">
+          {home.hero.badge}
+        </span>
+      )}
+
+      <div class="font-display text-4xl md:text-6xl leading-tight text-foreground">
+        <div>{home.hero.titleLine1}</div>
+        <div>{home.hero.titleLine2}</div>
+        <div>{home.hero.titleLine3}</div>
       </div>
+
+      {home.hero?.subheadline && (
+        <p class="mt-6 text-xl font-body text-muted-foreground">
+          {home.hero.subheadline}
+        </p>
+      )}
+
+      {home.hero?.description && (
+        <p class="mt-4 max-w-2xl mx-auto font-body text-muted-foreground">
+          {home.hero.description}
+        </p>
+      )}
+
+      {home.hero?.primaryCtaLabel && home.hero?.primaryCtaHref && (
+        <div class="mt-10">
+          <a
+            href={home.hero.primaryCtaHref}
+            class="inline-block rounded-xl bg-accent px-8 py-4 font-display text-white hover:opacity-90 transition"
+          >
+            {home.hero.primaryCtaLabel}
+          </a>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- H1 אמיתי -->
+  <section class="container mx-auto px-6 mt-24">
+    <h1 class="font-display text-3xl md:text-4xl text-foreground">
+      {home.h1Title}
+    </h1>
+
+    <p class="mt-4 max-w-2xl font-body text-muted-foreground">
+      {home.bridgeText}
+    </p>
+  </section>
+
+  <!-- CARD GRID -->
+  {home.cardGrid && (
+    <section class="container mx-auto px-6 mt-20">
+      <PortableText value={home.cardGrid} />
     </section>
-  </main>
-  <Footer />
-  <WhatsAppFloat />
+  )}
+
+  <!-- METHOD SECTION -->
+  {home.methodSection && (
+    <section class="container mx-auto px-6 mt-24">
+      <PortableText value={home.methodSection} />
+    </section>
+  )}
+
+  <!-- FAQ -->
+  {home.faq && (
+    <section class="container mx-auto px-6 mt-24">
+      <PortableText value={home.faq} />
+    </section>
+  )}
+
+  <!-- CTA תחתון -->
+  {home.bottomCta?.label && home.bottomCta?.href && (
+    <section class="container mx-auto px-6 mt-24 mb-32 text-center">
+      <a
+        href={home.bottomCta.href}
+        class="inline-block rounded-xl bg-accent px-10 py-5 font-display text-white hover:opacity-90 transition"
+      >
+        {home.bottomCta.label}
+      </a>
+    </section>
+  )}
+
 </BaseLayout>

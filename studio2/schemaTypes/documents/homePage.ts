@@ -1,107 +1,111 @@
-import { defineType, defineField } from 'sanity'
+// studio2/schemaTypes/documents/homePage.ts
+import {defineType, defineField} from 'sanity'
 
 export default defineType({
   name: 'homePage',
   title: 'דף בית',
   type: 'document',
 
-  // Singleton: רק עדכון ופרסום
-  __experimental_actions: ['update', 'publish'],
-
   fields: [
+    defineField({
+      name: 'title',
+      title: 'כותרת פנימית',
+      type: 'string',
+      initialValue: 'דף הבית',
+    }),
+
+    // SEO (כולל noindex פעם אחת בלבד – בתוך seo)
     defineField({
       name: 'seo',
       title: 'SEO',
       type: 'seo',
     }),
 
+    // Hero
     defineField({
       name: 'hero',
       title: 'Hero',
       type: 'hero',
     }),
 
+    // גשר (H1 + פסקה)
     defineField({
-      name: 'h1Title',
+      name: 'h1',
       title: 'כותרת H1 (מתחת להירו)',
       type: 'string',
-      initialValue: 'תהליכי ברור',
-      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'introParagraph',
+      title: 'פסקת גשר',
+      description: 'פחד מול תשוקה – הפסקה שמתחת ל־H1',
+      type: 'text',
+      rows: 4,
     }),
 
+    // כרטיסים
     defineField({
-      name: 'bridgeText',
-      title: 'פסקת גשר (פחד מול תשוקה)',
+      name: 'cardsHeading',
+      title: 'כותרת הכרטיסים',
+      type: 'string',
+    }),
+    defineField({
+      name: 'cardsSubheading',
+      title: 'תת כותרת הכרטיסים',
+      type: 'string',
+    }),
+    defineField({
+      name: 'cards',
+      title: 'כרטיסים',
+      type: 'cardGrid',
+    }),
+
+    // מ.ס.ע (משאיר גם תאימות לשדה msa שכבר קיים בדאטה)
+    defineField({
+      name: 'methodHeading',
+      title: 'כותרת המודל',
+      type: 'string',
+    }),
+    defineField({
+      name: 'methodIntro',
+      title: 'טקסט פתיחה למודל',
       type: 'text',
       rows: 3,
-      validation: (Rule) => Rule.required(),
     }),
-
     defineField({
-      name: 'cardGrid',
-      title: '3 תחומים (Grid)',
-      type: 'cardGrid',
-      validation: (Rule) => Rule.required(),
+      name: 'methodTitle',
+      title: 'שם המודל',
+      type: 'string',
     }),
-
     defineField({
-      name: 'methodSection',
-      title: 'סקשן קצר על השיטה',
-      type: 'richText',
+      name: 'msa',
+      title: 'שלבי מ.ס.ע',
+      type: 'msaSection',
     }),
 
+    // FAQ
     defineField({
       name: 'faq',
       title: 'FAQ',
       type: 'faq',
     }),
 
+    // CTA תחתון
     defineField({
-      name: 'bottomCta',
-      title: 'CTA תחתון',
-      type: 'object',
-      fields: [
-        defineField({
-          name: 'label',
-          title: 'טקסט כפתור',
-          type: 'string',
-          initialValue: 'בוא נדבר תכל׳ס',
-        }),
-        defineField({
-          name: 'href',
-          title: 'קישור',
-          type: 'url',
-        }),
-      ],
+      name: 'bottomCtaText',
+      title: 'CTA תחתון טקסט כפתור',
+      type: 'string',
     }),
-
-    // Variant B: עתידי מוכן להתרחבות
     defineField({
-      name: 'future',
-      title: 'עתידי (מוכן להתרחבות)',
-      type: 'object',
-      fields: [
-        defineField({
-          name: 'testimonials',
-          title: 'המלצות (עתידי)',
-          type: 'array',
-          of: [
-            {
-              type: 'object',
-              fields: [
-                { name: 'name', title: 'שם', type: 'string' },
-                { name: 'text', title: 'טקסט', type: 'text', rows: 3 },
-              ],
-            },
-          ],
-        }),
-        defineField({
-          name: 'secondarySections',
-          title: 'סקשנים נוספים (עתידי)',
-          type: 'array',
-          of: [{ type: 'richText' }],
-        }),
-      ],
+      name: 'bottomCtaHref',
+      title: 'CTA תחתון קישור',
+      type: 'string',
     }),
   ],
+
+  preview: {
+    select: {title: 'title'},
+    prepare({title}) {
+      return {title: title || 'דף הבית'}
+    },
+  },
 })
