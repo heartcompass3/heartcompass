@@ -1,4 +1,4 @@
-import {defineType, defineField} from 'sanity'
+import { defineType, defineField } from 'sanity'
 
 export default defineType({
   name: 'hero',
@@ -7,46 +7,52 @@ export default defineType({
   fields: [
     defineField({
       name: 'badge',
-      title: 'תגית עליונה',
+      title: 'תגית קטנה',
       type: 'string',
     }),
+
     defineField({
       name: 'titleLine1',
-      title: 'כותרת שורה ראשונה',
+      title: 'כותרת שורה 1',
       type: 'string',
-      validation: Rule => Rule.required(),
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'titleLine2',
-      title: 'כותרת שורה שנייה',
+      title: 'כותרת שורה 2',
       type: 'string',
+      validation: (Rule) => Rule.required(),
     }),
+    defineField({
+      name: 'titleLine3',
+      title: 'כותרת שורה 3',
+      type: 'string',
+      description: 'כדי שהכותרת הגדולה תישבר ל־3 שורות בדיוק',
+      validation: (Rule) => Rule.required(),
+    }),
+
     defineField({
       name: 'subheadline',
-      title: 'שורת הזמנה',
+      title: 'תת כותרת',
       type: 'string',
     }),
+
     defineField({
-      name: 'paragraph',
-      title: 'פסקת פתיחה',
+      name: 'description',
+      title: 'תיאור',
       type: 'text',
-      rows: 4,
+      rows: 3,
     }),
+
     defineField({
-      name: 'ctaText',
-      title: 'טקסט כפתור',
+      name: 'primaryCtaLabel',
+      title: 'CTA ראשי טקסט',
       type: 'string',
     }),
     defineField({
-      name: 'ctaHref',
-      title: 'קישור כפתור',
-      type: 'string',
-    }),
-    defineField({
-      name: 'image',
-      title: 'תמונת Hero',
-      type: 'image',
-      options: {hotspot: true},
+      name: 'primaryCtaHref',
+      title: 'CTA ראשי קישור',
+      type: 'url',
     }),
   ],
 })
