@@ -1,8 +1,5 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Navigation from '../../components/Navigation.astro';
-import Footer from '../../components/Footer.astro';
-import WhatsAppFloat from '../../components/WhatsAppFloat.astro';
 import site from '../../content/pages/site.json';
 import { getCollection } from 'astro:content';
 
@@ -16,8 +13,8 @@ const { Content } = await post.render();
 const title = `${post.data.title} | ${site.brand}`;
 const description = post.data.excerpt;
 ---
+
 <BaseLayout title={title} description={description}>
-  <Navigation />
   <article class="animate-fade-in py-24 bg-background min-h-screen">
     <div class="max-w-4xl mx-auto px-6">
       <a href="/blog" class="flex items-center text-primary hover:text-gold-dark mb-10 font-bold transition-colors bg-white px-6 py-3 rounded-full shadow-md w-fit border border-accent/20">← חזרה למאמרים</a>
@@ -42,6 +39,4 @@ const description = post.data.excerpt;
       </div>
     </div>
   </article>
-  <Footer />
-  <WhatsAppFloat />
 </BaseLayout>

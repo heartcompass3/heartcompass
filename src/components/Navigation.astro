@@ -4,39 +4,17 @@ import { sanity } from '../lib/sanity'
 
 const currentPath = Astro.url.pathname
 
-// 1) מביאים תפריט ראשי מהגדרות אתר (אם קיים)
 const settings = await sanity.fetch(
-  `*[_type=="siteSettings"][0]{ nav[]{ label, href, children[]{ label, href } } }`
+  `*[_type=="siteSettings"][0]{ nav[]{ label, href } }`
 )
 
-// 2) מביאים אוטומטית את דפי השיטה לפי slug method/*
-const methodPages = await sanity.fetch(
-  `*[_type=="page" && defined(slug.current) && slug.current match "method/*"]{
-    title,
-    "slug": slug.current,
-    "href": "/" + slug.current
-  } | order(slug asc)`
-)
+const nav = settings?.nav ?? []
 
-const normalizeHref = (href) => {
-  if (!href) return ''
-  const raw = String(href).trim()
-
-  // URL מלא -> pathname
-  if (raw.startsWith('http://') || raw.startsWith('https://')) {
-    try {
-      return new URL(raw).pathname || '/'
-    } catch {
-      return '/'
-    }
-  }
-
-  // פנימי בלי / -> נוסיף /
-  if (!raw.startsWith('/')) return '/' + raw
-
-  // ניקוי כפילות // בתחילת נתיב
-  return raw.replace(/^\/+/, '/')
-}
+const methodChildren = [
+  { label: 'אימון זוגי', href: '/method/couples' },
+  { label: 'קריירה ועסקים', href: '/method/career' },
+  { label: 'התפתחות אישית', href: '/method/personal' },
+]
 
 const isActive = (href) => {
   if (!href) return false
@@ -44,164 +22,248 @@ const isActive = (href) => {
   return currentPath === href || currentPath.startsWith(href + '/')
 }
 
-// nav מהגדרות אתר (אם אין – יהיה ריק)
-const rawNav = (settings?.nav ?? [])
-  .map((item) => ({
-    ...item,
-    href: normalizeHref(item.href),
-    children: (item.children ?? [])
-      .map((c) => ({ ...c, href: normalizeHref(c.href) }))
-      .filter((c) => c?.label && c?.href),
-  }))
-  .filter((i) => i?.label && i?.href)
-
-// children אוטומטי מה-pages method/*
-const autoMethodChildren = (methodPages ?? [])
-  .filter((p) => p?.title && p?.href && p?.slug)
-  // מוציאים את דף האב (method) אם יש טעות והוא נכנס לרשימה
-  .filter((p) => p.slug !== 'method')
-  .map((p) => ({ label: p.title, href: normalizeHref(p.href) }))
-
-// מזהים את פריט "השיטה": /method
-const METHOD_PARENT_HREF = '/method'
-
-// מעדכנים את פריט "השיטה" הקיים כך שייקח children אוטומטי
-let nav = rawNav.map((item) => {
-  if (normalizeHref(item.href) === METHOD_PARENT_HREF) {
-    return { ...item, href: METHOD_PARENT_HREF, children: autoMethodChildren }
-  }
-  return item
-})
-
-// אם אין בכלל "השיטה" בתפריט – נוסיף
-const hasMethodItem = nav.some((i) => normalizeHref(i.href) === METHOD_PARENT_HREF)
-if (!hasMethodItem) {
-  nav = [...nav, { label: 'השיטה', href: METHOD_PARENT_HREF, children: autoMethodChildren }]
-}
-
-// ניקוי כפילויות לפי href
-const seen = new Set()
-nav = nav.filter((item) => {
-  const href = normalizeHref(item?.href)
-  if (!href) return false
-  if (seen.has(href)) return false
-  seen.add(href)
-  return true
-})
+const isMethodActive = currentPath === '/method' || currentPath.startsWith('/method/')
 ---
 
-<nav class="sticky top-0 z-[100] glass border-b border-accent/20 shadow-sm w-full">
-  <div class="max-w-7xl mx-auto px-6 lg:px-8">
-    <div class="flex justify-between items-center h-20 md:h-24">
+<nav
+  class="sticky top-0 z-[100] border-b border-accent/20 bg-[#fbf8f2] md:bg-background/70 md:backdrop-blur-md"
+  data-nav
+>
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex items-center justify-between h-20">
 
-      <a href="/" class="flex items-center gap-4 group focus:outline-none" aria-label="חזרה לדף הבית">
-        <div class="relative w-12 h-12 md:w-14 md:h-14 shrink-0 transition-transform duration-500 group-hover:rotate-[30deg]">
-          <div class="w-full h-full rounded-full gradient-gold flex items-center justify-center p-[2px] shadow-lg">
-            <div class="w-full h-full rounded-full bg-white flex items-center justify-center border border-accent/30">
-              <img
-                src="/assets/logo.png"
-                alt="לוגו מצפן הלב"
-                loading="eager"
-                class="h-9 md:h-10 w-auto object-contain drop-shadow-sm"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="flex flex-col justify-center h-full items-start">
-          <span class="text-2xl md:text-3xl font-black text-primary font-display leading-none tracking-tight drop-shadow-sm">{site.brand}</span>
-          <span class="text-xs md:text-sm text-gold-dark font-body font-bold tracking-widest mt-0.5 whitespace-nowrap">{site.tagline}</span>
+      <a href="/" class="flex items-center gap-4">
+        <img src="/assets/logo.png" alt="לוגו" class="h-10 w-auto" />
+        <div class="flex flex-col leading-tight">
+          <span class="font-display text-xl">{site.brand}</span>
+          <span class="font-body text-xs text-muted-foreground">{site.tagline}</span>
         </div>
       </a>
 
-      <!-- Desktop nav -->
-      <div class="hidden md:flex items-center gap-8 lg:gap-10">
+      <!-- Desktop -->
+      <div class="hidden md:flex gap-8 items-center">
         {nav.map((item) => {
-          const hasChildren = Array.isArray(item.children) && item.children.length > 0
-          const active = isActive(item.href)
-
-          return hasChildren ? (
-            <div class="relative group">
+          const isMethod = item.href === '/method'
+          if (!isMethod) {
+            return (
               <a
                 href={item.href}
-                class={`text-lg font-bold transition-all duration-300 font-body relative px-2 py-1 outline-none ${
-                  active ? 'text-primary' : 'text-primary/70 hover:text-accent'
+                class={`font-body font-bold transition ${
+                  isActive(item.href)
+                    ? 'text-foreground'
+                    : 'text-muted-foreground hover:text-accent'
                 }`}
               >
                 {item.label}
               </a>
+            )
+          }
 
-              <div class="absolute right-0 top-full pt-3 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity z-[200]">
-                <div class="w-[320px] rounded-2xl bg-white shadow-elegant border border-accent/15">
-                  <div class="p-3">
-                    {item.children.map((child) => (
-                      <a
-                        href={child.href}
-                        class={`block px-4 py-3 rounded-xl hover:bg-accent/5 font-body font-bold transition-colors ${
-                          isActive(child.href) ? 'text-primary' : 'text-primary/80 hover:text-primary'
-                        }`}
-                      >
-                        {child.label}
-                      </a>
-                    ))}
-                  </div>
-                </div>
+          return (
+            <div class="relative" data-method>
+              <button
+                type="button"
+                class={`font-body font-bold transition inline-flex items-center gap-2 ${
+                  isMethodActive ? 'text-foreground' : 'text-muted-foreground hover:text-accent'
+                }`}
+                data-method-trigger
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                {item.label}
+                <span aria-hidden="true">▾</span>
+              </button>
+
+              <div
+                class="hidden absolute right-0 mt-3 w-56 rounded-2xl bg-white shadow-elegant border border-accent/10 overflow-hidden z-[120]"
+                data-method-menu
+              >
+                {methodChildren.map((c) => (
+                  <a
+                    href={c.href}
+                    class={`block px-5 py-3 font-body text-sm transition ${
+                      isActive(c.href)
+                        ? 'bg-accent/10 text-foreground'
+                        : 'text-foreground/80 hover:bg-accent/10 hover:text-foreground'
+                    }`}
+                  >
+                    {c.label}
+                  </a>
+                ))}
               </div>
             </div>
-          ) : (
-            <a
-              href={item.href}
-              class={`text-lg font-bold transition-all duration-300 font-body relative px-2 py-1 outline-none ${
-                active ? 'text-primary' : 'text-primary/70 hover:text-accent'
-              }`}
-            >
-              {item.label}
-            </a>
           )
         })}
       </div>
 
-      <!-- Mobile nav -->
-      <details class="md:hidden">
-        <summary class="list-none text-primary p-2 hover:bg-accent/10 rounded-xl transition-colors cursor-pointer select-none">
-          <span class="sr-only">תפריט</span>
-          <span class="text-3xl">☰</span>
-        </summary>
+      <!-- Mobile -->
+      <div class="md:hidden">
+        <button
+          type="button"
+          class="text-2xl"
+          aria-label="פתח תפריט"
+          aria-expanded="false"
+          data-menu-button
+        >
+          ☰
+        </button>
 
-        <div class="bg-white border-t border-accent/20 absolute top-full left-0 w-full shadow-2xl z-[200] animate-fade-in">
-          <div class="px-6 py-6 space-y-2 flex flex-col">
-            {nav.map((item) => {
-              const hasChildren = Array.isArray(item.children) && item.children.length > 0
+        <!-- Fullscreen Menu (אטום) -->
+        <div
+          class="hidden fixed inset-0 z-[200] bg-[#fbf8f2] overscroll-contain overflow-y-auto"
+          style="background-color:#fbf8f2;"
+          data-mobile-menu
+          aria-hidden="true"
+        >
+          <div class="p-6 flex flex-col gap-6">
+            <button
+              type="button"
+              aria-label="סגור תפריט"
+              class="self-end text-3xl"
+              data-menu-close
+            >
+              ×
+            </button>
 
-              return hasChildren ? (
-                <div class="pt-2">
-                  <div class="text-sm font-bold text-primary/60 px-4 py-2">{item.label}</div>
-                  {item.children.map((child) => (
+            <div class="flex flex-col gap-2">
+              {nav.map((item) => {
+                const isMethod = item.href === '/method'
+                if (!isMethod) {
+                  return (
                     <a
-                      href={child.href}
-                      class={`w-full text-right px-4 py-3 rounded-xl text-lg font-bold border-b border-accent/10 transition-colors hover:bg-accent/5 ${
-                        isActive(child.href) ? 'text-primary' : ''
+                      href={item.href}
+                      class={`font-body text-xl border-b pb-4 transition ${
+                        isActive(item.href) ? 'text-foreground' : 'text-foreground/80 hover:text-accent'
                       }`}
+                      data-menu-link
                     >
-                      {child.label}
+                      {item.label}
                     </a>
-                  ))}
-                </div>
-              ) : (
-                <a
-                  href={item.href}
-                  class={`w-full text-right px-4 py-4 rounded-xl text-xl font-bold border-b border-accent/10 transition-colors hover:bg-accent/5 ${
-                    isActive(item.href) ? 'text-primary' : ''
-                  }`}
-                >
-                  {item.label}
-                </a>
-              )
-            })}
+                  )
+                }
+
+                return (
+                  <div class="border-b pb-4">
+                    <a
+                      href="/method"
+                      class={`font-body text-xl transition ${
+                        isMethodActive ? 'text-foreground' : 'text-foreground/80 hover:text-accent'
+                      }`}
+                      data-menu-link
+                    >
+                      {item.label}
+                    </a>
+
+                    <div class="mt-3 flex flex-col gap-2 pr-3">
+                      {methodChildren.map((c) => (
+                        <a
+                          href={c.href}
+                          class={`font-body text-base transition ${
+                            isActive(c.href) ? 'text-foreground' : 'text-foreground/70 hover:text-accent'
+                          }`}
+                          data-menu-link
+                        >
+                          {c.label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            <div class="pt-2 text-sm text-muted-foreground font-body">
+              {site.tagline}
+            </div>
           </div>
         </div>
-      </details>
+      </div>
 
     </div>
   </div>
+
+  <script is:inline>
+    (() => {
+      const root = document.querySelector('[data-nav]');
+      if (!root) return;
+
+      // -------- Mobile menu ----------
+      const menu = root.querySelector('[data-mobile-menu]');
+      const btn = root.querySelector('[data-menu-button]');
+      const closeBtn = root.querySelector('[data-menu-close]');
+      const links = root.querySelectorAll('[data-menu-link]');
+
+      const setExpanded = (v) => btn && btn.setAttribute('aria-expanded', v ? 'true' : 'false');
+
+      const openMobile = () => {
+        if (!menu) return;
+        menu.classList.remove('hidden');
+        menu.setAttribute('aria-hidden', 'false');
+        setExpanded(true);
+        document.documentElement.style.overflow = 'hidden';
+      };
+
+      const closeMobile = () => {
+        if (!menu) return;
+        menu.classList.add('hidden');
+        menu.setAttribute('aria-hidden', 'true');
+        setExpanded(false);
+        document.documentElement.style.overflow = '';
+      };
+
+      if (btn && menu) {
+        btn.addEventListener('click', () => {
+          menu.classList.contains('hidden') ? openMobile() : closeMobile();
+        });
+      }
+      if (closeBtn) closeBtn.addEventListener('click', closeMobile);
+      links.forEach((a) => a.addEventListener('click', closeMobile));
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeMobile();
+      });
+      document.addEventListener('astro:after-swap', closeMobile);
+      window.addEventListener('resize', () => {
+        if (window.matchMedia('(min-width: 768px)').matches) closeMobile();
+      });
+
+      // -------- Desktop Method dropdown (click only) ----------
+      const methodWrap = root.querySelector('[data-method]');
+      const methodTrigger = root.querySelector('[data-method-trigger]');
+      const methodMenu = root.querySelector('[data-method-menu]');
+
+      const closeMethod = () => {
+        if (!methodMenu || !methodTrigger) return;
+        methodMenu.classList.add('hidden');
+        methodTrigger.setAttribute('aria-expanded', 'false');
+      };
+
+      const openMethod = () => {
+        if (!methodMenu || !methodTrigger) return;
+        methodMenu.classList.remove('hidden');
+        methodTrigger.setAttribute('aria-expanded', 'true');
+      };
+
+      const toggleMethod = () => {
+        if (!methodMenu) return;
+        methodMenu.classList.contains('hidden') ? openMethod() : closeMethod();
+      };
+
+      if (methodWrap && methodTrigger && methodMenu) {
+        methodTrigger.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleMethod();
+        });
+
+        methodMenu.addEventListener('click', (e) => e.stopPropagation());
+
+        document.addEventListener('click', () => closeMethod());
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') closeMethod();
+        });
+        document.addEventListener('astro:after-swap', closeMethod);
+      }
+    })();
+  </script>
 </nav>

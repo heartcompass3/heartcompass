@@ -1,33 +1,49 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Navigation from '../components/Navigation.astro';
-import Footer from '../components/Footer.astro';
-import WhatsAppFloat from '../components/WhatsAppFloat.astro';
-import site from '../content/pages/site.json';
-const title = `מי אני | ${site.brand}`;
-const description = 'נעים להכיר. הסיפור של יוסי והדרך שבה נבנתה שיטת מ.ס.ע.';
+import BaseLayout from '../layouts/BaseLayout.astro'
+import site from '../content/pages/site.json'
+
+const title = `מי אני | ${site.brand}`
+const description = 'נעים להכיר. הסיפור של יוסי והדרך שבה נבנתה שיטת מ.ס.ע.'
 ---
+
 <BaseLayout title={title} description={description}>
-  <Navigation />
   <article class="animate-fade-in py-24 bg-background">
     <div class="max-w-6xl mx-auto px-6">
       <div class="bg-white/60 backdrop-blur-xl rounded-[3rem] p-8 md:p-20 shadow-2xl border border-white/50 relative overflow-hidden flex flex-col md:flex-row gap-16 items-center">
+        
+        <!-- תמונה -->
         <div class="w-full md:w-5/12 relative z-10">
           <div class="aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-all duration-700 border-[8px] border-white ring-1 ring-accent/20">
-            <img src="/assets/yossi-about.jpg" alt={site.fullName} class="object-cover w-full h-full transform hover:scale-105 transition-transform duration-[1.5s]" />
+            <img
+              src="/assets/yossi-about.jpg"
+              alt={site.fullName}
+              class="object-cover w-full h-full transform hover:scale-105 transition-transform duration-[1.5s]"
+            />
           </div>
         </div>
+
+        <!-- טקסט -->
         <div class="w-full md:w-7/12 relative z-10 text-center md:text-right">
-          <h1 class="text-6xl md:text-7xl font-black text-primary font-display mb-10 leading-tight">נעים להכיר,<br />אני {site.fullName}.</h1>
+          <h1 class="text-6xl md:text-7xl font-black text-primary font-display mb-10 leading-tight">
+            נעים להכיר,<br />אני {site.fullName}.
+          </h1>
+
           <div class="prose prose-xl text-primary/80 font-body leading-9 max-w-none">
-            <p class="mb-8 font-bold text-gold-dark text-2xl border-r-4 border-accent pr-4 bg-white/50 p-4 rounded-l-xl">"הייתי שם. אני יודע איך זה מרגיש כשהלב רוצה משהו אחד, והראש אומר משהו אחר."</p>
-            <p>כאן יהיה טקסט אודות מלא בעריכה דרך Keystatic. כרגע זו גרסת שלד לשמירת העיצוב והעימוד.</p>
-            <p>כשתרצה, נמלא כאן סיפור אישי מדויק עם שפה שמרגישה שמבינים את האדם ולא רק מנסים למכור לו.</p>
+            <p class="mb-8 font-bold text-gold-dark text-2xl border-r-4 border-accent pr-4 bg-white/50 p-4 rounded-l-xl">
+              "הייתי שם. אני יודע איך זה מרגיש כשהלב רוצה משהו אחד, והראש אומר משהו אחר."
+            </p>
+
+            <p>
+              כאן יהיה טקסט אודות מלא בעריכה דרך Keystatic. כרגע זו גרסת שלד לשמירת העיצוב והעימוד.
+            </p>
+
+            <p>
+              כשתרצה, נמלא כאן סיפור אישי מדויק עם שפה שמרגישה שמבינים את האדם ולא רק מנסים למכור לו.
+            </p>
           </div>
         </div>
+
       </div>
     </div>
   </article>
-  <Footer />
-  <WhatsAppFloat />
 </BaseLayout>

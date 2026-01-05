@@ -1,130 +1,257 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
-import PortableText from '../components/PortableText.astro'
-
 import { sanity } from '../lib/sanity'
+import { HOME_PAGE_QUERY } from '../lib/sanityQueries'
 
-// שאילתה לדף הבית (Singleton)
-const query = `
-*[_type == "homePage"][0]{
-  seo,
-  hero{
-    badge,
-    titleLine1,
-    titleLine2,
-    titleLine3,
-    subheadline,
-    description,
-    primaryCtaLabel,
-    primaryCtaHref
-  },
-  h1Title,
-  bridgeText,
-  cardGrid,
-  methodSection,
-  faq,
-  bottomCta
-}
-`
+const home = await sanity.fetch(HOME_PAGE_QUERY)
+if (!home) throw new Error('HomePage not found')
 
-const home = await sanity.fetch(query)
+// SEO
+const seoTitle = home.seo?.title
+const seoDescription = home.seo?.description
+const noindex = home.seo?.noindex
 
-if (!home) {
-  throw new Error('HomePage document not found in Sanity')
-}
+// HERO
+const hero = home.hero ?? {}
+const heroBadge = hero.badge
+const heroTitle1 = hero.titleLine1
+const heroTitle2 = hero.titleLine2
+const heroTitle3 = hero.titleLine3
+const heroSub = hero.subheadline
+const heroImg = '/assets/yossi-hero.jpg'
+
+const primaryCtaHref = hero.primaryCtaHref
+const primaryCtaLabel = 'בוא נדבר תכל׳ס ←'
+const secondaryCtaHref = '/about'
+const secondaryCtaLabel = 'נעים להכיר, יוסי'
+
+// SEO H1 (לא ויזואלי)
+const H1 = 'תהליך אימון וליווי רגשי עמוק לשחרור דפוסים ואמונות מגבילות מהשורש'
+
+// גשר קצר מעל הכפתורים (זה “המשהו שחסר” בלי להעמיס)
+const bridge =
+  home.introParagraph ||
+  'תהליך עומק לשחרור חסמים, מציאת זוגיות ופריצת דרך בקריירה ועסקים.'
+
+// Cards
+const cards = home.cards?.items ?? []
+
+// MSA
+const msaIntro = home.methodIntro
+const msa = home.msa?.items ?? []
+
+// FAQ
+const faq = home.faq?.items ?? []
+
+// Bottom CTA
+const bottomCtaText = home.bottomCtaText
+const bottomCtaHref = home.bottomCtaHref
 ---
 
-<BaseLayout
-  title={home.seo?.title}
-  description={home.seo?.description}
-  canonical={home.seo?.canonical}
-  noindex={home.seo?.noindex}
-  ogImage={home.seo?.ogImageUrl}
->
+<BaseLayout title={seoTitle} description={seoDescription} noindex={noindex}>
+  <!-- H1 ל SEO בלבד -->
+  <h1 class="sr-only">{H1}</h1>
 
-  <!-- HERO (לא H1) -->
+  <!-- HERO -->
   <section class="relative overflow-hidden">
-    <div class="container mx-auto px-6 py-24 text-center">
+    <div class="container mx-auto px-6 py-16 md:py-24">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
 
-      {home.hero?.badge && (
-        <span class="inline-block mb-6 text-sm font-display tracking-wide text-accent">
-          {home.hero.badge}
-        </span>
-      )}
+        <!-- טקסט -->
+        <div class="text-center lg:text-right order-1">
+          {heroBadge && (
+            <span class="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-white/60 px-4 py-2 text-sm font-body font-bold text-accent">
+              <span class="inline-block h-2 w-2 rounded-full bg-accent"></span>
+              {heroBadge}
+            </span>
+          )}
 
-      <div class="font-display text-4xl md:text-6xl leading-tight text-foreground">
-        <div>{home.hero.titleLine1}</div>
-        <div>{home.hero.titleLine2}</div>
-        <div>{home.hero.titleLine3}</div>
-      </div>
+          <div class="mt-7 leading-[1.05] text-5xl md:text-7xl font-black font-display">
+            <div>{heroTitle1}</div>
+            <div>{heroTitle2}</div>
+            <div>{heroTitle3}</div>
+          </div>
 
-      {home.hero?.subheadline && (
-        <p class="mt-6 text-xl font-body text-muted-foreground">
-          {home.hero.subheadline}
-        </p>
-      )}
+          {heroSub && (
+            <p class="mt-6 text-lg md:text-xl text-muted-foreground font-body">
+              {heroSub}
+            </p>
+          )}
 
-      {home.hero?.description && (
-        <p class="mt-4 max-w-2xl mx-auto font-body text-muted-foreground">
-          {home.hero.description}
-        </p>
-      )}
+          <!-- “משהו מעל הכפתורים” אבל קצר ונקי -->
+          <p class="mt-6 max-w-xl mx-auto lg:mr-0 lg:ml-auto text-foreground/70 font-body leading-relaxed">
+            {bridge}
+          </p>
 
-      {home.hero?.primaryCtaLabel && home.hero?.primaryCtaHref && (
-        <div class="mt-10">
-          <a
-            href={home.hero.primaryCtaHref}
-            class="inline-block rounded-xl bg-accent px-8 py-4 font-display text-white hover:opacity-90 transition"
-          >
-            {home.hero.primaryCtaLabel}
-          </a>
+          <!-- כפתורים: בדסקטופ מתחת לטקסט -->
+          <div class="mt-9 hidden lg:flex gap-4 justify-end">
+            {primaryCtaHref && (
+              <a
+                href={primaryCtaHref}
+                class="rounded-2xl bg-accent px-8 py-4 font-body font-bold text-white shadow hover:opacity-90 transition"
+              >
+                {primaryCtaLabel}
+              </a>
+            )}
+            <a
+              href={secondaryCtaHref}
+              class="rounded-2xl border border-foreground/10 bg-white/70 px-8 py-4 font-body font-bold"
+            >
+              {secondaryCtaLabel}
+            </a>
+          </div>
         </div>
-      )}
+
+        <!-- תמונה -->
+        <div class="order-2">
+          <div class="rounded-[36px] border border-accent/20 bg-white/40 p-3">
+            <div class="rounded-[28px] overflow-hidden bg-white">
+              <img
+                src={heroImg}
+                alt="יוסי מדלסי"
+                class="w-full h-auto object-cover max-h-[520px] md:max-h-none"
+              />
+            </div>
+          </div>
+
+          <!-- כפתורים: במובייל מתחת לתמונה -->
+          <div class="mt-6 flex flex-col gap-4 lg:hidden">
+            {primaryCtaHref && (
+              <a
+                href={primaryCtaHref}
+                class="rounded-2xl bg-accent px-8 py-4 font-body font-bold text-white shadow hover:opacity-90 transition text-center"
+              >
+                {primaryCtaLabel}
+              </a>
+            )}
+            <a
+              href={secondaryCtaHref}
+              class="rounded-2xl border border-foreground/10 bg-white/70 px-8 py-4 font-body font-bold text-center"
+            >
+              {secondaryCtaLabel}
+            </a>
+          </div>
+        </div>
+
+      </div>
     </div>
   </section>
 
-  <!-- H1 אמיתי -->
-  <section class="container mx-auto px-6 mt-24">
-    <h1 class="font-display text-3xl md:text-4xl text-foreground">
-      {home.h1Title}
-    </h1>
-
-    <p class="mt-4 max-w-2xl font-body text-muted-foreground">
-      {home.bridgeText}
+  <!-- מסגור קל לכרטיסיות (לא שלט חוצות) -->
+  <section class="container mx-auto px-6 pt-2 pb-6 text-center">
+    <div class="text-sm md:text-base font-body font-bold text-muted-foreground">
+      תחומי התמחות
+    </div>
+    <p class="mt-2 text-muted-foreground font-body">
+      בחר את התחום שמדבר אליך, ונבנה יחד תהליך מותאם.
     </p>
   </section>
 
-  <!-- CARD GRID -->
-  {home.cardGrid && (
-    <section class="container mx-auto px-6 mt-20">
-      <PortableText value={home.cardGrid} />
-    </section>
-  )}
+  <!-- CARDS -->
+  <section class="container mx-auto px-6 pb-14">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {cards.map(item => (
+        <a
+          href={item.link}
+          class="group rounded-[36px] bg-white shadow-lg border border-foreground/5 p-10 text-center hover:shadow-xl transition"
+        >
+          <div class="mx-auto h-20 w-20 rounded-3xl bg-accent flex items-center justify-center text-white text-2xl">✦</div>
 
-  <!-- METHOD SECTION -->
-  {home.methodSection && (
-    <section class="container mx-auto px-6 mt-24">
-      <PortableText value={home.methodSection} />
-    </section>
-  )}
+          <h3 class="mt-8 text-2xl font-black font-display">{item.title}</h3>
+          <p class="mt-4 text-muted-foreground leading-relaxed font-body">{item.text}</p>
+
+          <div class="mt-8 font-body font-bold text-accent inline-flex items-center gap-2">
+            <span>לקריאה מלאה</span>
+            <span class="transition group-hover:translate-x-[-2px]">←</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- MSA -->
+  <section class="relative text-white">
+    <div class="absolute inset-0 bg-[radial-gradient(900px_500px_at_50%_-150px,rgba(255,255,255,0.20),rgba(255,255,255,0)_55%),linear-gradient(180deg,#2b4f4a_0%,#0f2f33_55%,#0b2629_100%)]"></div>
+    <div class="relative container mx-auto px-6 py-16 md:py-20">
+
+      <div class="text-center lg:hidden">
+        <div class="font-display font-black leading-[0.95] text-6xl">
+          <div class="text-white">מודל</div>
+          <div class="mt-2"><span class="text-accent">מ.ס.ע</span></div>
+        </div>
+
+        {msaIntro && (
+          <p class="mt-6 max-w-2xl mx-auto text-white/75 font-body leading-relaxed">
+            {msaIntro}
+          </p>
+        )}
+      </div>
+
+      <div class="mt-10 lg:mt-0 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div class="order-2 lg:order-1 space-y-6">
+          {msa.map(step => (
+            <div class="rounded-[28px] bg-white/10 border border-white/10 p-8 backdrop-blur-md shadow-[0_20px_60px_-40px_rgba(0,0,0,0.7)]">
+              <div class="flex items-start gap-4">
+                <div class="h-14 w-14 rounded-2xl bg-accent flex items-center justify-center text-2xl font-black font-display text-white">
+                  {step.letter}
+                </div>
+
+                <div class="flex-1">
+                  <h3 class="text-xl md:text-2xl font-black font-display">
+                    {step.title}
+                    {step.subtitle && (
+                      <span class="text-white/70 font-body text-base md:text-lg"> | {step.subtitle}</span>
+                    )}
+                  </h3>
+                  <p class="mt-3 text-white/75 font-body leading-relaxed">
+                    {step.text}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div class="hidden lg:block order-1 lg:order-2 text-right">
+          <div class="font-display font-black leading-[0.95] text-7xl">
+            <div class="text-white">מודל</div>
+            <div class="mt-2"><span class="text-accent">מ.ס.ע</span></div>
+          </div>
+
+          {msaIntro && (
+            <p class="mt-7 text-white/75 font-body leading-relaxed max-w-xl mr-auto">
+              {msaIntro}
+            </p>
+          )}
+        </div>
+      </div>
+
+    </div>
+  </section>
 
   <!-- FAQ -->
-  {home.faq && (
-    <section class="container mx-auto px-6 mt-24">
-      <PortableText value={home.faq} />
-    </section>
-  )}
+  <section class="container mx-auto px-6 py-20">
+    <h2 class="text-3xl md:text-4xl text-center font-black font-display">שאלות נפוצות</h2>
+    <div class="mt-10 max-w-4xl mx-auto space-y-6">
+      {faq.map(it => (
+        <details class="rounded-3xl bg-white border border-foreground/5 p-6">
+          <summary class="cursor-pointer text-xl flex justify-between font-black font-display">
+            <span>{it.question}</span><span class="text-accent">+</span>
+          </summary>
+          <div class="mt-4 text-muted-foreground font-body">{it.answer}</div>
+        </details>
+      ))}
+    </div>
+  </section>
 
-  <!-- CTA תחתון -->
-  {home.bottomCta?.label && home.bottomCta?.href && (
-    <section class="container mx-auto px-6 mt-24 mb-32 text-center">
+  {bottomCtaText && bottomCtaHref && (
+    <section class="container mx-auto px-6 pb-24 text-center">
       <a
-        href={home.bottomCta.href}
-        class="inline-block rounded-xl bg-accent px-10 py-5 font-display text-white hover:opacity-90 transition"
+        href={bottomCtaHref}
+        class="rounded-2xl bg-accent px-10 py-5 font-body font-bold text-white shadow hover:opacity-90 transition"
       >
-        {home.bottomCta.label}
+        {bottomCtaText}
       </a>
     </section>
   )}
-
 </BaseLayout>

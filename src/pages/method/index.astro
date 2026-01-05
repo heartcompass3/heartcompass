@@ -1,43 +1,59 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Navigation from '../../components/Navigation.astro';
-import Footer from '../../components/Footer.astro';
-import WhatsAppFloat from '../../components/WhatsAppFloat.astro';
-import site from '../../content/pages/site.json';
-const title = `השיטה | ${site.brand}`;
-const description = 'היכרות עם מודל מ.ס.ע והגישה של מצפן הלב.';
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import site from '../../content/pages/site.json'
+
+const title = `השיטה | ${site.brand}`
+const description = 'מודל מ.ס.ע: מיפוי, סילוק וסלילה, עצמאות. תהליך מדורג לשחרור דפוסים מהשורש.'
 ---
+
 <BaseLayout title={title} description={description}>
-  <Navigation />
   <main class="animate-fade-in py-24 bg-background min-h-screen">
     <div class="max-w-6xl mx-auto px-6">
+
       <header class="text-center mb-14">
-        <h1 class="text-6xl font-black text-primary font-display mb-6">השיטה</h1>
-        <p class="text-xl text-primary/70 font-body max-w-3xl mx-auto">כאן נכתוב בהמשך את ההסבר המלא. כרגע אנחנו בונים את המבנה המדויק והקבוע.</p>
+        <h1 class="text-5xl md:text-6xl font-black text-primary font-display mb-6">
+          השיטה
+        </h1>
+        <p class="text-xl text-primary/70 font-body max-w-3xl mx-auto">
+          {description}
+        </p>
       </header>
 
-      <section class="bg-white rounded-[3rem] p-10 md:p-16 shadow-elegant border border-accent/10">
-        <h2 class="text-3xl font-black text-primary font-display mb-6">מודל מ.ס.ע</h2>
-        <div class="grid gap-6">
-          {[{l:'מ',t:'מיפוי',d:'מה קורה לי באמת, ומה מפעיל אותי.'},{l:'ס',t:'סילוק',d:'להוריד רעש ולשחרר את מה שחוסם תנועה.'},{l:'ע',t:'עצמאות',d:'לקבל החלטה ולבצע מתוך אני בוגר.'}].map((x)=>(
-            <div class="p-6 rounded-3xl border border-accent/15 bg-background">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 gradient-gold text-white rounded-2xl flex items-center justify-center font-black text-2xl">{x.l}</div>
-                <div>
-                  <div class="text-2xl font-black text-primary font-display">{x.t}</div>
-                  <div class="text-primary/70 font-body">{x.d}</div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+      <section class="grid md:grid-cols-3 gap-8">
+        <a href="/method/couples" class="bg-white p-10 rounded-[2.5rem] shadow-elegant border border-white hover:translate-y-[-2px] transition">
+          <h2 class="text-2xl font-black text-primary font-display mb-4">זוגיות ומשפחה</h2>
+          <p class="text-primary/70 font-body leading-relaxed">
+            מפרקים את הדפוס שמדליק את האש, ובונים שפה זוגית חדשה.
+          </p>
+          <div class="mt-6 font-bold text-accent font-body">קרא עוד ←</div>
+        </a>
 
-        <div class="mt-10">
-          <a href={site.primaryCtaHref} class="inline-flex items-center justify-center px-8 py-4 rounded-2xl gradient-gold text-white font-bold shadow-md">{site.primaryCtaLabel}</a>
-        </div>
+        <a href="/method/career" class="bg-white p-10 rounded-[2.5rem] shadow-elegant border border-white hover:translate-y-[-2px] transition">
+          <h2 class="text-2xl font-black text-primary font-display mb-4">קריירה ועסקים</h2>
+          <p class="text-primary/70 font-body leading-relaxed">
+            מוציאים אותך מתקיעות, חשיבת יתר ודחיינות, ובונים תנועה אמיתית.
+          </p>
+          <div class="mt-6 font-bold text-accent font-body">קרא עוד ←</div>
+        </a>
+
+        <a href="/method/personal" class="bg-white p-10 rounded-[2.5rem] shadow-elegant border border-white hover:translate-y-[-2px] transition">
+          <h2 class="text-2xl font-black text-primary font-display mb-4">התפתחות אישית</h2>
+          <p class="text-primary/70 font-body leading-relaxed">
+            ערך עצמי, בחירה, שקט פנימי. עובדים מהשורש, בלי להעמיד פנים.
+          </p>
+          <div class="mt-6 font-bold text-accent font-body">קרא עוד ←</div>
+        </a>
       </section>
+
+      <div class="mt-16 text-center">
+        <a
+          href={site.primaryCtaHref}
+          class="inline-flex items-center gap-3 px-10 py-5 rounded-2xl gradient-gold text-white font-bold shadow-gold"
+        >
+          {site.primaryCtaLabel} <span aria-hidden="true">←</span>
+        </a>
+      </div>
+
     </div>
   </main>
-  <Footer />
-  <WhatsAppFloat />
 </BaseLayout>

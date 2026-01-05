@@ -1,44 +1,56 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Navigation from '../../components/Navigation.astro';
-import Footer from '../../components/Footer.astro';
-import WhatsAppFloat from '../../components/WhatsAppFloat.astro';
-import site from '../../content/pages/site.json';
-const title = `התפתחות אישית בשיטת מ.ס.ע | ${site.brand}`;
-const description = 'תהליך עומק לשחרור דפוסים, מחשבות טורדניות ותקיעות.';
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import site from '../../content/pages/site.json'
+
+const title = `התפתחות אישית בשיטת מ.ס.ע | ${site.brand}`
+const description = 'דחיינות, מחשבות טורדניות, ערך עצמי וקושי לבחור. עושים סדר, ואז עושים תנועה.'
 ---
+
 <BaseLayout title={title} description={description}>
-  <Navigation />
   <main class="animate-fade-in py-24 bg-background min-h-screen">
     <div class="max-w-4xl mx-auto px-6">
+
       <header class="mb-10 text-center">
-        <h1 class="text-5xl md:text-6xl font-black text-primary font-display mb-6">התפתחות אישית בשיטת מ.ס.ע</h1>
-        <p class="text-xl text-primary/70 font-body">{description}</p>
+        <h1 class="text-5xl md:text-6xl font-black text-primary font-display mb-6">
+          התפתחות אישית בשיטת מ.ס.ע
+        </h1>
+        <p class="text-xl text-primary/70 font-body">
+          {description}
+        </p>
       </header>
 
       <div class="bg-white p-10 md:p-16 rounded-[3rem] shadow-elegant border border-white">
-        <h2 class="text-2xl font-black text-primary font-display mb-6">מה קורה בפועל</h2>
-        <ol class="space-y-6">
-          <li class="bg-background p-6 rounded-2xl border border-accent/10">
-            <div class="font-black text-accent mb-2">מיפוי</div>
-            <div class="text-primary/80 font-body">מגדירים יעד, ואז ממפים את הדפוס שמנהל את הרגעים שבהם אתה נופל לאוטומט.</div>
+        <h2 class="text-2xl font-black text-primary font-display mb-6">
+          פחות להילחם בעצמך, יותר להבין אותך
+        </h2>
+
+        <p class="text-primary/80 font-body leading-relaxed mb-8">
+          אנחנו לא “מעלימים” רגש. אנחנו לומדים לקרוא אותו, להבין את הפרשנות שמפעילה אותו,
+          ולהוציא אותך מהאוטומט.
+        </p>
+
+        <ul class="space-y-4">
+          <li class="bg-background p-6 rounded-2xl border border-accent/10 text-primary/80 font-body">
+            עבודה על ערך עצמי מול אישור חיצוני, בלי סיסמאות.
           </li>
-          <li class="bg-background p-6 rounded-2xl border border-accent/10">
-            <div class="font-black text-accent mb-2">סילוק</div>
-            <div class="text-primary/80 font-body">מורידים רעש ומסלקים חסמים דרך עבודה רגשית ותודעתית שמדברת בשפה של הגוף.</div>
+          <li class="bg-background p-6 rounded-2xl border border-accent/10 text-primary/80 font-body">
+            שחרור תקיעות: כשאתה יודע מה נכון ועדיין לא זז.
           </li>
-          <li class="bg-background p-6 rounded-2xl border border-accent/10">
-            <div class="font-black text-accent mb-2">עצמאות</div>
-            <div class="text-primary/80 font-body">תוכנית פעולה קצרה וברורה, והחזקת ההחלטה עד שזה הופך להרגל.</div>
+          <li class="bg-background p-6 rounded-2xl border border-accent/10 text-primary/80 font-body">
+            יצירת מפת דרכים חדשה מתוך האני הבוגר.
           </li>
-        </ol>
+        </ul>
 
         <div class="mt-10">
-          <a href={site.primaryCtaHref} class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl gradient-gold text-white font-bold shadow-gold">{site.primaryCtaLabel} <span aria-hidden="true">←</span></a>
+          <a
+            href={site.primaryCtaHref}
+            class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl gradient-gold text-white font-bold shadow-gold"
+          >
+            {site.primaryCtaLabel} <span aria-hidden="true">←</span>
+          </a>
         </div>
       </div>
+
     </div>
   </main>
-  <Footer />
-  <WhatsAppFloat />
 </BaseLayout>

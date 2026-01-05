@@ -1,26 +1,17 @@
 ---
-import site from '../content/pages/site.json';
-const phone = site.whatsAppPhone;
-const base = (msg) => `https://wa.me/${phone}?text=${encodeURIComponent(msg || '')}`;
+import site from '../content/pages/site.json'
+const phone = site.whatsAppPhone
+const msg = site.whatsAppDefaultMessage || ''
+const href = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`
 ---
 
-<div class="fixed bottom-4 left-4 z-[9999]">
-  <details class="group">
-    <summary class="list-none cursor-pointer">
-      <a href={base(site.whatsAppDefaultMessage)} target="_blank" rel="noopener" class="flex items-center gap-3 px-4 py-3 rounded-full shadow-xl text-sm font-bold gradient-gold text-white">
-        WhatsApp
-        <span aria-hidden="true">↗</span>
-      </a>
-    </summary>
-    <div class="mt-3 w-[280px] bg-white rounded-3xl shadow-elegant border border-accent/15 p-4 hidden group-open:block">
-      <div class="text-primary font-bold mb-3">שאלות מהירות</div>
-      <div class="space-y-2">
-        {site.whatsAppQuickQuestions?.map(q => (
-          <a href={base(q)} target="_blank" rel="noopener" class="block px-3 py-3 rounded-2xl bg-secondary hover:bg-accent/5 border border-accent/10 font-body font-semibold text-primary/80">
-            {q}
-          </a>
-        ))}
-      </div>
-    </div>
-  </details>
-</div>
+<a href={href}
+   target="_blank"
+   rel="noopener"
+   aria-label="וואטסאפ"
+   class="fixed bottom-5 left-5 z-[9999] h-14 w-14 rounded-full bg-[#25D366] shadow-2xl flex items-center justify-center hover:scale-105 transition">
+  <svg viewBox="0 0 32 32" width="26" height="26" fill="#fff" aria-hidden="true">
+    <path d="M19.11 17.49c-.27-.14-1.6-.79-1.85-.88-.25-.09-.43-.14-.61.14-.18.27-.7.88-.86 1.06-.16.18-.32.2-.59.07-.27-.14-1.14-.42-2.17-1.34-.8-.72-1.34-1.61-1.5-1.88-.16-.27-.02-.42.12-.56.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.02-.22-.53-.45-.46-.61-.47-.16-.01-.34-.01-.52-.01-.18 0-.48.07-.73.34-.25.27-.95.93-.95 2.27 0 1.34.98 2.63 1.12 2.81.14.18 1.93 2.95 4.67 4.14.65.28 1.16.45 1.56.58.65.21 1.24.18 1.71.11.52-.08 1.6-.65 1.83-1.28.23-.63.23-1.17.16-1.28-.07-.11-.25-.18-.52-.32z"/>
+    <path d="M26.6 5.4A13.95 13.95 0 0016.02 2C8.83 2 3 7.83 3 15.02c0 2.4.63 4.74 1.83 6.8L3 30l8.38-1.79a13.9 13.9 0 006.64 1.69h.01c7.19 0 13.02-5.83 13.02-13.02 0-3.48-1.36-6.75-3.45-9.48z"/>
+  </svg>
+</a>
