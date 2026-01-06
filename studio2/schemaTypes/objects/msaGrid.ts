@@ -9,8 +9,9 @@ export default defineType({
       name: 'items',
       title: 'כרטיסים',
       type: 'array',
+      validation: (Rule) => Rule.max(3).warning('מומלץ 3 שלבים'),
       of: [
-        defineField({
+        {
           name: 'msaCard',
           title: 'כרטיס',
           type: 'object',
@@ -20,7 +21,7 @@ export default defineType({
             {name: 'subtitle', title: 'כותרת משנה', type: 'string'},
             {name: 'text', title: 'טקסט', type: 'text', rows: 3},
           ],
-        }),
+        },
       ],
     }),
   ],

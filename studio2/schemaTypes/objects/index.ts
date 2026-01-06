@@ -8,13 +8,4 @@ import navItem from './navItem'
 import msaSection from './msaSection'
 import msaGrid from './msaGrid'
 
-export const objects = [
-  seo,
-  richText,
-  hero,
-  cardGrid,
-  faq,
-  navItem,
-  msaSection,
-  msaGrid,
-]
+export const objects = [seo, richText, hero, cardGrid, faq, navItem, msaSection, msaGrid]

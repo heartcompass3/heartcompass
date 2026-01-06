@@ -1,14 +1,6 @@
 // studio2/schemaTypes/documents/homePage.ts
 import {defineType, defineField} from 'sanity'
 
-// שימוש באובייקטים קיימים בלבד
-import hero from '../objects/hero'
-import cardGrid from '../objects/cardGrid'
-import faq from '../objects/faq'
-import seo from '../objects/seo'
-import msaSection from '../objects/msaSection'
-import msaGrid from '../objects/msaGrid'
-
 export default defineType({
   name: 'homePage',
   title: 'דף בית',
@@ -59,12 +51,12 @@ export default defineType({
       group: 'content',
     }),
 
+    // IMPORTANT:
+    // האתר (Astro) מצפה ל- home.cards.items ולכן cards חייב להיות אובייקט (cardGrid) ולא מערך.
     defineField({
       name: 'cards',
       title: 'כרטיסים (3 תחומים)',
-      type: 'array',
-      of: [{type: 'cardGrid'}],
-      validation: (Rule) => Rule.max(3).warning('מומלץ 3 כרטיסים'),
+      type: 'cardGrid',
       group: 'content',
     }),
 
@@ -84,52 +76,24 @@ export default defineType({
 
     defineField({
       name: 'methodIntro',
-      title: 'טקסט קצר על השיטה',
+      title: 'טקסט פתיחה לסקשן השיטה',
       type: 'text',
       rows: 4,
       group: 'content',
     }),
 
+    // IMPORTANT:
+    // האתר (Astro) מצפה ל- home.msa.items ולכן msa חייב להיות אובייקט שמכיל items (msaGrid).
     defineField({
       name: 'msa',
-      title: 'מודל מ.ס.ע',
-      type: 'object',
+      title: 'כרטיסי מ.ס.ע',
+      type: 'msaGrid',
       group: 'msa',
-      fields: [
-        defineField({
-          name: 'heading',
-          title: 'כותרת (H2)',
-          type: 'string',
-        }),
-        defineField({
-          name: 'title',
-          title: 'כותרת גדולה',
-          type: 'string',
-        }),
-        defineField({
-          name: 'intro',
-          title: 'טקסט פתיחה',
-          type: 'text',
-          rows: 4,
-        }),
-        defineField({
-          name: 'steps',
-          title: 'שלבים',
-          type: 'array',
-          of: [{type: 'msaSection'}],
-          validation: (Rule) => Rule.max(3).warning('מומלץ 3 שלבים'),
-        }),
-        defineField({
-          name: 'grid',
-          title: 'גריד (אופציונלי)',
-          type: 'msaGrid',
-        }),
-      ],
     }),
 
     defineField({
       name: 'faq',
-      title: 'FAQ',
+      title: 'שאלות נפוצות',
       type: 'faq',
       group: 'faq',
     }),
@@ -162,7 +126,6 @@ export default defineType({
       name: 'cardsIntro',
       title: 'טקסט פתיחה לכרטיסים',
       type: 'text',
-      rows: 3,
       hidden: true,
       group: 'legacy',
     }),
@@ -178,14 +141,6 @@ export default defineType({
     defineField({
       name: 'ctaHref',
       title: 'CTA קישור',
-      type: 'string',
-      hidden: true,
-      group: 'legacy',
-    }),
-
-    defineField({
-      name: 'title',
-      title: 'שם המודל',
       type: 'string',
       hidden: true,
       group: 'legacy',

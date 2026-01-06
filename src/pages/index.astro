@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
-import { sanity } from '../lib/sanity'
+import { sanity, urlFor } from '../lib/sanity'
 import { HOME_PAGE_QUERY } from '../lib/sanityQueries'
 
 const home = await sanity.fetch(HOME_PAGE_QUERY)
@@ -17,19 +17,23 @@ const heroBadge = hero.badge
 const heroTitle1 = hero.titleLine1
 const heroTitle2 = hero.titleLine2
 const heroTitle3 = hero.titleLine3
-const heroImg = '/assets/yossi-hero.jpg'
+
+// תמונת הירו: אם יש תמונה בסאניטי משתמשים בה, אחרת נשארים עם התמונה הקבועה
+const heroImg =
+  hero.image ? urlFor(hero.image).width(1400).quality(85).url() : '/assets/yossi-hero.jpg'
 
 const primaryCtaHref = hero.primaryCtaHref
-const primaryCtaLabel = 'בוא נדבר תכל׳ס ←'
-const secondaryCtaHref = '/about'
-const secondaryCtaLabel = 'נעים להכיר, יוסי'
+const primaryCtaLabel = hero.primaryCtaText || 'בוא נדבר תכל׳ס ←'
+
+const secondaryCtaHref = hero.secondaryCtaHref || '/about'
+const secondaryCtaLabel = hero.secondaryCtaText || 'נעים להכיר, יוסי'
 
 // H1 (צהוב, יחיד בדף)
 const H1 =
   home.h1 ||
   'תהליך אימון וליווי רגשי עמוק לשחרור דפוסים ואמונות מגבילות מהשורש'
 
-// טקסט גשר קצר
+// פסקת גשר (מה שאתה רואה בסאניטי כ"פסקת גשר")
 const bridge =
   home.introParagraph ||
   'תהליך עומק לשחרור חסמים, מציאת זוגיות ופריצת דרך בקריירה ועסקים.'
@@ -232,7 +236,7 @@ const brandDeep = '#295157'
     </div>
   </section>
 
-  <!-- FAQ (סגור כברירת מחדל, נפתח בלחיצה) -->
+  <!-- FAQ -->
   <section class="container mx-auto px-6 py-20">
     <h2 class="text-3xl md:text-4xl text-center font-black font-display" style={`color:${brandDeep}`}>
       שאלות נפוצות

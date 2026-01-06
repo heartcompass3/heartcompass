@@ -10,14 +10,15 @@ export default defineType({
       title: 'שאלות',
       type: 'array',
       of: [
-        defineField({
+        {
           name: 'qa',
+          title: 'שאלה ותשובה',
           type: 'object',
           fields: [
             {name: 'question', title: 'שאלה', type: 'string'},
             {name: 'answer', title: 'תשובה', type: 'text'},
           ],
-        }),
+        },
       ],
     }),
   ],
