@@ -17,7 +17,10 @@ export const sanity = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: true,
+
+  // בלוקאל: רוצים לראות שינוי מיד, בלי קאש
+  // בפרודקשן: אפשר להחזיר ל-true בשביל ביצועים
+  useCdn: import.meta.env.DEV ? false : true,
 })
 
 const builder = imageUrlBuilder(sanity)
