@@ -5,6 +5,8 @@ import '../styles/global.css'
 import Navigation from '../components/Navigation.astro'
 import Footer from '../components/Footer.astro'
 import WhatsAppFloat from '../components/WhatsAppFloat.astro'
+import Tracking from '../components/Tracking.astro'
+import CookieBanner from '../components/CookieBanner.astro'
 
 const {
   title = site.brand,
@@ -39,6 +41,9 @@ const {
 
     <title>{title}</title>
 
+    <!-- Tracking Layer: נטען רק אחרי הסכמה + enabled בסאניטי -->
+    <Tracking />
+
     <script
       type="application/ld+json"
       set:html={JSON.stringify({
@@ -54,8 +59,6 @@ const {
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!-- טעינת פונטים בפועל -->
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Heebo:wght@300;400;500;600;700;800&display=swap"
@@ -69,5 +72,8 @@ const {
     </main>
     <Footer />
     <WhatsAppFloat />
+
+    <!-- Cookie consent banner -->
+    <CookieBanner />
   </body>
 </html>

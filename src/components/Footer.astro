@@ -1,13 +1,33 @@
 ---
+import { sanity } from '../lib/sanity'
+import { SITE_SETTINGS_QUERY } from '../lib/sanityQueries'
+
 const year = new Date().getFullYear()
 
-const socials = [
+const settings = await sanity.fetch(SITE_SETTINGS_QUERY)
+
+const fallbackSocials = [
   { label: 'Instagram', href: 'https://www.instagram.com/heartcompass3/', icon: 'instagram' },
   { label: 'Facebook', href: 'https://www.facebook.com/share/1AGLnvhmiF/', icon: 'facebook' },
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/heartcompass-medalsi-2a643a397/', icon: 'linkedin' },
   { label: 'Blog', href: 'https://heartcompass3.blogspot.com/', icon: 'blog' },
   { label: 'WhatsApp', href: 'https://wa.me/972544580285', icon: 'whatsapp' },
 ]
+
+const fallbackFooterLinks = [
+  { label: 'ראשי', href: '/' },
+  { label: 'מי אני', href: '/about' },
+  { label: 'השיטה', href: '/method' },
+  { label: 'מאמרים', href: '/blog' },
+]
+
+const socials = Array.isArray(settings?.socials) && settings.socials.length > 0 ? settings.socials : fallbackSocials
+const footerLinks =
+  Array.isArray(settings?.footerLinks) && settings.footerLinks.length > 0 ? settings.footerLinks : fallbackFooterLinks
+
+const brandTitle = settings?.siteTitle ?? settings?.title ?? 'מצפן הלב'
+const tagline = settings?.tagline ?? 'אימון רגשי תודעתי'
+const email = 'heartcompass3@gmail.com'
 
 const iconSvg = (name) => {
   switch (name) {
@@ -30,12 +50,11 @@ const iconSvg = (name) => {
 <footer class="bg-[#0f2f33] text-white">
   <div class="max-w-7xl mx-auto px-6 py-14">
     <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-10">
-
       <div class="text-center md:text-right space-y-3">
-        <div class="font-display text-2xl">מצפן הלב</div>
-        <div class="text-white/70 font-body">אימון רגשי תודעתי</div>
-        <a href="mailto:heartcompass3@gmail.com" class="text-white/70 hover:text-white font-body dir-ltr">
-          heartcompass3@gmail.com
+        <div class="font-display text-2xl">{brandTitle}</div>
+        <div class="text-white/70 font-body">{tagline}</div>
+        <a href={`mailto:${email}`} class="text-white/70 hover:text-white font-body dir-ltr">
+          {email}
         </a>
       </div>
 
@@ -54,15 +73,18 @@ const iconSvg = (name) => {
       </div>
 
       <nav class="flex flex-col items-center md:items-end gap-3 font-body text-white/80">
-        <a href="/" class="hover:text-white">ראשי</a>
-        <a href="/about" class="hover:text-white">מי אני</a>
-        <a href="/method" class="hover:text-white">השיטה</a>
-        <a href="/blog" class="hover:text-white">מאמרים</a>
+        {footerLinks.map((l) => (
+          <a href={l.href} class="hover:text-white">
+            {l.label}
+          </a>
+        ))}
+        <!-- לינק קבוע לנגישות -->
+        <a href="/accessibility" class="hover:text-white">הצהרת נגישות</a>
       </nav>
     </div>
 
     <div class="mt-10 pt-6 border-t border-white/10 text-center text-white/60 text-sm font-body">
-      © {year} מצפן הלב. כל הזכויות שמורות.
+      © {year} {brandTitle}. כל הזכויות שמורות.
     </div>
   </div>
 </footer>

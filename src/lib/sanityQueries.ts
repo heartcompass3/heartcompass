@@ -1,3 +1,5 @@
+// src/lib/sanityQueries.ts
+
 export const HOME_PAGE_QUERY = /* groq */ `
 *[_type == "homePage"][0]{
   seo,
@@ -18,9 +20,43 @@ export const HOME_PAGE_QUERY = /* groq */ `
 export const SITE_SETTINGS_QUERY = /* groq */ `
 *[_type == "siteSettings"][0]{
   title,
+  tagline,
+
   nav[]{
     label,
+    href,
+    children[]{
+      label,
+      href
+    }
+  },
+
+  footerLinks[]{
+    label,
     href
+  },
+
+  socials[]{
+    label,
+    href,
+    icon
+  },
+
+  whatsapp{
+    label,
+    href
+  },
+
+  whatsappWarmups[]{
+    label,
+    message
+  },
+
+  tracking{
+    enabled,
+    gaMeasurementId,
+    metaPixelId,
+    tiktokPixelId
   }
 }
 `

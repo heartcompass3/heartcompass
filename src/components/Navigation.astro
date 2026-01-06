@@ -1,16 +1,15 @@
 ---
-import site from '../content/pages/site.json'
 import { sanity } from '../lib/sanity'
+import site from '../content/pages/site.json'
+import { SITE_SETTINGS_QUERY } from '../lib/sanityQueries'
 
 const currentPath = Astro.url.pathname
 
-const settings = await sanity.fetch(
-  `*[_type=="siteSettings"][0]{ nav[]{ label, href } }`
-)
-
+const settings = await sanity.fetch(SITE_SETTINGS_QUERY)
 const nav = settings?.nav ?? []
 
-const methodChildren = [
+// fallback קבוע לשיטה (עד שנמלא children בסאניטי)
+const methodChildrenFallback = [
   { label: 'אימון זוגי', href: '/method/couples' },
   { label: 'קריירה ועסקים', href: '/method/career' },
   { label: 'התפתחות אישית', href: '/method/personal' },
@@ -21,8 +20,6 @@ const isActive = (href) => {
   if (href === '/') return currentPath === '/'
   return currentPath === href || currentPath.startsWith(href + '/')
 }
-
-const isMethodActive = currentPath === '/method' || currentPath.startsWith('/method/')
 ---
 
 <nav
@@ -43,8 +40,19 @@ const isMethodActive = currentPath === '/method' || currentPath.startsWith('/met
       <!-- Desktop -->
       <div class="hidden md:flex gap-8 items-center">
         {nav.map((item) => {
+          const childrenFromSanity = Array.isArray(item.children) ? item.children : []
           const isMethod = item.href === '/method'
-          if (!isMethod) {
+
+          const children =
+            childrenFromSanity.length > 0
+              ? childrenFromSanity
+              : isMethod
+                ? methodChildrenFallback
+                : []
+
+          const hasChildren = children.length > 0
+
+          if (!hasChildren) {
             return (
               <a
                 href={item.href}
@@ -59,14 +67,17 @@ const isMethodActive = currentPath === '/method' || currentPath.startsWith('/met
             )
           }
 
+          const isParentActive =
+            isActive(item.href) || children.some((c) => isActive(c.href))
+
           return (
-            <div class="relative" data-method>
+            <div class="relative" data-dropdown>
               <button
                 type="button"
                 class={`font-body font-bold transition inline-flex items-center gap-2 ${
-                  isMethodActive ? 'text-foreground' : 'text-muted-foreground hover:text-accent'
+                  isParentActive ? 'text-foreground' : 'text-muted-foreground hover:text-accent'
                 }`}
-                data-method-trigger
+                data-dropdown-trigger
                 aria-haspopup="true"
                 aria-expanded="false"
               >
@@ -76,9 +87,9 @@ const isMethodActive = currentPath === '/method' || currentPath.startsWith('/met
 
               <div
                 class="hidden absolute right-0 mt-3 w-56 rounded-2xl bg-white shadow-elegant border border-accent/10 overflow-hidden z-[120]"
-                data-method-menu
+                data-dropdown-menu
               >
-                {methodChildren.map((c) => (
+                {children.map((c) => (
                   <a
                     href={c.href}
                     class={`block px-5 py-3 font-body text-sm transition ${
@@ -108,7 +119,6 @@ const isMethodActive = currentPath === '/method' || currentPath.startsWith('/met
           ☰
         </button>
 
-        <!-- Fullscreen Menu (אטום) -->
         <div
           class="hidden fixed inset-0 z-[200] bg-[#fbf8f2] overscroll-contain overflow-y-auto"
           style="background-color:#fbf8f2;"
@@ -127,8 +137,19 @@ const isMethodActive = currentPath === '/method' || currentPath.startsWith('/met
 
             <div class="flex flex-col gap-2">
               {nav.map((item) => {
+                const childrenFromSanity = Array.isArray(item.children) ? item.children : []
                 const isMethod = item.href === '/method'
-                if (!isMethod) {
+
+                const children =
+                  childrenFromSanity.length > 0
+                    ? childrenFromSanity
+                    : isMethod
+                      ? methodChildrenFallback
+                      : []
+
+                const hasChildren = children.length > 0
+
+                if (!hasChildren) {
                   return (
                     <a
                       href={item.href}
@@ -142,12 +163,15 @@ const isMethodActive = currentPath === '/method' || currentPath.startsWith('/met
                   )
                 }
 
+                const isParentActive =
+                  isActive(item.href) || children.some((c) => isActive(c.href))
+
                 return (
                   <div class="border-b pb-4">
                     <a
-                      href="/method"
+                      href={item.href}
                       class={`font-body text-xl transition ${
-                        isMethodActive ? 'text-foreground' : 'text-foreground/80 hover:text-accent'
+                        isParentActive ? 'text-foreground' : 'text-foreground/80 hover:text-accent'
                       }`}
                       data-menu-link
                     >
@@ -155,7 +179,7 @@ const isMethodActive = currentPath === '/method' || currentPath.startsWith('/met
                     </a>
 
                     <div class="mt-3 flex flex-col gap-2 pr-3">
-                      {methodChildren.map((c) => (
+                      {children.map((c) => (
                         <a
                           href={c.href}
                           class={`font-body text-base transition ${
@@ -187,7 +211,7 @@ const isMethodActive = currentPath === '/method' || currentPath.startsWith('/met
       const root = document.querySelector('[data-nav]');
       if (!root) return;
 
-      // -------- Mobile menu ----------
+      // Mobile
       const menu = root.querySelector('[data-mobile-menu]');
       const btn = root.querySelector('[data-menu-button]');
       const closeBtn = root.querySelector('[data-menu-close]');
@@ -227,42 +251,40 @@ const isMethodActive = currentPath === '/method' || currentPath.startsWith('/met
         if (window.matchMedia('(min-width: 768px)').matches) closeMobile();
       });
 
-      // -------- Desktop Method dropdown (click only) ----------
-      const methodWrap = root.querySelector('[data-method]');
-      const methodTrigger = root.querySelector('[data-method-trigger]');
-      const methodMenu = root.querySelector('[data-method-menu]');
+      // Desktop dropdown (click)
+      const trigger = root.querySelector('[data-dropdown-trigger]');
+      const menu2 = root.querySelector('[data-dropdown-menu]');
 
-      const closeMethod = () => {
-        if (!methodMenu || !methodTrigger) return;
-        methodMenu.classList.add('hidden');
-        methodTrigger.setAttribute('aria-expanded', 'false');
+      const closeDropdown = () => {
+        if (!menu2 || !trigger) return;
+        menu2.classList.add('hidden');
+        trigger.setAttribute('aria-expanded', 'false');
       };
 
-      const openMethod = () => {
-        if (!methodMenu || !methodTrigger) return;
-        methodMenu.classList.remove('hidden');
-        methodTrigger.setAttribute('aria-expanded', 'true');
+      const openDropdown = () => {
+        if (!menu2 || !trigger) return;
+        menu2.classList.remove('hidden');
+        trigger.setAttribute('aria-expanded', 'true');
       };
 
-      const toggleMethod = () => {
-        if (!methodMenu) return;
-        methodMenu.classList.contains('hidden') ? openMethod() : closeMethod();
+      const toggleDropdown = () => {
+        if (!menu2) return;
+        menu2.classList.contains('hidden') ? openDropdown() : closeDropdown();
       };
 
-      if (methodWrap && methodTrigger && methodMenu) {
-        methodTrigger.addEventListener('click', (e) => {
+      if (trigger && menu2) {
+        trigger.addEventListener('click', (e) => {
           e.preventDefault();
           e.stopPropagation();
-          toggleMethod();
+          toggleDropdown();
         });
 
-        methodMenu.addEventListener('click', (e) => e.stopPropagation());
-
-        document.addEventListener('click', () => closeMethod());
+        menu2.addEventListener('click', (e) => e.stopPropagation());
+        document.addEventListener('click', () => closeDropdown());
         document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape') closeMethod();
+          if (e.key === 'Escape') closeDropdown();
         });
-        document.addEventListener('astro:after-swap', closeMethod);
+        document.addEventListener('astro:after-swap', closeDropdown);
       }
     })();
   </script>
