@@ -1,4 +1,4 @@
-import { defineType, defineField } from 'sanity'
+import {defineType, defineField} from 'sanity'
 
 const page = defineType({
   name: 'page',
@@ -15,21 +15,34 @@ const page = defineType({
       name: 'slug',
       title: 'כתובת (slug)',
       type: 'slug',
-      options: { source: 'title', maxLength: 96 },
+      options: {source: 'title', maxLength: 96},
       validation: (Rule) => Rule.required(),
     }),
+
+    // היה "תיאור קצר" – עכשיו זה השדה שמזין את הטקסט הזהוב באודות
     defineField({
       name: 'excerpt',
-      title: 'תיאור קצר (אופציונלי)',
+      title: 'פתיחה (הטקסט הזהוב)',
       type: 'text',
       rows: 2,
+      description: 'מופיע במסגרת הזהובה בראש הדף.',
     }),
+
+    defineField({
+      name: 'heroImage',
+      title: 'תמונה (אופציונלי)',
+      type: 'image',
+      options: {hotspot: true},
+      description: 'אם ריק, האתר ישתמש בתמונה הקיימת ולא ישבור עיצוב/אנימציה.',
+    }),
+
     defineField({
       name: 'body',
       title: 'תוכן',
       type: 'array',
-      of: [{ type: 'block' }],
+      of: [{type: 'block'}],
     }),
+
     defineField({
       name: 'seo',
       title: 'SEO',
