@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import site from '../../content/pages/site.json'
+
+const title = `תחומי התמחות | ${site.brand}`
+const description = 'שלושה מסלולים לתהליך מ.ס.ע מותאם: זוגיות, קריירה ועסקים, והתפתחות אישית.'
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="animate-fade-in py-24 bg-background min-h-screen">
+    <div class="max-w-6xl mx-auto px-6">
+      <header class="text-center mb-14">
+        <h1 class="text-5xl md:text-6xl font-black text-primary font-display mb-6">
+          תחומי התמחות
+        </h1>
+        <p class="text-xl text-primary/70 font-body max-w-3xl mx-auto">
+          {description}
+        </p>
+      </header>
+
+      <section class="grid md:grid-cols-3 gap-8">
+        <a href="/specialties/couples" class="bg-white p-10 rounded-[2.5rem] shadow-elegant border border-white hover:translate-y-[-2px] transition">
+          <h2 class="text-2xl font-black text-primary font-display mb-4">זוגיות ומשפחה</h2>
+          <p class="text-primary/70 font-body leading-relaxed">
+            מפרקים דפוסים שחוזרים בריב, בריחוק או בריצוי, ובונים שפה חדשה בבית.
+          </p>
+          <div class="mt-6 font-bold text-accent font-body">קרא עוד ←</div>
+        </a>
+
+        <a href="/specialties/career" class="bg-white p-10 rounded-[2.5rem] shadow-elegant border border-white hover:translate-y-[-2px] transition">
+          <h2 class="text-2xl font-black text-primary font-display mb-4">קריירה ועסקים</h2>
+          <p class="text-primary/70 font-body leading-relaxed">
+            יוצאים מתקיעות, דחיינות וחשיבת יתר, ועוברים לתנועה החלטית עם שקט פנימי.
+          </p>
+          <div class="mt-6 font-bold text-accent font-body">קרא עוד ←</div>
+        </a>
+
+        <a href="/specialties/personal" class="bg-white p-10 rounded-[2.5rem] shadow-elegant border border-white hover:translate-y-[-2px] transition">
+          <h2 class="text-2xl font-black text-primary font-display mb-4">התפתחות אישית</h2>
+          <p class="text-primary/70 font-body leading-relaxed">
+            ערך עצמי, גבולות, חרדה, רעש פנימי והלקאה עצמית. חוזרים להגה מבפנים.
+          </p>
+          <div class="mt-6 font-bold text-accent font-body">קרא עוד ←</div>
+        </a>
+      </section>
+
+      <div class="mt-16 text-center">
+        <a
+          href={site.primaryCtaHref}
+          class="inline-flex items-center gap-3 px-10 py-5 rounded-2xl gradient-gold text-white font-bold shadow-gold"
+        >
+          {site.primaryCtaLabel} <span aria-hidden="true">←</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

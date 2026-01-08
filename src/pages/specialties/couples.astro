@@ -1,0 +1,124 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import site from '../../content/pages/site.json'
+import { sanity } from '../../lib/sanity'
+
+const SLUG = 'specialties/couples'
+
+const page = await sanity.fetch(
+  `*[_type=="page" && slug.current == $slug][0]{
+    title,
+    excerpt,
+    specialty{
+      intro,
+      stagesTitle,
+      stages[]{
+        key, title, text
+      },
+      closing
+    },
+    seo{
+      title,
+      description,
+      canonical,
+      noindex,
+      ogImage{
+        asset->{url}
+      }
+    }
+  }`,
+  { slug: SLUG }
+)
+
+const fallback = {
+  title: 'אימון זוגי בשיטת מ.ס.ע',
+  gold: 'כשיש אהבה אבל משהו ביניכם ננעל. תגובות אוטומטיות, פגיעות ישנות ותחושה שאתם מפספסים אחד את השנייה.',
+  intro:
+    'ברוב הזוגות הבעיה היא לא “מה אמרת” אלא מה זה הפעיל. מ.ס.ע הופכת את זה למסע ברור: קודם מבינים את המנגנון, אחר כך משחררים את האוטומט, ואז בונים דרך חדשה לתקשורת יציבה.',
+  stagesTitle: 'מה קורה בפועל',
+  stages: [
+    {
+      key: 'mapping',
+      title: 'מיפוי',
+      text: 'מזהים את הטריגרים הקבועים, את הפרשנות שעולה, ואת הדפוס שמדליק ריב או סוגר שיח. בלי האשמות, בלי דרמה. רק בהירות.',
+    },
+    {
+      key: 'removal',
+      title: 'סילוק',
+      text: 'משחררים את החסם שמחבר בין טריגר לתגובה: כעס, הסתגרות, ביקורת, ריצוי. כשהאוטומט נחלש, השיחה משתנה מעצמה.',
+    },
+    {
+      key: 'autonomy',
+      title: 'עצמאות',
+      text: 'בונים הסכמות וכלים שחוזרים לחיים האמיתיים: גבולות, תקשורת מדויקת, ועוגנים שמחזיקים גם כשהרגש עולה.',
+    },
+  ],
+  closing:
+    'המטרה היא לא “להיות צודק”. המטרה היא להיות ביחד. להבין מה מפעיל אתכם, ולהחזיר לבית תחושת בטחון וחיבור.',
+}
+
+const title = page?.seo?.title || page?.title || `${fallback.title} | ${site.brand}`
+const description = page?.seo?.description || page?.excerpt || fallback.gold
+const canonical = page?.seo?.canonical || undefined
+const noindex = page?.seo?.noindex || false
+const ogImage = page?.seo?.ogImage?.asset?.url || undefined
+
+const h1 = page?.title || fallback.title
+const gold = page?.excerpt || fallback.gold
+const intro = page?.specialty?.intro || fallback.intro
+const stagesTitle = page?.specialty?.stagesTitle || fallback.stagesTitle
+const stages = (page?.specialty?.stages?.length ? page.specialty.stages : fallback.stages)
+const closing = page?.specialty?.closing || fallback.closing
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} noindex={noindex} ogImage={ogImage}>
+  <section class="animate-fade-in py-24 bg-background min-h-screen">
+    <div class="max-w-4xl mx-auto px-6">
+      <header class="mb-10 text-center">
+        <h1 class="text-5xl md:text-6xl font-black text-primary font-display mb-6">
+          {h1}
+        </h1>
+
+        <p class="text-xl text-accent font-body font-bold max-w-3xl mx-auto">
+          {gold}
+        </p>
+
+        <p class="mt-8 text-lg text-primary/70 font-body leading-relaxed max-w-3xl mx-auto">
+          {intro}
+        </p>
+      </header>
+
+      <div class="bg-white p-10 md:p-16 rounded-[3rem] shadow-elegant border border-white">
+        <h2 class="text-2xl font-black text-primary font-display mb-10">
+          {stagesTitle}
+        </h2>
+
+        <div class="space-y-8">
+          {stages.map((s) => (
+            <div class="bg-background p-8 rounded-2xl border border-accent/10">
+              <div class="font-black text-accent mb-2">{s.title}</div>
+              <div class="text-primary/80 font-body leading-relaxed">
+                {s.text}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {closing && (
+          <div class="mt-10 text-primary/75 font-body leading-relaxed">
+            {closing}
+          </div>
+        )}
+
+        <div class="mt-10">
+          <a
+            href={site.primaryCtaHref}
+            class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl gradient-gold text-white font-bold shadow-gold"
+          >
+            {site.primaryCtaLabel} <span aria-hidden="true">←</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
