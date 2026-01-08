@@ -1,13 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
 import { sanity } from '../lib/sanity'
+import PortableText from '../components/PortableText.astro'
 
-// slug מגיע כ-array: ["method","couples"] וכו'
-const slugParts = Astro.params.slug ? Astro.params.slug.split('/') : []
-const slug = slugParts.join('/')
+const parts = Array.isArray(Astro.params.slug)
+  ? Astro.params.slug
+  : [Astro.params.slug].filter(Boolean)
 
-// דף בית: אם מגיעים ל- "/" אז slug יהיה ריק
-const effectiveSlug = slug || 'home'
+const slug = parts.join('/')
 
 // מושכים דף לפי slug
 const page = await sanity.fetch(
@@ -15,44 +15,51 @@ const page = await sanity.fetch(
     title,
     excerpt,
     body,
-    seo
+    seo{
+      title,
+      description,
+      canonical,
+      noindex,
+      ogImage{
+        asset->{url}
+      }
+    }
   }`,
-  { slug: effectiveSlug }
+  { slug }
 )
 
-// אם אין דף בסאניטי — מחזירים 404 אמיתי
 if (!page) {
   return new Response('Not found', { status: 404 })
 }
 
-// רינדור מינימלי ל-body (Portable Text בסיסי)
-const renderBlocks = (blocks = []) => {
-  return blocks
-    .filter(b => b?._type === 'block' && Array.isArray(b.children))
-    .map(b => b.children.map(c => c.text).join(''))
-    .filter(Boolean)
-}
-const paragraphs = renderBlocks(page.body)
+const title = page?.seo?.title || page.title
+const description = page?.seo?.description || page.excerpt || ''
+const canonical = page?.seo?.canonical || undefined
+const noindex = page?.seo?.noindex || false
+const ogImage = page?.seo?.ogImage?.asset?.url || undefined
+
+// הגנה: אם אין body, לא מפילים את PortableText
+const body = Array.isArray(page?.body) ? page.body : []
 ---
 
-<BaseLayout title={page?.seo?.title || page.title} description={page?.seo?.description || page.excerpt || ''}>
-  <main class="max-w-5xl mx-auto px-6 lg:px-8 py-12">
-    <h1 class="text-4xl md:text-5xl font-black text-primary font-display leading-tight">
-      {page.title}
-    </h1>
+<BaseLayout title={title} description={description} canonical={canonical} noindex={noindex} ogImage={ogImage}>
+  <section class="container mx-auto px-6 py-16">
+    <header class="max-w-4xl mx-auto text-center">
+      <h1 class="text-4xl md:text-5xl font-black text-primary font-display leading-tight">
+        {page.title}
+      </h1>
 
-    {page.excerpt && (
-      <p class="mt-4 text-lg md:text-xl text-primary/70 font-body leading-relaxed">
-        {page.excerpt}
-      </p>
-    )}
-
-    <div class="mt-10 space-y-6">
-      {paragraphs.map((p) => (
-        <p class="text-lg text-primary/80 font-body leading-relaxed">
-          {p}
+      {page.excerpt && (
+        <p class="mt-5 text-lg md:text-xl text-primary/70 font-body leading-relaxed">
+          {page.excerpt}
         </p>
-      ))}
-    </div>
-  </main>
+      )}
+    </header>
+
+    <article class="max-w-4xl mx-auto mt-12 bg-white rounded-[36px] border border-foreground/5 shadow-lg p-8 md:p-12">
+      <div class="prose prose-lg max-w-none prose-headings:font-display prose-p:font-body prose-p:text-foreground/80 prose-a:text-accent">
+        <PortableText value={body} />
+      </div>
+    </article>
+  </section>
 </BaseLayout>
