@@ -1,24 +1,21 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
-import { sanity } from '../lib/sanity'
 import PortableText from '../components/PortableText.astro'
+import { sanity, urlFor } from '../lib/sanity'
 
 const data = await sanity.fetch(`*[_type=="methodPage"][0]{
   hero,
+  body,
+  interludeImage,
+  cta,
+  seo,
+  // תאימות אחורה
   pain{title, body},
   bridge{title, body},
   msa{
     intro,
-    steps[]{
-      letter,
-      title,
-      description,
-      exampleTitle,
-      example
-    }
-  },
-  cta,
-  seo
+    steps[]{ _key, letter, title, description, exampleTitle, example }
+  }
 }`)
 
 if (!data) return new Response('Not found', { status: 404 })
@@ -27,15 +24,23 @@ const title = data?.seo?.title || 'שיטת מ.ס.ע | מצפן הלב'
 const description = data?.seo?.description || ''
 const noindex = data?.seo?.noindex || false
 const canonical = data?.seo?.canonical || undefined
+
+const hasBody = (data?.body?.length ?? 0) > 0
+const steps = (data?.msa?.steps ?? []).filter(Boolean)
+
+const imageUrl = data?.interludeImage
+  ? urlFor(data.interludeImage).width(1400).quality(80).auto('format').url()
+  : null
+
+const imageAlt = data?.interludeImage?.alt || 'תמונה רגועה של דרך'
+const imageCaption = data?.interludeImage?.caption || ''
 ---
 
 <BaseLayout title={title} description={description} noindex={noindex} canonical={canonical}>
   <main dir="rtl" class="relative overflow-hidden">
-    <!-- רקע עדין כמו בשאר האתר -->
     <div class="absolute inset-0 -z-10 bg-[radial-gradient(1100px_700px_at_50%_-220px,rgba(41,81,87,0.10),rgba(255,255,255,0)_60%),linear-gradient(180deg,#fbf6ee_0%,#fbf6ee_65%,#fbf6ee_100%)]"></div>
 
     <section class="container mx-auto px-6 pt-28 md:pt-32 pb-20">
-      <!-- HERO: כותרת + שורת זהב (כמו בית/אודות) -->
       <header class="max-w-3xl mx-auto text-center">
         <h1 class="font-display font-black text-primary leading-tight text-[clamp(2.1rem,4.4vw,3.6rem)]">
           {data.hero?.headline}
@@ -54,96 +59,121 @@ const canonical = data?.seo?.canonical || undefined
         )}
       </header>
 
-      <!-- גוף הדף: מאמר נושם -->
-      <article class="max-w-3xl mx-auto mt-12">
-        <!-- חלק 1: פתיחה מאמרית (משתמשים בשדות הקיימים כדי לייצר רצף) -->
-        <div class="prose prose-lg max-w-none prose-headings:font-display prose-headings:text-primary prose-p:font-body prose-p:text-foreground/80 prose-li:font-body prose-li:text-foreground/80">
-          {(data.pain?.body?.length ?? 0) > 0 && <PortableText value={data.pain.body} />}
+      {/* פס זהב נשימה */}
+      <div class="mt-12 flex justify-center">
+        <div class="h-[2px] w-28 rounded-full bg-accent/80"></div>
+      </div>
+
+      {/* תמונת נשימה באמצע הדרך */}
+      <div class="max-w-4xl mx-auto mt-10">
+        <div class="relative overflow-hidden rounded-[26px] border border-foreground/5 bg-white/60 backdrop-blur shadow-sm">
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={imageAlt}
+              class="block w-full h-[240px] md:h-[320px] object-cover"
+              loading="lazy"
+            />
+          ) : (
+            <div class="w-full h-[240px] md:h-[320px] bg-[radial-gradient(900px_500px_at_30%_10%,rgba(212,163,89,0.25),rgba(255,255,255,0)_60%),radial-gradient(800px_500px_at_70%_90%,rgba(41,81,87,0.18),rgba(255,255,255,0)_60%),linear-gradient(180deg,rgba(255,255,255,0.65),rgba(255,255,255,0.65))]"></div>
+          )}
+
+          <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(251,246,238,0.0)_0%,rgba(251,246,238,0.25)_55%,rgba(251,246,238,0.55)_100%)]"></div>
         </div>
 
-        <!-- פס זהב עדין לשבירת צבע בלי בלוק -->
-        <div class="my-10 flex justify-center">
-          <div class="h-[2px] w-28 rounded-full bg-accent/80"></div>
-        </div>
-
-        <!-- חלק 2: המשך מאמר -->
-        <div class="prose prose-lg max-w-none prose-headings:font-display prose-headings:text-primary prose-p:font-body prose-p:text-foreground/80 prose-li:font-body prose-li:text-foreground/80">
-          {(data.bridge?.body?.length ?? 0) > 0 && <PortableText value={data.bridge.body} />}
-        </div>
-
-        <!-- מעבר טבעי לשיטה -->
-        <div class="mt-12">
-          <p class="font-body text-foreground/70 leading-relaxed">
-            מכאן נבנה הסדר. לא כקפיצה, אלא כתהליך.
-          </p>
-        </div>
-
-        <!-- כותרת עדינה לפני השלבים -->
-        <h2 class="mt-10 font-display font-black text-primary text-[clamp(1.4rem,2.2vw,1.9rem)]">
-          אז איך זה עובד בפועל
-        </h2>
-
-        {(data.msa?.intro || '').length > 0 && (
-          <p class="mt-3 font-body text-foreground/70 leading-relaxed">
-            {data.msa.intro}
+        {imageCaption && (
+          <p class="mt-3 text-center font-body text-foreground/55 text-sm">
+            {imageCaption}
           </p>
         )}
+      </div>
 
-        <!-- שלבים: כפרקי מאמר, לא כבלוקים -->
-        <div class="mt-8 space-y-14">
-          {(data.msa?.steps || []).map((s) => (
-            <section class="relative">
-              <!-- אות גדולה שקופה ברקע -->
-              <div class="pointer-events-none absolute -top-8 right-0 text-accent/15 font-display font-black leading-none select-none text-[96px] md:text-[120px]">
-                {s.letter}
-              </div>
+      <article class="max-w-3xl mx-auto mt-12">
+        {hasBody ? (
+          <>
+            <div class="prose prose-lg max-w-none prose-headings:font-display prose-headings:text-primary prose-p:font-body prose-p:text-foreground/80 prose-li:font-body prose-li:text-foreground/80 prose-a:text-accent">
+              <PortableText value={data.body} />
+            </div>
 
-              <h3 class="font-display font-black text-primary text-[clamp(1.25rem,1.9vw,1.6rem)]">
-                {s.title}
-              </h3>
+            {(data.cta?.title || '').length > 0 && (
+              <section class="mt-16 text-center">
+                <h2 class="font-display font-black text-primary text-[clamp(1.6rem,2.5vw,2.2rem)]">
+                  {data.cta.title}
+                </h2>
 
-              <div class="mt-4 prose prose-lg max-w-none prose-headings:font-display prose-headings:text-primary prose-p:font-body prose-p:text-foreground/80 prose-li:font-body prose-li:text-foreground/80">
-                {(s.description?.length ?? 0) > 0 && <PortableText value={s.description} />}
-              </div>
+                {(data.cta?.text || '').length > 0 && (
+                  <p class="mt-4 font-body text-primary/70 leading-relaxed max-w-2xl mx-auto">
+                    {data.cta.text}
+                  </p>
+                )}
 
-              {(s.example?.length ?? 0) > 0 && (
-                <div class="mt-6 rounded-[22px] bg-white/85 backdrop-blur border border-foreground/5 p-6">
-                  <div class="font-body font-bold text-primary">
-                    {s.exampleTitle || 'דוגמה מהחיים'}
+                {(data.cta?.buttonHref || '').length > 0 && (
+                  <div class="mt-8">
+                    <a
+                      href={data.cta.buttonHref}
+                      class="inline-flex items-center gap-3 px-9 py-5 rounded-2xl bg-accent text-white font-body font-bold shadow hover:opacity-90 transition"
+                    >
+                      {data.cta.buttonLabel || 'יוסי, בוא נבדוק התאמה'} <span aria-hidden="true">←</span>
+                    </a>
                   </div>
-                  <div class="mt-2 prose prose-lg max-w-none prose-p:font-body prose-p:text-foreground/80">
-                    <PortableText value={s.example} />
-                  </div>
-                </div>
-              )}
-            </section>
-          ))}
-        </div>
+                )}
+              </section>
+            )}
+          </>
+        ) : (
+          <>
+            {/* נפילה אחורה אם עוד לא הדבקת מאמר */}
+            <div class="prose prose-lg max-w-none prose-p:font-body prose-p:text-foreground/80">
+              {(data.pain?.body?.length ?? 0) > 0 && <PortableText value={data.pain.body} />}
+            </div>
 
-        <!-- סיום רגוע -->
-        {(data.cta?.title || '').length > 0 && (
-          <section class="mt-16 text-center">
-            <h2 class="font-display font-black text-primary text-[clamp(1.6rem,2.5vw,2.2rem)]">
-              {data.cta.title}
+            <div class="my-10 flex justify-center">
+              <div class="h-[2px] w-28 rounded-full bg-accent/80"></div>
+            </div>
+
+            <div class="prose prose-lg max-w-none prose-p:font-body prose-p:text-foreground/80">
+              {(data.bridge?.body?.length ?? 0) > 0 && <PortableText value={data.bridge.body} />}
+            </div>
+
+            <h2 class="mt-10 font-display font-black text-primary text-[clamp(1.4rem,2.2vw,1.9rem)]">
+              אז איך זה עובד בפועל
             </h2>
 
-            {(data.cta?.text || '').length > 0 && (
-              <p class="mt-4 font-body text-primary/70 leading-relaxed max-w-2xl mx-auto">
-                {data.cta.text}
+            {(data.msa?.intro || '').length > 0 && (
+              <p class="mt-3 font-body text-foreground/70 leading-relaxed">
+                {data.msa.intro}
               </p>
             )}
 
-            {(data.cta?.buttonHref || '').length > 0 && (
-              <div class="mt-8">
-                <a
-                  href={data.cta.buttonHref}
-                  class="inline-flex items-center gap-3 px-9 py-5 rounded-2xl bg-accent text-white font-body font-bold shadow hover:opacity-90 transition"
-                >
-                  {data.cta.buttonLabel || 'יוסי, בוא נבדוק התאמה'} <span aria-hidden="true">←</span>
-                </a>
-              </div>
-            )}
-          </section>
+            <div class="mt-8 space-y-14">
+              {steps.map((s) => (
+                <section class="relative" key={s._key}>
+                  <div class="pointer-events-none absolute -top-8 right-0 text-accent/15 font-display font-black leading-none select-none text-[96px] md:text-[120px]">
+                    {s.letter || ''}
+                  </div>
+
+                  <h3 class="font-display font-black text-primary text-[clamp(1.25rem,1.9vw,1.6rem)]">
+                    {s.title || ''}
+                  </h3>
+
+                  <div class="mt-4 prose prose-lg max-w-none prose-p:font-body prose-p:text-foreground/80">
+                    {(s.description?.length ?? 0) > 0 && <PortableText value={s.description} />}
+                  </div>
+
+                  {(s.example?.length ?? 0) > 0 && (
+                    <div class="mt-6 rounded-[22px] bg-white/85 backdrop-blur border border-foreground/5 p-6">
+                      <div class="font-body font-bold text-primary">
+                        {s.exampleTitle || 'דוגמה מהחיים'}
+                      </div>
+                      <div class="mt-2 prose prose-lg max-w-none prose-p:font-body prose-p:text-foreground/80">
+                        <PortableText value={s.example} />
+                      </div>
+                    </div>
+                  )}
+                </section>
+              ))}
+            </div>
+          </>
         )}
       </article>
     </section>
