@@ -49,7 +49,7 @@ const opening =
   page?.excerpt?.trim() ||
   'הייתי שם. אני יודע איך זה מרגיש כשהלב רוצה משהו אחד, והראש אומר משהו אחר.'
 
-// תמונה (אנימציה נשמרת – רק src מתחלף)
+// תמונה
 const fallbackImage = '/assets/yossi-about.jpg'
 const imageSrc = page?.heroImage
   ? urlFor(page.heroImage).width(1000).height(1250).fit('crop').url()
@@ -69,6 +69,21 @@ const ogImageUrl = page?.seo?.ogImage
 >
   <article class="animate-fade-in py-24 bg-background">
     <div class="max-w-6xl mx-auto px-6">
+
+      <!-- מובייל: כותרת + ציטוט זהב לפני התמונה -->
+      <div class="md:hidden bg-white/60 backdrop-blur-xl rounded-[3rem] p-8 shadow-2xl border border-white/50 mb-10">
+        <h1 class="text-5xl font-black text-primary font-display mb-8 leading-tight text-center">
+          {heading}
+        </h1>
+
+        <div class="prose prose-xl text-primary/80 font-body leading-9 max-w-none text-center">
+          <p class="mb-0 font-bold text-gold-dark text-2xl border-r-4 border-accent pr-4 bg-white/50 p-4 rounded-l-xl">
+            "{opening}"
+          </p>
+        </div>
+      </div>
+
+      <!-- הקארד הראשי: בדסקטופ נשאר אותו לייאאוט, במובייל התמונה תבוא לפני הגוף -->
       <div class="bg-white/60 backdrop-blur-xl rounded-[3rem] p-8 md:p-20 shadow-2xl border border-white/50 relative overflow-hidden flex flex-col md:flex-row gap-16 items-center">
 
         <!-- תמונה -->
@@ -86,21 +101,29 @@ const ogImageUrl = page?.seo?.ogImage
 
         <!-- טקסט -->
         <div class="w-full md:w-7/12 relative z-10 text-center md:text-right">
-          <h1 class="text-6xl md:text-7xl font-black text-primary font-display mb-10 leading-tight">
-            {heading}
-          </h1>
 
-          <div class="prose prose-xl text-primary/80 font-body leading-9 max-w-none">
-            <p class="mb-8 font-bold text-gold-dark text-2xl border-r-4 border-accent pr-4 bg-white/50 p-4 rounded-l-xl">
-              "{opening}"
-            </p>
+          <!-- בדסקטופ: כותרת + ציטוט זהב בתוך הטקסט (כמו שהיה) -->
+          <div class="hidden md:block">
+            <h1 class="text-6xl md:text-7xl font-black text-primary font-display mb-10 leading-tight">
+              {heading}
+            </h1>
 
+            <div class="prose prose-xl text-primary/80 font-body leading-9 max-w-none">
+              <p class="mb-8 font-bold text-gold-dark text-2xl border-r-4 border-accent pr-4 bg-white/50 p-4 rounded-l-xl">
+                "{opening}"
+              </p>
+            </div>
+          </div>
+
+          <!-- הגוף: גם מובייל וגם דסקטופ -->
+          <div class="prose prose-xl text-primary/80 font-body leading-9 max-w-none mt-10 md:mt-0">
             {page?.body?.length ? (
               <PortableText value={page.body} />
             ) : (
               <p>עדיין אין תוכן בדף אודות בסאניטי. הוסף תוכן לשדה “תוכן”.</p>
             )}
           </div>
+
         </div>
 
       </div>
