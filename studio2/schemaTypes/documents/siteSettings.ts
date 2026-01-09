@@ -13,6 +13,20 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
 
+    // פרטי יצירת קשר
+    defineField({
+      name: 'contact',
+      title: 'פרטי יצירת קשר',
+      type: 'object',
+      fields: [
+        defineField({
+          name: 'email',
+          title: 'מייל',
+          type: 'string',
+        }),
+      ],
+    }),
+
     // ניווט
     defineField({
       name: 'nav',
@@ -97,7 +111,7 @@ export default defineType({
       ],
     }),
 
-    // וואטסאפ בסיסי (כבר יש אצלך שדות – זה לא מפריע)
+    // וואטסאפ
     defineField({
       name: 'whatsapp',
       title: 'וואטסאפ',
@@ -108,7 +122,7 @@ export default defineType({
       ],
     }),
 
-    // שאלות חימום (כדי שיהיו חיות מהסאניטי, בלי fallback)
+    // שאלות חימום
     defineField({
       name: 'whatsappWarmups',
       title: 'שאלות חימום לוואטסאפ',

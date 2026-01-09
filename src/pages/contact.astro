@@ -1,55 +1,95 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
 import site from '../content/pages/site.json'
+import { sanity } from '../lib/sanity'
+import { CONTACT_PAGE_QUERY, SITE_SETTINGS_QUERY } from '../lib/sanityQueries'
 
-const title = `צור קשר | ${site.brand}`
-const description = 'תיאום שיחה קצרה. בוא נעשה סדר ונבדוק מה הצעד הבא.'
+// מושכים גם Site Settings וגם Contact Page
+const settings = await sanity.fetch(SITE_SETTINGS_QUERY)
+const contact = await sanity.fetch(CONTACT_PAGE_QUERY)
+
+// SEO
+const seoTitle = contact?.seo?.title || `צור קשר | ${site.brand}`
+const seoDescription =
+  contact?.seo?.description || 'תיאום שיחה קצרה. הדרך הכי פשוטה להתחיל היא הודעת WhatsApp.'
+const noindex = contact?.seo?.noindex
+
+// Data
+const email = settings?.contact?.email || site.email || 'heartcompass3@gmail.com'
+const whatsappHref = settings?.whatsapp?.href || site.primaryCtaHref || '#'
+
+// טקסטים מהדוקומנט, עם fallback קשיח כדי שלא יישבר אם עוד לא יצרת מסמך
+const leftTitle = contact?.left?.title || 'תיאום שיחה קצרה'
+const leftText =
+  contact?.left?.text ||
+  'כדי לא להעמיס, כרגע הדרך הכי מהירה היא WhatsApp. תכתוב לי כמה שאלות מוכנות בפתחו של הירוק למטה.'
+const leftCtaLabel = contact?.left?.ctaLabel || "בוא נדבר תכל'ס"
+const leftHelper =
+  contact?.left?.helper ||
+  'אם אתה יודע כבר מה הכאב המרכזי, תכתוב אותו במשפט אחד. זה מספיק כדי להתחיל.'
+
+const rightLine1 = contact?.right?.titleLine1 || 'בוא נפתח'
+const rightLine2 = contact?.right?.titleLine2 || 'דף חדש.'
+const mailLabel = contact?.right?.ctaLabel || 'שליחת מייל'
+const rightHelper =
+  contact?.right?.helper ||
+  'אם אתה לא בטוח מה לכתוב, פשוט רשום: “אני רוצה להבין מה הצעד הבא.”'
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={seoTitle} description={seoDescription} noindex={noindex}>
   <main class="animate-fade-in py-24 bg-background min-h-screen">
     <div class="max-w-6xl mx-auto px-6">
       <div class="bg-white rounded-[3.5rem] shadow-2xl overflow-hidden border border-white flex flex-col md:flex-row min-h-[650px]">
 
-        <div class="bg-primary text-white p-16 md:w-5/12 relative overflow-hidden flex flex-col items-center text-center justify-center">
+        <!-- כחול ראשון בקוד: ב-RTL זה יישב מימין בדסקטופ כמו במקור -->
+        <section class="bg-primary text-white p-16 md:w-5/12 relative overflow-hidden flex flex-col items-center text-center justify-center">
           <div class="absolute top-0 right-0 w-80 h-80 bg-accent rounded-full -mr-20 -mt-20 opacity-20 blur-[80px]"></div>
 
           <h1 class="text-5xl font-black font-display mb-8 leading-tight relative z-10">
-            בואו נפתח <br /><span class="text-accent">דף חדש.</span>
+            {rightLine1} <br /><span class="text-accent">{rightLine2}</span>
           </h1>
 
           <div class="relative z-10 text-xl font-bold font-display dir-ltr tracking-wide mt-10">
-            {site.email}
+            {email}
           </div>
 
-          <div class="mt-6">
-            <a
-              href={`mailto:${site.email}`}
-              class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-white/10 hover:bg-white/15 transition-colors"
-            >
-              שליחת מייל <span aria-hidden="true">←</span>
-            </a>
-          </div>
-        </div>
+          <a
+            href={`mailto:${email}`}
+            class="mt-10 inline-flex items-center gap-3 px-10 py-5 rounded-2xl bg-white/10 hover:bg-white/15 transition-colors font-body font-bold"
+            aria-label="שליחת מייל"
+          >
+            {mailLabel} <span aria-hidden="true">←</span>
+          </a>
 
-        <div class="p-16 md:w-7/12 bg-white flex flex-col justify-center relative">
-          <div class="space-y-8 relative z-10">
-            <h2 class="text-3xl font-black text-primary font-display">
-              תיאום שיחה קצרה
-            </h2>
+          <p class="mt-10 font-body text-sm text-white/60 max-w-xs">
+            {rightHelper}
+          </p>
+        </section>
 
-            <p class="text-primary/70 font-body text-lg">
-              כדי לא להעמיס, כרגע הדרך הכי מהירה היא WhatsApp. כתבתי לך כמה שאלות מוכנות בכפתור הירוק למטה.
-            </p>
+        <!-- לבן -->
+        <section class="p-16 md:w-7/12 bg-white flex flex-col items-center text-center justify-center">
+          <h2 class="text-4xl font-black text-primary font-display">
+            {leftTitle}
+          </h2>
 
-            <a
-              href={site.primaryCtaHref}
-              class="inline-flex items-center gap-3 px-10 py-5 rounded-2xl gradient-gold text-white font-bold shadow-gold"
-            >
-              {site.primaryCtaLabel} <span aria-hidden="true">←</span>
-            </a>
-          </div>
-        </div>
+          <p class="mt-6 text-primary/70 font-body text-lg max-w-md">
+            {leftText}
+          </p>
+
+          <a
+            href={whatsappHref}
+            class="mt-10 inline-flex items-center gap-3 px-10 py-5 rounded-2xl gradient-gold text-white font-body font-bold shadow-gold hover:opacity-95 transition"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="פתיחת וואטסאפ לתיאום"
+          >
+            {leftCtaLabel} <span aria-hidden="true">←</span>
+          </a>
+
+          <p class="mt-10 font-body text-sm text-foreground/60 max-w-md">
+            {leftHelper}
+          </p>
+        </section>
 
       </div>
     </div>
