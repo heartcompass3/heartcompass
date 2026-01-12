@@ -125,6 +125,47 @@
   ::selection {
     @apply bg-accent text-accent-foreground;
   }
+
+  /* ===== PortableText / RichText spacing ===== */
+  .portabletext {
+    direction: rtl;
+  }
+
+  .portabletext > * + * {
+    margin-top: 1rem; /* אוויר בין פסקאות / כותרות */
+  }
+
+  .portabletext p {
+    line-height: 1.85;
+  }
+
+  .portabletext a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .portabletext strong {
+    font-weight: 800;
+  }
+
+  .portabletext em {
+    font-style: italic;
+  }
+
+  .portabletext ul {
+    list-style: disc;
+    padding-right: 1.25rem;
+  }
+
+  .portabletext li {
+    margin-top: 0.4rem;
+  }
+
+  .portabletext blockquote {
+    border-right: 4px solid hsl(var(--accent));
+    padding-right: 1rem;
+    color: hsl(var(--muted-foreground));
+  }
 }
 
 @layer utilities {

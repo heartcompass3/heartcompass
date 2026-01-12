@@ -1,4 +1,5 @@
 import './studio.css'
+import './studio-rtl.css'
 
 import {defineConfig} from 'sanity'
 import {deskTool} from 'sanity/desk'
@@ -12,10 +13,7 @@ export default defineConfig({
   projectId: 'bk4y5jiw',
   dataset: 'production',
 
-  plugins: [
-    deskTool(),
-    visionTool(),
-  ],
+  plugins: [deskTool(), visionTool()],
 
   schema: {
     types: schemaTypes,

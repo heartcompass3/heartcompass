@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
+import PortableText from '../components/PortableText.astro'
 import { sanity, urlFor } from '../lib/sanity'
 import { HOME_PAGE_QUERY } from '../lib/sanityQueries'
 
@@ -33,8 +34,9 @@ const H1 =
   home.h1 ||
   'תהליך אימון וליווי רגשי עמוק לשחרור דפוסים ואמונות מגבילות מהשורש'
 
-// פסקת גשר (מה שאתה רואה בסאניטי כ"פסקת גשר")
-const bridge =
+// פסקת גשר – Rich קודם, ואם אין אז טקסט
+const bridgeRich = home.introParagraphRich
+const bridgeText =
   home.introParagraph ||
   'תהליך עומק לשחרור חסמים, מציאת זוגיות ופריצת דרך בקריירה ועסקים.'
 
@@ -85,9 +87,15 @@ const brandDeep = '#295157'
             {H1}
           </h1>
 
-          <p class="mt-6 max-w-xl mx-auto lg:mr-0 lg:ml-auto text-foreground/70 font-body leading-relaxed">
-            {bridge}
-          </p>
+          <div class="mt-6 max-w-xl mx-auto lg:mr-0 lg:ml-auto text-foreground/70 font-body leading-relaxed">
+            {bridgeRich ? (
+              <div class="portabletext">
+                <PortableText value={bridgeRich} />
+              </div>
+            ) : (
+              <p>{bridgeText}</p>
+            )}
+          </div>
 
           <!-- כפתורים בדסקטופ -->
           <div class="mt-10 hidden lg:flex gap-6 justify-center">

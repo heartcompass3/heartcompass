@@ -5,7 +5,10 @@ export const HOME_PAGE_QUERY = /* groq */ `
   seo,
   hero,
   h1,
+
   introParagraph,
+  introParagraphRich,
+
   cards,
   methodHeading,
   methodTitle,

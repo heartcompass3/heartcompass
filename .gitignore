@@ -1,5 +1,6 @@
 node_modules/
-.vercel/
-dist/
-.astro/
 .env
+.DS_Store
+.astro/
+dist/
+.vercel/

@@ -43,12 +43,23 @@ export default defineType({
       group: 'hero',
     }),
 
+    // השדה הישן – נשאר TEXT כדי לא לשבור נתונים קיימים
     defineField({
       name: 'introParagraph',
-      title: 'פסקת גשר (פחד מול תשוקה)',
+      title: 'פסקת גשר (ישן – טקסט פשוט)',
       type: 'text',
       rows: 3,
+      group: 'legacy',
+      hidden: true,
+    }),
+
+    // השדה החדש – Rich Text עם סרגל כלים
+    defineField({
+      name: 'introParagraphRich',
+      title: 'פסקת גשר (עם עריכה מלאה)',
+      type: 'blockContent',
       group: 'content',
+      description: 'כאן אפשר הדגשות, קישורים, רשימות וריווח טבעי בין פסקאות.',
     }),
 
     // IMPORTANT:
