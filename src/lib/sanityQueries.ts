@@ -85,3 +85,80 @@ export const SITE_SETTINGS_QUERY = /* groq */ `
   }
 }
 `
+
+export const METHOD_PAGE_QUERY = /* groq */ `
+*[_type == "methodPage"][0]{
+  seo,
+
+  hero{
+    h1,
+    goldLine,
+    opening,
+    ctaLabel,
+    ctaHref
+  },
+
+  msaCore{
+    shortLine
+  },
+
+  body,
+
+  cards[]{
+    title,
+    text,
+    href
+  }
+}
+`
+
+// =======================
+// Articles (Sanity)
+// =======================
+
+export const ARTICLES_QUERY = /* groq */ `
+*[_type == "article"]
+| order(coalesce(publishedAt, _createdAt) desc)
+{
+  _id,
+  title,
+  goldLine,
+  slug,
+  excerpt,
+  publishedAt,
+  authorLine,
+  mainImage{
+    alt,
+    asset->{
+      url
+    }
+  },
+  author->{
+    name
+  },
+  tags
+}
+`
+
+export const ARTICLE_BY_SLUG_QUERY = /* groq */ `
+*[_type == "article" && slug.current == $slug][0]{
+  _id,
+  title,
+  goldLine,
+  slug,
+  excerpt,
+  publishedAt,
+  authorLine,
+  mainImage{
+    alt,
+    asset->{
+      url
+    }
+  },
+  author->{
+    name
+  },
+  tags,
+  body
+}
+`

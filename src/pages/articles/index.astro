@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import site from '../../content/pages/site.json'
+import { sanity } from '../../lib/sanity'
+import { ARTICLES_QUERY } from '../../lib/sanityQueries'
+
+const articles = await sanity.fetch(ARTICLES_QUERY)
+
+const title = `מאמרים | ${site.brand}`
+const description = 'מאמרים, תובנות וכלים מעשיים מתוך מצפן הלב.'
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="animate-fade-in py-24 bg-background min-h-screen">
+    <div class="max-w-7xl mx-auto px-6">
+      <header class="mb-16 text-center">
+        <h1 class="text-5xl md:text-6xl font-black text-primary font-display mb-6 drop-shadow-sm">
+          מאמרים
+        </h1>
+        <p class="text-xl md:text-2xl text-primary/70 font-body font-medium max-w-3xl mx-auto">
+          תובנות, מחקר וכלים לשחרור דפוסים ולתנועה פנימית קדימה.
+        </p>
+      </header>
+
+      {(!articles || articles.length === 0) ? (
+        <p class="text-center text-primary/60 font-body text-lg">עדיין לא פורסמו מאמרים.</p>
+      ) : (
+        <div class="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
+          {articles.map((a) => (
+            <a
+              href={`/articles/${a.slug?.current}`}
+              class="bg-white rounded-[2.5rem] shadow-xl hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] transition-all duration-500 border border-white/50 flex flex-col h-full overflow-hidden hover:-translate-y-3 cursor-pointer group ring-1 ring-black/5 relative"
+            >
+              <div class="h-56 overflow-hidden relative w-full">
+                <img
+                  src={a.mainImage?.asset?.url || '/assets/yossi-hero.jpg'}
+                  alt={a.mainImage?.alt || a.title}
+                  class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-[1.5s]"
+                  loading="lazy"
+                />
+                <div class="absolute top-6 right-6 bg-white/95 px-4 py-1.5 text-xs font-bold text-primary rounded-full shadow-lg z-20">
+                  {a.publishedAt ? new Date(a.publishedAt).toLocaleDateString('he-IL') : ''}
+                </div>
+              </div>
+
+              <div class="p-10 flex-1 flex flex-col text-center items-center w-full">
+                {/* Gold line in card */}
+                {a.goldLine && (
+                  <p class="text-accent font-bold tracking-wide mb-4 font-display text-sm">
+                    {a.goldLine}
+                  </p>
+                )}
+
+                <h2 class="text-2xl font-black text-primary mb-4 font-display leading-tight group-hover:text-gold-dark transition-colors">
+                  {a.title}
+                </h2>
+
+                {a.excerpt && (
+                  <p class="text-primary/70 font-body leading-relaxed mb-8 font-medium line-clamp-3 text-lg">
+                    {a.excerpt}
+                  </p>
+                )}
+
+                <div class="mt-auto flex items-center text-accent font-bold tracking-wide group-hover:gap-2 transition-all">
+                  קרא עוד <span class="mr-2">←</span>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>

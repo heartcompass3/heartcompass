@@ -1,7 +1,14 @@
-import page from './page'
-import siteSettings from './siteSettings'
-import homePage from './homePage'
-import methodPage from './methodPage'
-import contactPage from './contactPage'
+// studio2/schemaTypes/documents/index.ts
+import page from "./page";
+import author from "./author";
+import methodPage from "./methodPage";
+import homePage from "./homePage";
+import article from "./article";
 
-export const documents = [siteSettings, homePage, methodPage, contactPage, page]
+export const documents = [
+  page,
+  homePage,
+  methodPage,
+  article,
+  author,
+];

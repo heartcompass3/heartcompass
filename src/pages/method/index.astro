@@ -1,59 +1,218 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
+import PortableText from '../../components/PortableText.astro'
 import site from '../../content/pages/site.json'
+import { sanity } from '../../lib/sanity'
 
-const title = `השיטה | ${site.brand}`
-const description = 'מודל מ.ס.ע: מיפוי, סילוק וסלילה, עצמאות. תהליך מדורג לשחרור דפוסים מהשורש.'
+const data = await sanity.fetch(/* groq */ `
+*[_type == "methodPage"][0]{
+  hero{
+    headlineLine1,
+    headlineLine2,
+    subheadline,
+    intro
+  },
+  interludeImage{
+    asset->{url},
+    alt,
+    caption
+  },
+  body,
+  msa{
+    intro,
+    steps[]{
+      letter,
+      title,
+      description,
+      exampleTitle,
+      example
+    }
+  },
+  cta{
+    title,
+    text,
+    buttonLabel,
+    buttonHref
+  },
+  seo{
+    title,
+    description,
+    canonical,
+    noindex,
+    ogImage{asset->{url}}
+  }
+}
+`)
+
+if (!data) {
+  throw new Error('No methodPage document found in Sanity')
+}
+
+const h1a = data?.hero?.headlineLine1 || 'שיטת מ.ס.ע'
+const h1b = data?.hero?.headlineLine2 || ''
+const gold = data?.hero?.subheadline || ''
+const intro = data?.hero?.intro || ''
+
+const interludeUrl = data?.interludeImage?.asset?.url || ''
+const interludeAlt = data?.interludeImage?.alt || ''
+const interludeCaption = data?.interludeImage?.caption || ''
+
+const body = Array.isArray(data?.body) ? data.body : []
+
+const msaIntro = data?.msa?.intro || ''
+const steps = Array.isArray(data?.msa?.steps) ? data.msa.steps : []
+
+const ctaTitle = data?.cta?.title || ''
+const ctaText = data?.cta?.text || ''
+const ctaLabel = data?.cta?.buttonLabel || site.primaryCtaLabel
+const ctaHref = data?.cta?.buttonHref || site.primaryCtaHref
+
+const seoTitle = data?.seo?.title || `${h1a} | ${site.brand}`
+const seoDescription =
+  data?.seo?.description ||
+  gold ||
+  'מודל מ.ס.ע: מיפוי, סילוק וסלילה, עצמאות. תהליך מדורג לשחרור דפוסים מהשורש.'
+
+const canonical = data?.seo?.canonical || undefined
+const noindex = data?.seo?.noindex || false
+const ogImage = data?.seo?.ogImage?.asset?.url || undefined
 ---
 
-<BaseLayout title={title} description={description}>
-  <main class="animate-fade-in py-24 bg-background min-h-screen">
+<BaseLayout title={seoTitle} description={seoDescription} canonical={canonical} noindex={noindex} ogImage={ogImage}>
+  <section class="animate-fade-in py-24 bg-background min-h-screen">
     <div class="max-w-6xl mx-auto px-6">
 
-      <header class="text-center mb-14">
-        <h1 class="text-5xl md:text-6xl font-black text-primary font-display mb-6">
-          השיטה
+      <!-- HERO -->
+      <header class="mb-14 text-center">
+        <h1 class="text-5xl md:text-6xl font-black text-primary font-display leading-tight mb-6">
+          <span class="block">{h1a}</span>
+          {h1b && <span class="block">{h1b}</span>}
         </h1>
-        <p class="text-xl text-primary/70 font-body max-w-3xl mx-auto">
-          {description}
-        </p>
+
+        {gold && (
+          <p class="text-xl text-accent font-body font-bold max-w-3xl mx-auto leading-relaxed">
+            {gold}
+          </p>
+        )}
+
+        {intro && (
+          <p class="mt-8 text-lg text-primary/70 font-body leading-relaxed max-w-3xl mx-auto">
+            {intro}
+          </p>
+        )}
       </header>
 
-      <section class="grid md:grid-cols-3 gap-8">
-        <a href="/method/couples" class="bg-white p-10 rounded-[2.5rem] shadow-elegant border border-white hover:translate-y-[-2px] transition">
-          <h2 class="text-2xl font-black text-primary font-display mb-4">זוגיות ומשפחה</h2>
-          <p class="text-primary/70 font-body leading-relaxed">
-            מפרקים את הדפוס שמדליק את האש, ובונים שפה זוגית חדשה.
-          </p>
-          <div class="mt-6 font-bold text-accent font-body">קרא עוד ←</div>
-        </a>
+      <!-- מ.ס.ע – הליבה -->
+      {(msaIntro || steps.length > 0) && (
+        <section class="mb-14">
+          {msaIntro && (
+            <div class="max-w-4xl mx-auto mb-10">
+              <div class="bg-white rounded-[3rem] shadow-elegant border border-white px-10 py-8 text-center">
+                <p class="text-lg text-primary/70 font-body leading-relaxed">
+                  {msaIntro}
+                </p>
+              </div>
+            </div>
+          )}
 
-        <a href="/method/career" class="bg-white p-10 rounded-[2.5rem] shadow-elegant border border-white hover:translate-y-[-2px] transition">
-          <h2 class="text-2xl font-black text-primary font-display mb-4">קריירה ועסקים</h2>
-          <p class="text-primary/70 font-body leading-relaxed">
-            מוציאים אותך מתקיעות, חשיבת יתר ודחיינות, ובונים תנועה אמיתית.
-          </p>
-          <div class="mt-6 font-bold text-accent font-body">קרא עוד ←</div>
-        </a>
+          {steps.length > 0 && (
+            <div class="grid md:grid-cols-3 gap-8">
+              {steps.map((s) => (
+                <div class="bg-white p-10 rounded-[3rem] shadow-elegant border border-white">
+                  <div class="flex justify-center mb-6">
+                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center bg-accent/10 border border-accent/20">
+                      <span class="text-2xl font-black text-primary font-display">
+                        {s?.letter}
+                      </span>
+                    </div>
+                  </div>
 
-        <a href="/method/personal" class="bg-white p-10 rounded-[2.5rem] shadow-elegant border border-white hover:translate-y-[-2px] transition">
-          <h2 class="text-2xl font-black text-primary font-display mb-4">התפתחות אישית</h2>
-          <p class="text-primary/70 font-body leading-relaxed">
-            ערך עצמי, בחירה, שקט פנימי. עובדים מהשורש, בלי להעמיד פנים.
-          </p>
-          <div class="mt-6 font-bold text-accent font-body">קרא עוד ←</div>
-        </a>
-      </section>
+                  <h2 class="text-2xl font-black text-primary font-display mb-4 text-center">
+                    {s?.title}
+                  </h2>
 
+                  {Array.isArray(s?.description) && s.description.length > 0 && (
+                    <div class="prose prose-lg max-w-none prose-headings:font-display prose-p:font-body prose-p:text-foreground/80">
+                      <PortableText value={s.description} />
+                    </div>
+                  )}
+
+                  {(s?.exampleTitle || (Array.isArray(s?.example) && s.example.length > 0)) && (
+                    <div class="mt-8 bg-background p-6 rounded-2xl border border-accent/10">
+                      {s?.exampleTitle && (
+                        <div class="font-black text-accent font-body mb-2">
+                          {s.exampleTitle}
+                        </div>
+                      )}
+                      {Array.isArray(s?.example) && s.example.length > 0 && (
+                        <div class="prose prose-lg max-w-none prose-p:font-body prose-p:text-foreground/80">
+                          <PortableText value={s.example} />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      <!-- תמונת נשימה באמצע הדרך -->
+      {interludeUrl && (
+        <section class="my-16">
+          <div class="bg-white p-6 md:p-8 rounded-[3rem] shadow-elegant border border-white">
+            <img
+              src={interludeUrl}
+              alt={interludeAlt || ''}
+              class="w-full h-auto rounded-[2.5rem]"
+              loading="lazy"
+            />
+            {interludeCaption && (
+              <p class="mt-4 text-sm text-primary/60 font-body text-center">
+                {interludeCaption}
+              </p>
+            )}
+          </div>
+        </section>
+      )}
+
+      <!-- מאמר רציף -->
+      {body.length > 0 && (
+        <section class="mt-2 max-w-4xl mx-auto">
+          <div class="bg-white p-10 md:p-16 rounded-[3rem] shadow-elegant border border-white">
+            <div class="prose prose-lg max-w-none prose-headings:font-display prose-p:font-body prose-p:text-foreground/80">
+              <PortableText value={body} />
+            </div>
+          </div>
+        </section>
+      )}
+
+      <!-- CTA תחתון -->
       <div class="mt-16 text-center">
+        {(ctaTitle || ctaText) && (
+          <div class="max-w-3xl mx-auto mb-8">
+            {ctaTitle && (
+              <h2 class="text-3xl font-black text-primary font-display mb-3">
+                {ctaTitle}
+              </h2>
+            )}
+            {ctaText && (
+              <p class="text-lg text-primary/70 font-body leading-relaxed">
+                {ctaText}
+              </p>
+            )}
+          </div>
+        )}
+
         <a
-          href={site.primaryCtaHref}
+          href={ctaHref}
           class="inline-flex items-center gap-3 px-10 py-5 rounded-2xl gradient-gold text-white font-bold shadow-gold"
         >
-          {site.primaryCtaLabel} <span aria-hidden="true">←</span>
+          {ctaLabel} <span aria-hidden="true">←</span>
         </a>
       </div>
 
     </div>
-  </main>
+  </section>
 </BaseLayout>

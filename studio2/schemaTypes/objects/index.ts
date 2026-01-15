@@ -7,5 +7,16 @@ import seo from './seo'
 import navItem from './navItem'
 import msaSection from './msaSection'
 import msaGrid from './msaGrid'
+import blockContent from './blockContent'
 
-export const objects = [seo, richText, hero, cardGrid, faq, navItem, msaSection, msaGrid]
+export const objects = [
+  seo,
+  richText,
+  hero,
+  cardGrid,
+  faq,
+  navItem,
+  msaSection,
+  msaGrid,
+  blockContent,
+]

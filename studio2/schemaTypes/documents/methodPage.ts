@@ -19,10 +19,15 @@ export default defineType({
       type: 'object',
       fields: [
         defineField({
-          name: 'headline',
-          title: 'כותרת ראשית (H1)',
+          name: 'headlineLine1',
+          title: 'כותרת ראשית שורה 1 (H1)',
           type: 'string',
           validation: (Rule) => Rule.required(),
+        }),
+        defineField({
+          name: 'headlineLine2',
+          title: 'כותרת ראשית שורה 2 (H1) (אופציונלי)',
+          type: 'string',
         }),
         defineField({
           name: 'subheadline',
@@ -40,7 +45,6 @@ export default defineType({
       ],
     }),
 
-    // ✅ חדש: תמונת נשימה באמצע הדרך
     defineField({
       name: 'interludeImage',
       title: 'תמונה – נשימה באמצע הדרך',
@@ -61,7 +65,6 @@ export default defineType({
       ],
     }),
 
-    // ✅ חדש: מאמר רציף
     defineField({
       name: 'body',
       title: 'תוכן הדף (מאמר רציף)',
@@ -71,30 +74,9 @@ export default defineType({
         'מדביקים כאן את הטקסט כרצף. כותרות פרקים מסמנים כ-Heading 2.',
     }),
 
-    // --- תאימות אחורה (אם יש אצלך כבר תוכן ישן) ---
-    defineField({
-      name: 'pain',
-      title: 'הכאב והמציאות (תאימות אחורה)',
-      type: 'object',
-      fields: [
-        defineField({name: 'title', title: 'כותרת סקשן', type: 'string'}),
-        defineField({name: 'body', title: 'טקסט', type: 'array', of: [{type: 'block'}]}),
-      ],
-    }),
-
-    defineField({
-      name: 'bridge',
-      title: 'גשר לשיטה (תאימות אחורה)',
-      type: 'object',
-      fields: [
-        defineField({name: 'title', title: 'כותרת סקשן', type: 'string'}),
-        defineField({name: 'body', title: 'טקסט', type: 'array', of: [{type: 'block'}]}),
-      ],
-    }),
-
     defineField({
       name: 'msa',
-      title: 'מ.ס.ע – הליבה (תאימות אחורה)',
+      title: 'מ.ס.ע – הליבה',
       type: 'object',
       fields: [
         defineField({
@@ -156,43 +138,6 @@ export default defineType({
       ],
     }),
 
-    // ✅ מחזירים כדי להעלים את אזהרת Unknown fields
-    defineField({
-      name: 'examples',
-      title: 'דוגמאות לפי כאבים (SEO + הזדהות)',
-      type: 'object',
-      fields: [
-        defineField({name: 'title', title: 'כותרת', type: 'string'}),
-        defineField({name: 'items', title: 'דוגמאות', type: 'array', of: [{type: 'object', fields: [
-          defineField({name: 'title', title: 'כותרת', type: 'string'}),
-          defineField({name: 'body', title: 'טקסט', type: 'array', of: [{type: 'block'}]}),
-        ]}]}),
-      ],
-    }),
-
-    defineField({
-      name: 'links',
-      title: 'קישורים לתחומי התמחות',
-      type: 'object',
-      fields: [
-        defineField({name: 'title', title: 'כותרת', type: 'string'}),
-        defineField({
-          name: 'items',
-          title: 'קישורים',
-          type: 'array',
-          of: [
-            {
-              type: 'object',
-              fields: [
-                defineField({name: 'title', title: 'כותרת', type: 'string'}),
-                defineField({name: 'href', title: 'קישור', type: 'string'}),
-              ],
-            },
-          ],
-        }),
-      ],
-    }),
-
     defineField({
       name: 'cta',
       title: 'CTA',
@@ -214,8 +159,9 @@ export default defineType({
 
   initialValue: {
     hero: {
-      headline: 'שיטת מ.ס.ע – דרך פשוטה לעשות סדר פנימי',
-      subheadline: 'תהליך רגשי תודעתי שמחזיר בהירות ושקט פנימי.',
+      headlineLine1: 'שיטת מ.ס.ע',
+      headlineLine2: 'לצאת מהלופ ולחזור לעצמך',
+      subheadline: 'תהליך רגשי תודעתי שמחזיר בהירות ושקט מבפנים.',
       intro: '',
     },
     cta: {

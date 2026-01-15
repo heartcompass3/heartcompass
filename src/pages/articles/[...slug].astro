@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import site from '../../content/pages/site.json'
+import { sanity } from '../../lib/sanity'
+import { ARTICLE_BY_SLUG_QUERY } from '../../lib/sanityQueries'
+import PortableText from '../../components/PortableText.astro'
+
+const rawSlug = Astro.params.slug
+const slug = Array.isArray(rawSlug) ? rawSlug.join('/') : rawSlug
+
+const article = await sanity.fetch(ARTICLE_BY_SLUG_QUERY, { slug })
+
+if (!article) {
+  return Astro.redirect('/articles', 302)
+}
+
+const title = `${article.title} | ${site.brand}`
+const description = article.excerpt || 'מאמר מתוך מצפן הלב.'
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="animate-fade-in py-24 bg-background min-h-screen">
+    <div class="max-w-5xl mx-auto px-6">
+      <a
+        href="/articles"
+        class="flex items-center text-primary hover:text-gold-dark mb-10 font-bold transition-colors bg-white px-6 py-3 rounded-full shadow-md w-fit border border-accent/20"
+      >
+        ← חזרה למאמרים
+      </a>
+
+      <div class="bg-white p-10 md:p-16 rounded-[3rem] shadow-2xl border border-white">
+        {article.mainImage?.asset?.url && (
+          <div class="w-full h-80 rounded-[2rem] overflow-hidden mb-12 shadow-lg">
+            <img
+              src={article.mainImage.asset.url}
+              alt={article.mainImage.alt || article.title}
+              class="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </div>
+        )}
+
+        {/* Header */}
+        <header class="text-center">
+          {/* Gold line (subtitle) */}
+          {article.goldLine && (
+            <p class="text-accent font-bold tracking-wide mb-5 font-display">
+              {article.goldLine}
+            </p>
+          )}
+
+          {/* H1 */}
+          <h1 class="text-4xl md:text-6xl font-black text-primary font-display leading-tight mx-auto max-w-[20ch]">
+            {article.title}
+          </h1>
+
+          {/* Meta line */}
+          <div class="flex flex-wrap items-center justify-center gap-4 text-primary/60 font-body mt-6">
+            {article.publishedAt && <span>{new Date(article.publishedAt).toLocaleDateString('he-IL')}</span>}
+            {article.authorLine && <span>•</span>}
+            {article.authorLine && <span>{article.authorLine}</span>}
+          </div>
+
+          {article.excerpt && (
+            <p class="mt-10 text-xl text-primary/70 font-body leading-relaxed mx-auto max-w-3xl">
+              {article.excerpt}
+            </p>
+          )}
+        </header>
+
+        {/* Body */}
+        <div class="mt-14 prose prose-xl max-w-none text-primary/80 font-body leading-9">
+          <PortableText value={article.body} />
+        </div>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
