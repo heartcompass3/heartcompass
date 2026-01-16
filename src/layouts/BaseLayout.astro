@@ -2,6 +2,8 @@
 import site from '../content/pages/site.json'
 import '../styles/global.css'
 
+import SeoHead from '../components/SeoHead.astro'
+
 import Navigation from '../components/Navigation.astro'
 import Footer from '../components/Footer.astro'
 import WhatsAppFloat from '../components/WhatsAppFloat.astro'
@@ -9,12 +11,40 @@ import Tracking from '../components/Tracking.astro'
 import CookieBanner from '../components/CookieBanner.astro'
 
 const {
-  title = site.brand,
-  description = 'אימון רגשי תודעתי לשחרור חסמים ומציאת ייעוד.',
-  canonical = site.siteUrl + Astro.url.pathname,
-  noindex = false,
-  ogImage = site.siteUrl + '/assets/yossi-hero.jpg',
+  title,
+  description,
+  canonical,
+  // תאימות לאחור: חלק מהעמודים מעבירים noindex (ישן) וחלק noIndex (חדש)
+  noindex,
+  noIndex,
+  ogImage,
+  pageType,
+  schema,
 } = Astro.props
+
+const resolvedCanonical =
+  (typeof canonical === 'string' && canonical.trim())
+    ? canonical.trim()
+    : new URL(Astro.url.pathname, site.siteUrl).toString()
+
+const defaultDescription = site.heroDescription || 'אימון רגשי תודעתי לשחרור חסמים ומציאת ייעוד.'
+const resolvedDescription =
+  (typeof description === 'string' && description.trim()) ? description.trim() : defaultDescription
+
+const resolvedNoIndex = (noIndex === true) || (noindex === true)
+
+const defaultServiceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: site.brand,
+  url: site.siteUrl,
+  description: resolvedDescription,
+  founder: { '@type': 'Person', name: site.fullName },
+  areaServed: 'IL',
+}
+
+const schemaArray = Array.isArray(schema) ? schema : []
+const mergedSchema = [defaultServiceSchema, ...schemaArray]
 ---
 
 <!doctype html>
@@ -29,40 +59,20 @@ const {
       content="JnPSkMeCL51vUpC5HuP0QtTUnyHdGn6qpMpo9ZwKCrw"
     />
 
-    <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex,nofollow" />}
+    <SeoHead
+      title={title}
+      description={resolvedDescription}
+      canonical={resolvedCanonical}
+      noIndex={resolvedNoIndex}
+      ogImage={ogImage}
+      pageType={pageType}
+      schema={mergedSchema}
+    />
+
     <link rel="icon" href="/assets/logo.png" />
-
-    <meta property="og:locale" content="he_IL" />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={ogImage} />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImage} />
-
-    <title>{title}</title>
 
     <!-- Tracking Layer: נטען רק אחרי הסכמה + enabled בסאניטי -->
     <Tracking />
-
-    <script
-      type="application/ld+json"
-      set:html={JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'ProfessionalService',
-        name: site.brand,
-        url: site.siteUrl,
-        description,
-        founder: { '@type': 'Person', name: site.fullName },
-        areaServed: 'IL',
-      })}
-    ></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

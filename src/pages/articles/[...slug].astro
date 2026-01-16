@@ -16,9 +16,62 @@ if (!article) {
 
 const title = `${article.title} | ${site.brand}`
 const description = article.excerpt || 'מאמר מתוך מצפן הלב.'
+
+const canonical = new URL(Astro.url.pathname, site.siteUrl).toString()
+const ogImage = article.mainImage?.asset?.url || undefined
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: article.title,
+  description,
+  image: ogImage ? [ogImage] : undefined,
+  author: {
+    '@type': 'Person',
+    name: article.author?.name || article.authorLine || site.fullName,
+  },
+  datePublished: article.publishedAt || undefined,
+  dateModified: article.publishedAt || undefined,
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': canonical,
+  },
+}
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: site.brand,
+      item: `${site.siteUrl}/`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'מאמרים',
+      item: `${site.siteUrl}/articles`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: article.title,
+      item: canonical,
+    },
+  ],
+}
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  ogImage={ogImage}
+  pageType="article"
+  schema={[articleSchema, breadcrumbSchema]}
+>
   <article class="animate-fade-in py-24 bg-background min-h-screen">
     <div class="max-w-5xl mx-auto px-6">
       <a
