@@ -14,7 +14,7 @@ const {
   title,
   description,
   canonical,
-  // תאימות לאחור: חלק מהעמודים מעבירים noindex (ישן) וחלק noIndex (חדש)
+  // תאימות לאחור
   noindex,
   noIndex,
   ogImage,
@@ -27,12 +27,20 @@ const resolvedCanonical =
     ? canonical.trim()
     : new URL(Astro.url.pathname, site.siteUrl).toString()
 
-const defaultDescription = site.heroDescription || 'אימון רגשי תודעתי לשחרור חסמים ומציאת ייעוד.'
+const defaultDescription =
+  site.heroDescription || 'אימון רגשי תודעתי לשחרור חסמים ומציאת ייעוד.'
+
 const resolvedDescription =
-  (typeof description === 'string' && description.trim()) ? description.trim() : defaultDescription
+  (typeof description === 'string' && description.trim())
+    ? description.trim()
+    : defaultDescription
 
 const resolvedNoIndex = (noIndex === true) || (noindex === true)
 
+/**
+ * Schema: ProfessionalService
+ * מודפס רק בעמודים שאינם מאמרים
+ */
 const defaultServiceSchema = {
   '@context': 'https://schema.org',
   '@type': 'ProfessionalService',
@@ -44,7 +52,11 @@ const defaultServiceSchema = {
 }
 
 const schemaArray = Array.isArray(schema) ? schema : []
-const mergedSchema = [defaultServiceSchema, ...schemaArray]
+
+const mergedSchema =
+  pageType === 'article'
+    ? schemaArray
+    : [defaultServiceSchema, ...schemaArray]
 ---
 
 <!doctype html>
