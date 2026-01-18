@@ -1,12 +1,23 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import site from '../../content/pages/site.json'
+import { buildBreadcrumbListSchema } from '../../lib/breadcrumbs'
 
 const title = `תחומי התמחות | ${site.brand}`
 const description = 'שלושה מסלולים לתהליך מ.ס.ע מותאם: זוגיות, קריירה ועסקים, והתפתחות אישית.'
+
+const canonical = new URL(Astro.url.pathname, site.siteUrl).toString()
+
+const breadcrumbSchema = buildBreadcrumbListSchema({
+  siteUrl: site.siteUrl,
+  brandName: site.brand,
+  crumbs: [
+    { name: 'תחומי התמחות', item: canonical },
+  ],
+})
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} canonical={canonical} schema={[breadcrumbSchema]}>
   <section class="animate-fade-in py-24 bg-background min-h-screen">
     <div class="max-w-6xl mx-auto px-6">
       <header class="text-center mb-14">

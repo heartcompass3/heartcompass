@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import site from '../../content/pages/site.json'
 import { sanity } from '../../lib/sanity'
+import { buildBreadcrumbListSchema } from '../../lib/breadcrumbs'
 
 const SLUG = 'specialties/couples'
 
@@ -40,26 +41,26 @@ const fallback = {
     {
       key: 'mapping',
       title: 'מיפוי',
-      text: 'מזהים את הטריגרים הקבועים, את הפרשנות שעולה, ואת הדפוס שמדליק ריב או סוגר שיח. בלי האשמות, בלי דרמה. רק בהירות.',
+      text: 'מזהים מה מפעיל אתכם ברגע האמת: איפה אתם נסגרים, תוקפים, נעלבים או מתרחקים, ומה הפרשנות שמדליקה את זה.',
     },
     {
       key: 'removal',
       title: 'סילוק',
-      text: 'משחררים את החסם שמחבר בין טריגר לתגובה: כעס, הסתגרות, ביקורת, ריצוי. כשהאוטומט נחלש, השיחה משתנה מעצמה.',
+      text: 'משחררים את “הטריגר הקבוע” שמייצר אוטומט: מי צודק, מי נפגע יותר, ומי יישבר ראשון. כשהאוטומט יורד, אפשר לדבר אחרת.',
     },
     {
       key: 'autonomy',
       title: 'עצמאות',
-      text: 'בונים הסכמות וכלים שחוזרים לחיים האמיתיים: גבולות, תקשורת מדויקת, ועוגנים שמחזיקים גם כשהרגש עולה.',
+      text: 'בונים שפה והרגלים חדשים בבית: גבולות, תיקון, בקשה ברורה, ותקשורת שמכבדת גם רגש וגם היגיון.',
     },
   ],
   closing:
-    'המטרה היא לא “להיות צודק”. המטרה היא להיות ביחד. להבין מה מפעיל אתכם, ולהחזיר לבית תחושת בטחון וחיבור.',
+    'המטרה היא לא “לנצח בוויכוח”. המטרה היא לחזור להיות צוות, מתוך בהירות, רכות ועוצמה.',
 }
 
 const title = page?.seo?.title || page?.title || `${fallback.title} | ${site.brand}`
 const description = page?.seo?.description || page?.excerpt || fallback.gold
-const canonical = page?.seo?.canonical || undefined
+const canonical = page?.seo?.canonical || new URL(Astro.url.pathname, site.siteUrl).toString()
 const noindex = page?.seo?.noindex || false
 const ogImage = page?.seo?.ogImage?.asset?.url || undefined
 
@@ -69,9 +70,25 @@ const intro = page?.specialty?.intro || fallback.intro
 const stagesTitle = page?.specialty?.stagesTitle || fallback.stagesTitle
 const stages = (page?.specialty?.stages?.length ? page.specialty.stages : fallback.stages)
 const closing = page?.specialty?.closing || fallback.closing
+
+const breadcrumbSchema = buildBreadcrumbListSchema({
+  siteUrl: site.siteUrl,
+  brandName: site.brand,
+  crumbs: [
+    { name: 'תחומי התמחות', item: `${site.siteUrl}/specialties` },
+    { name: h1, item: canonical },
+  ],
+})
 ---
 
-<BaseLayout title={title} description={description} canonical={canonical} noindex={noindex} ogImage={ogImage}>
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  noindex={noindex}
+  ogImage={ogImage}
+  schema={[breadcrumbSchema]}
+>
   <section class="animate-fade-in py-24 bg-background min-h-screen">
     <div class="max-w-4xl mx-auto px-6">
       <header class="mb-10 text-center">
