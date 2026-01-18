@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import site from '../../content/pages/site.json'
 import { sanity } from '../../lib/sanity'
+import { buildBreadcrumbListSchema } from '../../lib/breadcrumbs'
 
 const SLUG = 'specialties/personal'
 
@@ -37,9 +38,21 @@ const fallback = {
     'זה לא אומר שמשהו בך “לא בסדר”. לרוב זה אומר שדפוס ישן עדיין מנהל את התגובה. מ.ס.ע עוזרת להפוך את זה למסע מסודר: להבין, לשחרר, ולחזור לפעולה מתוך שקט.',
   stagesTitle: 'מה קורה בפועל',
   stages: [
-    { key: 'mapping', title: 'מיפוי', text: 'מזהים מה מפעיל אותך, איזה פירוש נדלק, ואיזה דפוס רגשי נכנס אוטומטית לפעולה.' },
-    { key: 'removal', title: 'סילוק', text: 'משחררים את החיבור בין הטריגר לתגובה, כדי שהגוף והתודעה לא יצטרכו “להגן” באותה צורה.' },
-    { key: 'autonomy', title: 'עצמאות', text: 'בונים שגרה פנימית חדשה: בחירה, גבולות ועוגנים שמחזיקים לאורך זמן בלי מאבק.' },
+    {
+      key: 'mapping',
+      title: 'מיפוי',
+      text: 'מזהים מה מפעיל אותך, איזה פירוש נדלק, ואיזה דפוס רגשי נכנס אוטומטית לפעולה.',
+    },
+    {
+      key: 'removal',
+      title: 'סילוק',
+      text: 'משחררים את החיבור בין הטריגר לתגובה, כדי שהגוף והתודעה לא יצטרכו “להגן” באותה צורה.',
+    },
+    {
+      key: 'autonomy',
+      title: 'עצמאות',
+      text: 'בונים שגרה פנימית חדשה: בחירה, גבולות ועוגנים שמחזיקים לאורך זמן בלי מאבק.',
+    },
   ],
   closing:
     'המטרה היא לא להיות חזק יותר. המטרה היא להיות פחות מופעל, ולהרגיש שאתה חוזר להוביל את עצמך.',
@@ -47,7 +60,8 @@ const fallback = {
 
 const title = page?.seo?.title || page?.title || `${fallback.title} | ${site.brand}`
 const description = page?.seo?.description || page?.excerpt || fallback.gold
-const canonical = page?.seo?.canonical || undefined
+const canonical =
+  page?.seo?.canonical || new URL(Astro.url.pathname, site.siteUrl).toString()
 const noindex = page?.seo?.noindex || false
 const ogImage = page?.seo?.ogImage?.asset?.url || undefined
 
@@ -55,11 +69,27 @@ const h1 = page?.title || fallback.title
 const gold = page?.excerpt || fallback.gold
 const intro = page?.specialty?.intro || fallback.intro
 const stagesTitle = page?.specialty?.stagesTitle || fallback.stagesTitle
-const stages = (page?.specialty?.stages?.length ? page.specialty.stages : fallback.stages)
+const stages = page?.specialty?.stages?.length ? page.specialty.stages : fallback.stages
 const closing = page?.specialty?.closing || fallback.closing
+
+const breadcrumbSchema = buildBreadcrumbListSchema({
+  siteUrl: site.siteUrl,
+  brandName: site.brand,
+  crumbs: [
+    { name: 'תחומי התמחות', item: `${site.siteUrl}/specialties` },
+    { name: h1, item: canonical },
+  ],
+})
 ---
 
-<BaseLayout title={title} description={description} canonical={canonical} noindex={noindex} ogImage={ogImage}>
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  noindex={noindex}
+  ogImage={ogImage}
+  schema={[breadcrumbSchema]}
+>
   <section class="animate-fade-in py-24 bg-background min-h-screen">
     <div class="max-w-4xl mx-auto px-6">
       <header class="mb-10 text-center">

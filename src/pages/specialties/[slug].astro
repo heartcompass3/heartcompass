@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 import PortableText from '../../components/PortableText.astro'
 import { sanity } from '../../lib/sanity'
 import site from '../../content/pages/site.json'
+import { buildBreadcrumbListSchema } from '../../lib/breadcrumbs'
 
 const { slug } = Astro.params
 
@@ -37,13 +38,29 @@ if (!page) {
 
 const title = page?.seo?.title || page.title || `מצפן הלב | ${site.brand}`
 const description = page?.seo?.description || page.excerpt || ''
-const canonical = page?.seo?.canonical || undefined
+const canonical = page?.seo?.canonical || new URL(Astro.url.pathname, site.siteUrl).toString()
 const noindex = page?.seo?.noindex || false
 const ogImage = page?.seo?.ogImage?.asset?.url || undefined
 const body = Array.isArray(page?.body) ? page.body : []
+
+const breadcrumbSchema = buildBreadcrumbListSchema({
+  siteUrl: site.siteUrl,
+  brandName: site.brand,
+  crumbs: [
+    { name: 'תחומי התמחות', item: `${site.siteUrl}/specialties` },
+    { name: page.title, item: canonical },
+  ],
+})
 ---
 
-<BaseLayout title={title} description={description} canonical={canonical} noindex={noindex} ogImage={ogImage}>
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  noindex={noindex}
+  ogImage={ogImage}
+  schema={[breadcrumbSchema]}
+>
   <section class="container mx-auto px-6 py-16">
     <header class="max-w-4xl mx-auto text-center">
       <h1 class="text-4xl md:text-5xl font-black text-primary font-display leading-tight">
