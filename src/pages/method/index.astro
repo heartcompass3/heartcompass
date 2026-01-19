@@ -164,7 +164,7 @@ const ogImage = data?.seo?.ogImage?.asset?.url || undefined
           <div class="bg-white p-6 md:p-8 rounded-[3rem] shadow-elegant border border-white">
             <img
               src={interludeUrl}
-              alt={interludeAlt || ''}
+              alt={interludeAlt || interludeCaption || `תמונת ביניים | ${site.brand}`}
               class="w-full h-auto rounded-[2.5rem]"
               loading="lazy"
             />
