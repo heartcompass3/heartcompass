@@ -10,16 +10,26 @@ export default defineConfig({
   integrations: [
     sitemap({
       filter: (url) => {
-        const pathname = url.pathname
+        try {
+          const pathname =
+            typeof url === 'string'
+              ? new URL(url).pathname
+              : url?.pathname
 
-        // Exclude test route
-        if (pathname === '/sanity-test') return false
+          if (!pathname) return true
 
-        // Exclude legacy redirect aliases
-        if (pathname === '/blog') return false
-        if (pathname.startsWith('/method/')) return false
+          // Exclude test route
+          if (pathname === '/sanity-test') return false
 
-        return true
+          // Exclude legacy redirect aliases
+          if (pathname === '/blog') return false
+          if (pathname.startsWith('/method/')) return false
+
+          return true
+        } catch {
+          // Never fail sitemap generation
+          return true
+        }
       },
     }),
   ],
