@@ -2,8 +2,23 @@ import { defineConfig } from 'astro/config'
 import vercel from '@astrojs/vercel'
 import sitemap from '@astrojs/sitemap'
 
+function getSiteUrl() {
+  // Vercel sets these at build-time
+  const env = process.env.VERCEL_ENV // 'production' | 'preview' | 'development'
+  const vercelUrl = process.env.VERCEL_URL // e.g. heartcompass-xxxx-projects.vercel.app
+
+  // Always keep canonical domain in production sitemaps
+  if (env === 'production') return 'https://heartcompass.vercel.app'
+
+  // In Preview, generate sitemap URLs for the preview deployment itself
+  if (vercelUrl) return `https://${vercelUrl}`
+
+  // Local/dev fallback
+  return 'http://localhost:4321'
+}
+
 export default defineConfig({
-  site: 'https://heartcompass.vercel.app',
+  site: getSiteUrl(),
   output: 'server',
   trailingSlash: 'never',
   adapter: vercel(),
@@ -18,12 +33,17 @@ export default defineConfig({
 
           if (!pathname) return true
 
+          // Normalize trailing slashes so comparisons are consistent
+          const normalized = pathname.replace(/\/+$/, '') || '/'
+
           // Exclude test route
-          if (pathname === '/sanity-test') return false
+          if (normalized === '/sanity-test') return false
 
           // Exclude legacy redirect aliases
-          if (pathname === '/blog') return false
-          if (pathname.startsWith('/method/')) return false
+          if (normalized === '/blog') return false
+
+          // Exclude legacy method subroutes (keep /method itself)
+          if (normalized.startsWith('/method/')) return false
 
           return true
         } catch {
