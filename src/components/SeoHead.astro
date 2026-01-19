@@ -1,18 +1,6 @@
 ---
 import site from '../content/pages/site.json'
 
-export type SeoPageType = 'website' | 'article'
-
-export interface Props {
-  title?: string
-  description?: string
-  canonical?: string
-  noIndex?: boolean
-  ogImage?: string
-  pageType?: SeoPageType
-  schema?: Array<Record<string, any>>
-}
-
 const {
   title,
   description,
@@ -25,7 +13,7 @@ const {
 
 const brand = site.brand
 
-const clean = (v?: string) => (typeof v === 'string' ? v.trim() : '')
+const clean = (v) => (typeof v === 'string' ? v.trim() : '')
 
 const resolvedTitle = (() => {
   const t = clean(title)
@@ -35,12 +23,13 @@ const resolvedTitle = (() => {
   return `${t} | ${brand}`
 })()
 
-const defaultDescription = clean(site.heroDescription) || 'אימון רגשי תודעתי לשחרור חסמים ומציאת ייעוד.'
+const defaultDescription =
+  clean(site.heroDescription) || 'אימון רגשי תודעתי לשחרור חסמים ומציאת ייעוד.'
 const resolvedDescription = clean(description) || defaultDescription
 
 const resolvedCanonical = clean(canonical) || site.siteUrl
 
-const toAbsoluteUrl = (v?: string) => {
+const toAbsoluteUrl = (v) => {
   const raw = clean(v)
   if (!raw) return ''
   try {
@@ -58,7 +47,7 @@ const resolvedOgImage = toAbsoluteUrl(ogImage) || defaultOgImage
 <title>{resolvedTitle}</title>
 <meta name="description" content={resolvedDescription} />
 <link rel="canonical" href={resolvedCanonical} />
-{noIndex && <meta name="robots" content="noindex,nofollow" />}
+{noIndex && <meta name="robots" content="noindex,follow" />}
 
 <!-- Open Graph -->
 <meta property="og:locale" content="he_IL" />
