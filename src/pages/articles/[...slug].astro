@@ -86,28 +86,24 @@ const breadcrumbSchema = {
           <div class="w-full h-80 rounded-[2rem] overflow-hidden mb-12 shadow-lg">
             <img
               src={article.mainImage.asset.url}
-              alt={article.mainImage.alt || article.title}
+              alt={article.mainImage.alt || article.title || `מאמר | ${site.brand}`}
               class="w-full h-full object-cover"
               loading="lazy"
             />
           </div>
         )}
 
-        {/* Header */}
         <header class="text-center">
-          {/* Gold line (subtitle) */}
           {article.goldLine && (
             <p class="text-accent font-bold tracking-wide mb-5 font-display">
               {article.goldLine}
             </p>
           )}
 
-          {/* H1 */}
           <h1 class="text-4xl md:text-6xl font-black text-primary font-display leading-tight mx-auto max-w-[20ch]">
             {article.title}
           </h1>
 
-          {/* Meta line */}
           <div class="flex flex-wrap items-center justify-center gap-4 text-primary/60 font-body mt-6">
             {article.publishedAt && <span>{new Date(article.publishedAt).toLocaleDateString('he-IL')}</span>}
             {article.authorLine && <span>•</span>}
@@ -121,7 +117,6 @@ const breadcrumbSchema = {
           )}
         </header>
 
-        {/* Body */}
         <div class="mt-14 prose prose-xl max-w-none text-primary/80 font-body leading-9">
           <PortableText value={article.body} />
         </div>
