@@ -42,6 +42,9 @@ const bridgeText =
 
 // Cards
 const cards = home.cards?.items ?? []
+const cardsSectionTitle = home.cards?.title || 'תחומי האימון'
+const cardsSectionDescription =
+  home.cards?.description || 'שלושה עמודי תווך לתהליך עמוק, מדויק ומותאם.'
 
 // MSA
 const msaIntro = home.methodIntro
@@ -155,10 +158,10 @@ const brandDeep = '#295157'
   <!-- תחומי האימון -->
   <section class="container mx-auto px-6 pt-20 pb-14 text-center">
     <h2 class="text-4xl md:text-5xl font-black font-display" style={`color:${brandDeep}`}>
-      תחומי האימון
+      {cardsSectionTitle}
     </h2>
     <p class="mt-4 text-base md:text-lg text-muted-foreground font-body">
-      שלושה עמודי תווך לתהליך עמוק, מדויק ומותאם.
+      {cardsSectionDescription}
     </p>
   </section>
 

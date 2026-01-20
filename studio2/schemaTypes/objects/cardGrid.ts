@@ -1,4 +1,4 @@
-import {defineType, defineField} from 'sanity'
+import { defineType, defineField } from 'sanity'
 
 export default defineType({
   name: 'cardGrid',
@@ -6,21 +6,48 @@ export default defineType({
   type: 'object',
   fields: [
     defineField({
+      name: 'title',
+      title: 'כותרת הסקשן',
+      type: 'string',
+      initialValue: 'תחומי האימון',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'description',
+      title: 'תיאור הסקשן',
+      type: 'string',
+      initialValue: 'שלושה עמודי תווך לתהליך עמוק, מדויק ומותאם.',
+      validation: (Rule) =>
+        Rule.max(180).warning('מומלץ עד 180 תווים'),
+    }),
+    defineField({
       name: 'items',
       title: 'כרטיסים',
       type: 'array',
-      validation: (Rule) => Rule.max(3).warning('מומלץ 3 כרטיסים'),
       of: [
-        {
+        defineField({
           name: 'card',
           title: 'כרטיס',
           type: 'object',
           fields: [
-            {name: 'title', title: 'כותרת', type: 'string'},
-            {name: 'text', title: 'טקסט קצר', type: 'text', rows: 3},
-            {name: 'link', title: 'קישור', type: 'string'},
+            defineField({
+              name: 'title',
+              title: 'כותרת',
+              type: 'string',
+            }),
+            defineField({
+              name: 'text',
+              title: 'טקסט',
+              type: 'text',
+              rows: 3,
+            }),
+            defineField({
+              name: 'link',
+              title: 'קישור',
+              type: 'string',
+            }),
           ],
-        },
+        }),
       ],
     }),
   ],
