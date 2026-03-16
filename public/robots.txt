@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://heartcompass.vercel.app/sitemap-index.xml
+User-agent: OAI-SearchBot
+Allow: /
+
+Sitemap: https://heartcompass.vercel.app/sitemap.xml
