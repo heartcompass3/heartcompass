@@ -1,7 +1,21 @@
 User-agent: *
 Allow: /
 
+# חסימת אזורים טכניים (אם קיימים)
+Disallow: /api/
+Disallow: /studio/
+
+# גוגל
+User-agent: Googlebot
+Allow: /
+
+# בינג
+User-agent: Bingbot
+Allow: /
+
+# OpenAI / AI Crawlers
 User-agent: OAI-SearchBot
 Allow: /
 
+# מפת האתר
 Sitemap: https://heartcompass.vercel.app/sitemap.xml
