@@ -1,27 +1,12 @@
 import type { APIRoute } from 'astro'
 import { sanity } from '../lib/sanity'
 
-export const GET: APIRoute = async () => {
+export const prerender = true;
 
+export const GET: APIRoute = async () => {
   const baseUrl = 'https://heartcompass.vercel.app'
 
-  // מאמרים
-  const posts = await sanity.fetch(`
-    *[_type == "post"]{
-      "slug": slug.current,
-      _updatedAt
-    }
-  `)
-
-  // תחומי התמחות
-  const specialties = await sanity.fetch(`
-    *[_type == "specialty"]{
-      "slug": slug.current,
-      _updatedAt
-    }
-  `)
-
-  // עמודים סטטיים (עם תאריך אמיתי, לא דינמי!)
+  // עמודי התשתית 
   const staticPages = [
     { url: '/', lastmod: '2026-03-01' },
     { url: '/about', lastmod: '2026-03-01' },
@@ -30,6 +15,30 @@ export const GET: APIRoute = async () => {
     { url: '/specialties', lastmod: '2026-03-01' }
   ]
 
+  let articles = []
+  let pages = []
+
+  try {
+    // משיכת המאמרים
+    articles = await sanity.fetch(`
+      *[_type == "article" && defined(slug.current)]{
+        "slug": slug.current,
+        _updatedAt
+      }
+    `)
+
+    // משיכת דפי ההתמחויות (סכימת "page")
+    pages = await sanity.fetch(`
+      *[_type == "page" && defined(slug.current)]{
+        "slug": slug.current,
+        _updatedAt
+      }
+    `)
+
+  } catch (error) {
+    console.error('❌ Error fetching dynamic routes from Sanity:', error)
+  }
+
   const urls = [
     ...staticPages.map(p => `
       <url>
@@ -37,20 +46,24 @@ export const GET: APIRoute = async () => {
         <lastmod>${p.lastmod}</lastmod>
       </url>
     `),
-
-    ...posts.map(post => `
+    ...articles.map(a => {
+      // מנקה סלאש מיותר אם קיים בטעות ב-Sanity
+      const cleanSlug = a.slug.replace(/^\/+/, '')
+      return `
       <url>
-        <loc>${baseUrl}/articles/${post.slug}</loc>
-        <lastmod>${post._updatedAt}</lastmod>
+        <loc>${baseUrl}/articles/${cleanSlug}</loc>
+        <lastmod>${a._updatedAt}</lastmod>
       </url>
-    `),
-
-    ...specialties.map(item => `
+    `}),
+    ...pages.map(page => {
+      // כאן הסרנו את הקידומת הקשיחה, כי ה-Slug כבר מכיל אותה
+      const cleanSlug = page.slug.replace(/^\/+/, '')
+      return `
       <url>
-        <loc>${baseUrl}/specialties/${item.slug}</loc>
-        <lastmod>${item._updatedAt}</lastmod>
+        <loc>${baseUrl}/${cleanSlug}</loc>
+        <lastmod>${page._updatedAt}</lastmod>
       </url>
-    `)
+    `})
   ]
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -60,7 +73,8 @@ export const GET: APIRoute = async () => {
 
   return new Response(sitemap, {
     headers: {
-      'Content-Type': 'application/xml'
+      'Content-Type': 'application/xml',
+      'Cache-Control': 's-maxage=60, stale-while-revalidate=300'
     }
   })
 }
