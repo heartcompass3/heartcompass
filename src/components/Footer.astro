@@ -1,105 +1,78 @@
 ---
-import { sanity } from '../lib/sanity'
-import { SITE_SETTINGS_QUERY } from '../lib/sanityQueries'
-
-const year = new Date().getFullYear()
-
-const settings = await sanity.fetch(SITE_SETTINGS_QUERY)
-
-const fallbackSocials = [
-  { label: 'Instagram', href: 'https://www.instagram.com/heartcompass3/', icon: 'instagram' },
-  { label: 'Facebook', href: 'https://www.facebook.com/share/1AGLnvhmiF/', icon: 'facebook' },
-  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/yossi-medalsi-2a643a397/', icon: 'linkedin' },
-  { label: 'WhatsApp', href: 'https://wa.me/972544580285', icon: 'whatsapp' },
-]
-
-const fallbackFooterLinks = [
-  { label: 'ראשי', href: '/' },
-  { label: 'מי אני', href: '/about' },
-  { label: 'השיטה', href: '/method' },
-  { label: 'מאמרים', href: '/articles' },
-]
-
-const socials =
-  Array.isArray(settings?.socials) && settings.socials.length > 0
-    ? settings.socials
-    : fallbackSocials
-
-const footerLinks =
-  Array.isArray(settings?.footerLinks) && settings.footerLinks.length > 0
-    ? settings.footerLinks
-    : fallbackFooterLinks
-
-const brandTitle = settings?.siteTitle ?? settings?.title ?? 'מצפן הלב'
-const tagline = settings?.tagline ?? 'לבחור מתוך תשוקה ולא מתוך פחד'
-const email = 'heartcompass3@gmail.com'
-
-const iconSvg = (name) => {
-  switch (name) {
-
-    case 'instagram':
-      return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg>`
-
-    case 'facebook':
-      return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 22v-8h2.7l.4-3H13.5V9.1c0-.9.3-1.6 1.7-1.6h1.6V4.7c-.8-.1-1.8-.2-3-.2-2.9 0-4.9 1.8-4.9 5v1.5H6.2v3h2.7v8h4.6Z"/></svg>`
-
-    case 'linkedin':
-      return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 6.5A2.44 2.44 0 1 1 6.94 1.6a2.44 2.44 0 0 1 0 4.9ZM2.7 22h4.5V8.2H2.7V22ZM9.6 8.2H14v1.9h.1c.6-1.1 2-2.2 4.2-2.2 4.5 0 5.3 3 5.3 6.8V22h-4.5v-6.3c0-1.5 0-3.5-2.1-3.5-2.1 0-2.4 1.6-2.4 3.4V22H9.6V8.2Z"/></svg>`
-
-    case 'whatsapp':
-      return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 11.5a8 8 0 1 1-15.3 3.2L4 21l6.5-1.6A8 8 0 0 1 20 11.5Z"/></svg>`
-
-    default:
-      return ''
-  }
-}
 ---
 
-<footer class="bg-[#0f2f33] text-white">
-  <div class="max-w-7xl mx-auto px-6 py-14">
+<footer class="bg-[#0f172a] text-white mt-24">
+  <div class="max-w-7xl mx-auto px-6 py-16">
 
-    <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-10">
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-12">
 
-      <div class="text-center md:text-right space-y-3">
-        <div class="font-display text-2xl">{brandTitle}</div>
-        <div class="text-white/70 font-body">{tagline}</div>
-
-        <a href={`mailto:${email}`} class="text-white/70 hover:text-white">
-          {email}
-        </a>
+      <!-- מותג -->
+      <div>
+        <h3 class="text-2xl font-bold mb-4">מצפן הלב</h3>
+        <p class="text-white/70 leading-relaxed">
+          לבחור מתוך תשוקה ולא מתוך פחד.  
+          תהליך עומק לזיהוי חסמים, שחרור דפוסים ובניית דרך מדויקת.
+        </p>
       </div>
 
-      <div class="flex justify-center gap-4">
-        {socials.map((s) => (
-          <a
-            href={s.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={s.label}
-            class="w-11 h-11 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition"
-          >
-            <span class="w-5 h-5 text-white" set:html={iconSvg(s.icon)}></span>
-          </a>
-        ))}
+      <!-- תחומי ליווי -->
+      <div>
+        <h4 class="text-lg font-semibold mb-4">תחומי ליווי</h4>
+        <ul class="space-y-2 text-white/70">
+          <li><a href="/specialties/couples" class="hover:text-white">אימון זוגי</a></li>
+          <li><a href="/specialties/personal" class="hover:text-white">התפתחות אישית</a></li>
+          <li><a href="/specialties/career" class="hover:text-white">קריירה וייעוד</a></li>
+        </ul>
       </div>
 
-      <nav class="flex flex-col items-center md:items-end gap-3 font-body text-white/80">
-        {footerLinks.map((l) => (
-          <a href={l.href} class="hover:text-white">
-            {l.label}
+      <!-- השיטה -->
+      <div>
+        <h4 class="text-lg font-semibold mb-4">השיטה</h4>
+        <ul class="space-y-2 text-white/70">
+          <li><a href="/method" class="hover:text-white">שיטת מ.ס.ע</a></li>
+        </ul>
+      </div>
+
+      <!-- ניווט -->
+      <div>
+        <h4 class="text-lg font-semibold mb-4">ניווט</h4>
+        <ul class="space-y-2 text-white/70">
+          <li><a href="/" class="hover:text-white">דף הבית</a></li>
+          <li><a href="/about" class="hover:text-white">אודות</a></li>
+          <li><a href="/articles" class="hover:text-white">מאמרים</a></li>
+          <li><a href="/contact" class="hover:text-white">צור קשר</a></li>
+        </ul>
+      </div>
+
+      <!-- סושיאל -->
+      <div>
+        <h4 class="text-lg font-semibold mb-4">עקבו אחרי</h4>
+        <div class="flex flex-col gap-2 text-white/70">
+
+          <a href="https://www.instagram.com/heartcompass3/" target="_blank" class="hover:text-white">
+            Instagram
           </a>
-        ))}
 
-        <a href="/accessibility" class="hover:text-white">
-          הצהרת נגישות
-        </a>
+          <a href="https://www.facebook.com/share/1AGLnvhmiF/" target="_blank" class="hover:text-white">
+            Facebook
+          </a>
 
-      </nav>
+          <a href="https://www.linkedin.com/in/yossi-medalsi-2a643a397/" target="_blank" class="hover:text-white">
+            LinkedIn
+          </a>
+
+          <a href="https://wa.me/972544580285" target="_blank" class="hover:text-white">
+            WhatsApp
+          </a>
+
+        </div>
+      </div>
 
     </div>
 
-    <div class="mt-10 pt-6 border-t border-white/10 text-center text-white/60 text-sm font-body">
-      © {year} {brandTitle}. כל הזכויות שמורות.
+    <!-- תחתית -->
+    <div class="border-t border-white/10 mt-12 pt-6 text-center text-white/50 text-sm">
+      © {new Date().getFullYear()} מצפן הלב. כל הזכויות שמורות.
     </div>
 
   </div>
