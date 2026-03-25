@@ -4,7 +4,7 @@
 <footer class="bg-[#0f172a] text-white mt-24">
   <div class="max-w-7xl mx-auto px-6 py-16">
 
-    <div class="grid grid-cols-1 md:grid-cols-5 gap-12">
+    <div class="grid grid-cols-1 md:grid-cols-6 gap-12">
 
       <!-- מותג -->
       <div>
@@ -66,6 +66,50 @@
           </a>
 
         </div>
+      </div>
+
+      <!-- ניוזלטר משודרג -->
+      <div>
+        <h4 class="text-lg font-semibold mb-2">
+          אם הגעת עד לכאן – כנראה שמשהו בך כבר מחפש שינוי
+        </h4>
+
+        <p class="text-white/70 text-sm leading-relaxed mb-4">
+          אני לא שולח ספאם.  
+          רק תובנות חדות על דפוסים, פחדים והבחירות שאנחנו עושים מתחת לרדאר.  
+          דברים שיכולים להזיז אותך מבפנים.
+        </p>
+
+        <form action="https://formsubmit.co/yossi1974@outlook.co.il" method="POST" class="flex flex-col gap-2">
+
+          <input 
+            type="text" 
+            name="name" 
+            placeholder="איך קוראים לך?" 
+            required 
+            class="p-2 rounded text-black"
+          />
+
+          <input 
+            type="email" 
+            name="email" 
+            placeholder="לאן לשלוח לך את זה?" 
+            required 
+            class="p-2 rounded text-black"
+          />
+
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_subject" value="ליד חדש מהאתר מצפן הלב">
+          <input type="hidden" name="_next" value="http://localhost:4321/thank-you">
+
+          <button 
+            type="submit" 
+            class="bg-white text-black py-2 rounded hover:bg-gray-200"
+          >
+            כן, שלח לי תובנות
+          </button>
+
+        </form>
       </div>
 
     </div>
