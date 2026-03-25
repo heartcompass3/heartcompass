@@ -68,7 +68,7 @@
         </div>
       </div>
 
-      <!-- ניוזלטר משודרג -->
+      <!-- ניוזלטר -->
       <div>
         <h4 class="text-lg font-semibold mb-2">
           אם הגעת עד לכאן – כנראה שמשהו בך כבר מחפש שינוי
@@ -100,7 +100,9 @@
 
           <input type="hidden" name="_captcha" value="false">
           <input type="hidden" name="_subject" value="ליד חדש מהאתר מצפן הלב">
-          <input type="hidden" name="_next" value="http://localhost:4321/thank-you">
+
+          <!-- ⚠️ זה התיקון הקריטי -->
+          <input type="hidden" name="_next" value="https://heartcompass.vercel.app/thank-you">
 
           <button 
             type="submit" 
