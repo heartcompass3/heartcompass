@@ -1,6 +1,5 @@
 import { defineConfig } from 'astro/config'
 import vercel from '@astrojs/vercel'
-import sitemap from '@astrojs/sitemap'
 
 function getSiteUrl() {
   // Vercel sets these at build-time
@@ -22,8 +21,6 @@ export default defineConfig({
   output: 'server',
   trailingSlash: 'never',
   adapter: vercel(),
-  integrations: [
-    sitemap({
       filter: (url) => {
         try {
           const pathname =
