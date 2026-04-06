@@ -4,29 +4,30 @@ import { ARTICLES_QUERY } from '../lib/sanityQueries';
 
 export async function GET() {
   try {
-    // משיכת המאמרים מ-Sanity לפי השאילתה הקיימת באתר
     const articles = await sanity.fetch(ARTICLES_QUERY);
 
     return rss({
       title: 'מצפן הלב - יוסי מדלסי',
       description: 'תובנות, מחקר וכלים לשחרור דפוסים ולתנועה פנימית קדימה.',
       site: 'https://heartcompass.vercel.app',
-      items: articles.map((a: any) => ({
-        title: a.title || 'מאמר ללא כותרת',
-        // שימוש בשדה publishedAt כפי שמופיע ב-ARTICLES_QUERY
-        pubDate: a.publishedAt ? new Date(a.publishedAt) : new Date(),
-        description: a.excerpt || '',
-        // בניית הקישור המדויק לפי ה-slug מתוך Sanity
-        link: `https://heartcompass.vercel.app/articles/${a.slug?.current || ''}/`,
-      })),
+      // הוספת ה-xmlns הדרוש ל-Atom link
+      xmlns: {
+        atom: 'http://www.w3.org/2005/Atom',
+      },
+      // הוספת ה-Self link שה-Validator ביקש
+      customData: `<atom:link href="https://heartcompass.vercel.app/rss.xml" rel="self" type="application/rss+xml" />`,
+      items: articles.map((a: any) => {
+        // ניקוי רווחים מהסלאג כדי למנוע את שגיאת ה-Invalid Character
+        const cleanSlug = (a.slug?.current || '').trim();
+        return {
+          title: a.title,
+          pubDate: a.publishedAt ? new Date(a.publishedAt) : new Date(),
+          description: a.excerpt || '',
+          link: `https://heartcompass.vercel.app/articles/${cleanSlug}`,
+        };
+      }),
     });
   } catch (error) {
-    // במקרה של שגיאה טכנית, נחזיר פיד ריק כדי שה-Build של האתר לא ייכשל
-    return rss({
-      title: 'מצפן הלב',
-      description: 'סנכרון תכנים בתהליך',
-      site: 'https://heartcompass.vercel.app',
-      items: [],
-    });
+    return new Response('Error loading RSS', { status: 500 });
   }
 }
