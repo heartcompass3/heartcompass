@@ -1,29 +1,30 @@
 import rss from '@astrojs/rss';
-import { getCollection } from 'astro:content';
+import { sanity } from '../lib/sanity';
+import { ARTICLES_QUERY } from '../lib/sanityQueries';
 
 export async function GET() {
   try {
-    const allPosts = await getCollection('posts');
-    
-    // סינון מאמרים שאין להם תאריך או כותרת כדי למנוע תקלות
-    const validPosts = allPosts.filter(post => post.data.title && post.data.date);
+    // משיכת המאמרים מ-Sanity לפי השאילתה הקיימת באתר
+    const articles = await sanity.fetch(ARTICLES_QUERY);
 
     return rss({
       title: 'מצפן הלב - יוסי מדלסי',
-      description: 'ליווי רגשי-קוגניטיבי לשחרור דפוסים אוטומטיים',
+      description: 'תובנות, מחקר וכלים לשחרור דפוסים ולתנועה פנימית קדימה.',
       site: 'https://heartcompass.vercel.app',
-      items: validPosts.map((post) => ({
-        title: post.data.title,
-        pubDate: post.data.date,
-        description: post.data.excerpt,
-        // הוספת הכתובת המלאה כדי שפינטרסט ידע לאן להפנות
-        link: `https://heartcompass.vercel.app/articles/${post.id}/`,
+      items: articles.map((a: any) => ({
+        title: a.title || 'מאמר ללא כותרת',
+        // שימוש בשדה publishedAt כפי שמופיע ב-ARTICLES_QUERY
+        pubDate: a.publishedAt ? new Date(a.publishedAt) : new Date(),
+        description: a.excerpt || '',
+        // בניית הקישור המדויק לפי ה-slug מתוך Sanity
+        link: `https://heartcompass.vercel.app/articles/${a.slug?.current || ''}/`,
       })),
     });
   } catch (error) {
+    // במקרה של שגיאה טכנית, נחזיר פיד ריק כדי שה-Build של האתר לא ייכשל
     return rss({
       title: 'מצפן הלב',
-      description: 'סנכרון תכנים',
+      description: 'סנכרון תכנים בתהליך',
       site: 'https://heartcompass.vercel.app',
       items: [],
     });
