@@ -3,32 +3,29 @@ import { getCollection } from 'astro:content';
 
 export async function GET() {
   try {
-    // שליפת כל המאמרים מתיקיית ה-articles
-    const posts = await getCollection('articles');
+    // אנחנו מושכים את 'posts' כי זה השם שמוגדר ב-config.ts שלך
+    const allPosts = await getCollection('posts');
     
     return rss({
       title: 'מצפן הלב - יוסי מדלסי',
       description: 'ליווי רגשי-קוגניטיבי לשחרור דפוסים אוטומטיים',
       site: 'https://heartcompass.vercel.app',
-      items: posts.map((post: any) => ({
-        title: post.data.title || 'מאמר מבית מצפן הלב',
-        pubDate: post.data.pubDate || new Date(),
-        description: post.data.description || '',
+      items: allPosts.map((post) => ({
+        title: post.data.title,
+        // שימוש בשדה date כפי שמופיע ב-config שלך
+        pubDate: post.data.date, 
+        // שימוש בשדה excerpt כתיאור עבור פינטרסט
+        description: post.data.excerpt,
+        // יצירת הקישור לפי המבנה המקובל (id ב-Astro 5)
         link: `/articles/${post.id}/`,
       })),
     });
   } catch (error) {
-    // הגנה: אם יש תקלה בשליפה, נחזיר את פוסט הבדיקה כדי שהאתר לא יקרוס
     return rss({
       title: 'מצפן הלב',
-      description: 'עדכון תוכן בביצוע',
+      description: 'שגיאה בסנכרון מאמרים',
       site: 'https://heartcompass.vercel.app',
-      items: [{
-        title: 'מערכת ה-RSS פעילה',
-        pubDate: new Date(),
-        description: 'המאמרים בטעינה',
-        link: '/',
-      }],
+      items: [],
     });
   }
 }
