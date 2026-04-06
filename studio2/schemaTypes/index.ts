@@ -1,5 +1,3 @@
-// studio2/schemaTypes/index.ts
-
 import { documents } from './documents'
 import { objects } from './objects'
 import landingPage from './landingPage'
