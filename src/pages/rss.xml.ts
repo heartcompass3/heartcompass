@@ -3,27 +3,27 @@ import { getCollection } from 'astro:content';
 
 export async function GET() {
   try {
-    // אנחנו מושכים את 'posts' כי זה השם שמוגדר ב-config.ts שלך
     const allPosts = await getCollection('posts');
     
+    // סינון מאמרים שאין להם תאריך או כותרת כדי למנוע תקלות
+    const validPosts = allPosts.filter(post => post.data.title && post.data.date);
+
     return rss({
       title: 'מצפן הלב - יוסי מדלסי',
       description: 'ליווי רגשי-קוגניטיבי לשחרור דפוסים אוטומטיים',
       site: 'https://heartcompass.vercel.app',
-      items: allPosts.map((post) => ({
+      items: validPosts.map((post) => ({
         title: post.data.title,
-        // שימוש בשדה date כפי שמופיע ב-config שלך
-        pubDate: post.data.date, 
-        // שימוש בשדה excerpt כתיאור עבור פינטרסט
+        pubDate: post.data.date,
         description: post.data.excerpt,
-        // יצירת הקישור לפי המבנה המקובל (id ב-Astro 5)
-        link: `/articles/${post.id}/`,
+        // הוספת הכתובת המלאה כדי שפינטרסט ידע לאן להפנות
+        link: `https://heartcompass.vercel.app/articles/${post.id}/`,
       })),
     });
   } catch (error) {
     return rss({
       title: 'מצפן הלב',
-      description: 'שגיאה בסנכרון מאמרים',
+      description: 'סנכרון תכנים',
       site: 'https://heartcompass.vercel.app',
       items: [],
     });
