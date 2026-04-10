@@ -12,6 +12,7 @@ const {
 } = Astro.props
 
 const brand = site.brand
+const siteName = site.siteName || `${site.brand} - ${site.fullName}`
 
 const clean = (v) => (typeof v === 'string' ? v.trim() : '')
 
@@ -24,10 +25,12 @@ const resolvedTitle = (() => {
 })()
 
 const defaultDescription =
-  clean(site.heroDescription) || 'אימון רגשי תודעתי לשחרור דפוסים ומציאת ייעוד.'
+  clean(site.heroDescription) ||
+  'אימון רגשי תודעתי לשחרור דפוסים ומציאת ייעוד.'
 const resolvedDescription = clean(description) || defaultDescription
 
-const resolvedCanonical = clean(canonical) || site.siteUrl
+const resolvedCanonical = clean(canonical) ||
+  site.siteUrl
 
 const toAbsoluteUrl = (v) => {
   const raw = clean(v)
@@ -41,7 +44,8 @@ const toAbsoluteUrl = (v) => {
 }
 
 const defaultOgImage = `${site.siteUrl}/assets/yossi-hero.jpg`
-const resolvedOgImage = toAbsoluteUrl(ogImage) || defaultOgImage
+const resolvedOgImage = toAbsoluteUrl(ogImage) ||
+  defaultOgImage
 ---
 
 <title>{resolvedTitle}</title>
@@ -49,7 +53,6 @@ const resolvedOgImage = toAbsoluteUrl(ogImage) || defaultOgImage
 <link rel="canonical" href={resolvedCanonical} />
 {noIndex && <meta name="robots" content="noindex,follow" />}
 
-<!-- Open Graph -->
 <meta property="og:site_name" content={siteName} />
 <meta property="og:locale" content="he_IL" />
 <meta property="og:type" content={pageType} />
@@ -58,13 +61,11 @@ const resolvedOgImage = toAbsoluteUrl(ogImage) || defaultOgImage
 <meta property="og:url" content={resolvedCanonical} />
 <meta property="og:image" content={resolvedOgImage} />
 
-<!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={resolvedTitle} />
 <meta name="twitter:description" content={resolvedDescription} />
 <meta name="twitter:image" content={resolvedOgImage} />
 
-<!-- JSON-LD -->
 {Array.isArray(schema) &&
   schema.map((s) => (
     <script type="application/ld+json" set:html={JSON.stringify(s)}></script>
