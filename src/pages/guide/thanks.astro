@@ -1,29 +1,61 @@
 ---
 import { sanity } from '../../lib/sanity'
 
-// אנחנו מושכים את הקישור ל-PDF ישירות מסאניטי כדי שהכפתור יעבוד
-const guideData = await sanity.fetch(`*[_type == "landingPage" && slug.current == "overthinking-releese-guide"][0]{ "pdfUrl": leadMagnet.asset->url }`);
+// ניסיון משיכה ממוקד של ה-PDF
+const guideData = await sanity.fetch(`
+  *[_type == "landingPage" && slug.current == "overthinking-releese-guide"][0]{ 
+    "pdfUrl": leadMagnet.asset->url 
+  }
+`);
 ---
 
 <html lang="he" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <title>תודה - המדריך שלך מוכן</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>תודה - המדריך שלך מוכן | מצפן הלב</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap" rel="stylesheet">
   <script is:inline src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-50 font-['Assistant',sans-serif] antialiased">
+<body class="bg-slate-50 text-slate-900 font-['Assistant',sans-serif] antialiased">
+
   <main class="min-h-screen flex items-center justify-center p-6 text-center">
-    <div class="max-w-xl w-full bg-white p-12 rounded-3xl shadow-xl border border-slate-100">
-      <h1 class="text-3xl font-bold mb-6 text-slate-900">ההרשמה הסתיימה בהצלחה!</h1>
-      <p class="text-xl text-slate-600 mb-10">הצעד הראשון לשחרור המחשבות כבר כאן. המדריך מחכה לך בלחיצה על הכפתור.</p>
+    <div class="max-w-xl w-full bg-white p-12 md:p-16 rounded-3xl shadow-xl border border-slate-100">
       
-      <a href={guideData?.pdfUrl} download 
-         class="inline-block w-full bg-slate-900 hover:bg-black text-white font-bold text-xl py-5 rounded-xl transition-all shadow-lg">
-        להורדת המדריך עכשיו
-      </a>
+      <div class="mb-8 flex justify-center text-green-500">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+
+      <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-6 leading-tight">ההרשמה בוצעה בהצלחה</h1>
       
-      <a href="/" class="block mt-8 text-slate-400 hover:text-slate-600">חזרה לאתר הבית</a>
+      <p class="text-xl text-slate-600 mb-10 leading-relaxed">
+        המדריך לשחרור חשיבת יתר מוכן עבורך. תוכל להוריד אותו בלחיצה על הכפתור למטה.
+      </p>
+
+      <div class="space-y-4">
+        {guideData?.pdfUrl ? (
+          <a href={guideData.pdfUrl} target="_blank" download
+             class="inline-block w-full bg-slate-900 hover:bg-black text-white font-bold text-xl py-5 rounded-xl transition-all shadow-lg hover:shadow-xl">
+            הורדת המדריך (PDF)
+          </a>
+        ) : (
+          /* מנגנון הגנה: אם הקישור מסאניטי חסר, ניתן לחצן שמוביל חזרה לאתר כדי למנוע שגיאת דף */
+          <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-800">
+            <p class="mb-4">המדריך נשלח אליך למייל ברגעים אלו.</p>
+            <a href="/" class="text-slate-900 font-bold underline">חזרה לאתר הבית</a>
+          </div>
+        )}
+        
+        <a href="/" class="block text-slate-400 hover:text-slate-600 text-lg transition-all pt-4">
+          חזרה לאתר הבית
+        </a>
+      </div>
     </div>
   </main>
+
 </body>
 </html>
