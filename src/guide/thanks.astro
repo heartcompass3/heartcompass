@@ -1,7 +1,7 @@
 ---
 import { sanity } from '../../lib/sanity'
 
-// תיקון: איות נכון של release בשאילתה כדי למצוא את הקובץ
+// שימוש בסלאג תקין ללא שגיאות כתיב כדי למשוך את ה-PDF
 const guideData = await sanity.fetch(`*[_type == "landingPage" && slug.current == "overthinking-release-guide"][0]{ "pdfUrl": leadMagnet.asset->url }`);
 ---
 
@@ -9,7 +9,7 @@ const guideData = await sanity.fetch(`*[_type == "landingPage" && slug.current =
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>תודה - המדריך מוכן עבורך</title>
+  <title>תודה | המדריך בדרך אליך</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap" rel="stylesheet">
@@ -21,25 +21,25 @@ const guideData = await sanity.fetch(`*[_type == "landingPage" && slug.current =
     <div class="max-w-xl w-full bg-white p-12 rounded-3xl shadow-xl border border-slate-100">
       
       <div class="mb-8 flex justify-center text-green-500">
-        <svg xmlns="http://www.w3.org/2000/swap" class="h-20 w-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
         </svg>
       </div>
 
-      <h1 class="text-3xl font-bold mb-6">ההרשמה בוצעה בהצלחה</h1>
+      <h1 class="text-3xl font-bold mb-6 italic">ההרשמה בוצעה בהצלחה</h1>
       
       <p class="text-xl text-slate-600 mb-10">
         המדריך לשחרור חשיבת יתר מוכן לקריאה. תוכל להוריד אותו בלחיצה כאן:
       </p>
 
       {guideData?.pdfUrl ? (
-        <a href={guideData.pdfUrl} target="_blank" download
-           class="inline-block w-full bg-slate-900 hover:bg-black text-white font-bold text-xl py-5 rounded-xl transition-all shadow-lg">
+        <a href={guideData.pdfUrl} target="_blank" rel="noopener noreferrer" download
+           class="inline-block w-full bg-slate-900 hover:bg-black text-white font-bold text-xl py-5 rounded-xl transition-all shadow-lg text-center">
           הורדת המדריך (PDF)
         </a>
       ) : (
         <div class="p-4 bg-amber-50 rounded-xl border border-amber-100">
-            <p class="text-amber-700 italic">הקובץ מתעדכן ברגעים אלו, נסה לרענן את הדף בעוד רגע.</p>
+            <p class="text-amber-700">הקובץ מתעדכן כרגע, נסה לרענן את הדף בעוד כמה שניות.</p>
         </div>
       )}
       
