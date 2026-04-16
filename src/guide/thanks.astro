@@ -1,7 +1,8 @@
 ---
 import { sanity } from '../../lib/sanity'
 
-const guideData = await sanity.fetch(`*[_type == "landingPage" && slug.current == "overthinking-releese-guide"][0]{ "pdfUrl": leadMagnet.asset->url }`);
+// תיקון: איות נכון של release בשאילתה כדי למצוא את הקובץ
+const guideData = await sanity.fetch(`*[_type == "landingPage" && slug.current == "overthinking-release-guide"][0]{ "pdfUrl": leadMagnet.asset->url }`);
 ---
 
 <html lang="he" dir="rtl">
@@ -20,7 +21,7 @@ const guideData = await sanity.fetch(`*[_type == "landingPage" && slug.current =
     <div class="max-w-xl w-full bg-white p-12 rounded-3xl shadow-xl border border-slate-100">
       
       <div class="mb-8 flex justify-center text-green-500">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/swap" class="h-20 w-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       </div>
@@ -37,7 +38,9 @@ const guideData = await sanity.fetch(`*[_type == "landingPage" && slug.current =
           הורדת המדריך (PDF)
         </a>
       ) : (
-        <p class="text-amber-600 italic">הקובץ מתעדכן ברגעים אלו, נסה לרענן את הדף בעוד רגע.</p>
+        <div class="p-4 bg-amber-50 rounded-xl border border-amber-100">
+            <p class="text-amber-700 italic">הקובץ מתעדכן ברגעים אלו, נסה לרענן את הדף בעוד רגע.</p>
+        </div>
       )}
       
       <a href="/" class="block mt-8 text-slate-400 hover:text-slate-600 transition-all text-lg">
