@@ -12,6 +12,8 @@ const {
 } = Astro.props
 
 const brand = site.brand
+// הנה החוט שחיברנו:
+const siteName = site.siteName
 
 const clean = (v) => (typeof v === 'string' ? v.trim() : '')
 
@@ -24,8 +26,7 @@ const resolvedTitle = (() => {
 })()
 
 const defaultDescription =
-  clean(site.heroDescription) ||
-  'אימון רגשי תודעתי לשחרור חסמים ומציאת ייעוד.'
+  clean(site.heroDescription) || 'אימון רגשי תודעתי לשחרור חסמים ומציאת ייעוד.'
 const resolvedDescription = clean(description) || defaultDescription
 
 const resolvedCanonical = clean(canonical) || site.siteUrl
@@ -50,7 +51,7 @@ const resolvedOgImage = toAbsoluteUrl(ogImage) || defaultOgImage
 <link rel="canonical" href={resolvedCanonical} />
 {noIndex && <meta name="robots" content="noindex,follow" />}
 
-<meta property="og:site_name" content={brand} />
+<meta property="og:site_name" content={siteName} />
 <meta property="og:locale" content="he_IL" />
 <meta property="og:type" content={pageType} />
 <meta property="og:title" content={resolvedTitle} />
