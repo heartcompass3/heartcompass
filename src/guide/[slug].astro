@@ -22,7 +22,6 @@ if (!pageData) {
 }
 
 const formSubmitEmail = "yossi1974@outlook.co.il"; 
-// כתובת מלאה וקבועה למניעת "ניחושים" של הדפדפן
 const nextUrl = "https://heartcompass.vercel.app/guide/thanks"; 
 ---
 
@@ -42,25 +41,18 @@ const nextUrl = "https://heartcompass.vercel.app/guide/thanks";
     <div class="max-w-6xl w-full bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row border border-slate-100 text-right">
       
       <div class="w-full lg:w-1/2 p-8 md:p-12 lg:p-16 flex flex-col justify-center order-2 lg:order-1">
-        
-        <header class="mb-10">
-          <h1 class="text-4xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
-            {pageData.title}
-          </h1>
-          {pageData.subtitle && (
-            <p class="text-xl md:text-2xl text-slate-600 leading-relaxed">
-              {pageData.subtitle}
-            </p>
-          )}
+        <header class="mb-10 text-right">
+          <h1 class="text-4xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight italic">{pageData.title}</h1>
+          {pageData.subtitle && <p class="text-xl md:text-2xl text-slate-600 leading-relaxed">{pageData.subtitle}</p>}
         </header>
 
         {pageData.content && (
-          <div class="prose prose-lg text-slate-700 mb-8 leading-relaxed">
+          <div class="prose prose-lg text-slate-700 mb-8 text-right leading-relaxed">
             <PortableText value={pageData.content} />
           </div>
         )}
 
-        {pageData.bullets && pageData.bullets.length > 0 && (
+        {pageData.bullets && (
           <section class="mb-10">
             <ul class="space-y-4">
               {pageData.bullets.map((bullet) => (
@@ -77,39 +69,25 @@ const nextUrl = "https://heartcompass.vercel.app/guide/thanks";
           <form action={`https://formsubmit.co/${formSubmitEmail}`} method="POST" class="space-y-4">
             <input type="hidden" name="_next" value={nextUrl}>
             <input type="hidden" name="_captcha" value="false">
-            <input type="hidden" name="_subject" value={`בקשה למדריך חדש: ${pageData.title}`}>
-            
-            <input type="text" name="name" required placeholder="שם מלא" 
-                   class="w-full px-4 py-4 rounded-xl bg-white border border-slate-200 focus:border-slate-400 outline-none transition-all text-lg text-right">
-            
-            <input type="email" name="email" required placeholder="כתובת מייל" 
-                   class="w-full px-4 py-4 rounded-xl bg-white border border-slate-200 focus:border-slate-400 outline-none transition-all text-lg text-right">
+            <input type="hidden" name="_subject" value={`בקשה למדריך: ${pageData.title}`}>
 
-            <button type="submit" 
-                    class="w-full bg-slate-900 hover:bg-black text-white font-bold text-xl py-5 rounded-xl transition-all mt-4 cursor-pointer shadow-lg">
+            <input type="text" name="name" required placeholder="שם מלא" class="w-full px-4 py-4 rounded-xl bg-white border border-slate-200 focus:border-slate-400 outline-none transition-all text-lg text-right">
+            <input type="email" name="email" required placeholder="כתובת מייל" class="w-full px-4 py-4 rounded-xl bg-white border border-slate-200 focus:border-slate-400 outline-none transition-all text-lg text-right">
+
+            <button type="submit" class="w-full bg-slate-900 hover:bg-black text-white font-bold text-xl py-5 rounded-xl transition-all mt-4 cursor-pointer shadow-lg">
               {pageData.cta}
             </button>
           </form>
-          
-          <p class="text-sm text-slate-400 mt-6 text-center italic">
-            {pageData.trustText}
-          </p>
+          <p class="text-sm text-slate-400 mt-6 text-center italic">{pageData.trustText}</p>
         </section>
-
       </div>
 
       {pageData.imageUrl && (
         <div class="w-full lg:w-1/2 bg-slate-100 order-1 lg:order-2 relative h-64 lg:h-auto">
-          <img 
-            src={pageData.imageUrl} 
-            alt={pageData.title} 
-            class="absolute inset-0 w-full h-full object-cover"
-          />
+          <img src={pageData.imageUrl} alt={pageData.title} class="absolute inset-0 w-full h-full object-cover" />
         </div>
       )}
-
     </div>
   </main>
-
 </body>
 </html>
