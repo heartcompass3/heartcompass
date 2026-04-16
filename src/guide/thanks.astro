@@ -1,0 +1,53 @@
+---
+import { sanity } from '../../lib/sanity'
+
+// משיכת הקישור ל-PDF ישירות מהמדריך הרלוונטי
+const guideData = await sanity.fetch(`*[_type == "landingPage" && slug.current == "overthinking-releese-guide"][0]{ "pdfUrl": leadMagnet.asset->url }`);
+---
+
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>תודה - המדריך שלך מוכן</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap" rel="stylesheet">
+  <script is:inline src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 font-['Assistant',sans-serif] antialiased">
+
+  <main class="min-h-screen flex items-center justify-center p-6 text-center">
+    <div class="max-w-xl w-full bg-white p-12 md:p-16 rounded-3xl shadow-xl border border-slate-100">
+      
+      <div class="mb-8 flex justify-center text-green-500">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+
+      <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-6 leading-tight">ההרשמה הסתיימה בהצלחה!</h1>
+      
+      <p class="text-xl text-slate-600 mb-10 leading-relaxed">
+        הצעד הראשון לשחרור הלופ המחשבתי כבר כאן. המדריך מחכה לך בלחיצה על הכפתור למטה.
+      </p>
+
+      <div class="space-y-4">
+        {guideData?.pdfUrl ? (
+          <a href={guideData.pdfUrl} download 
+             class="inline-block w-full bg-slate-900 hover:bg-black text-white font-bold text-xl py-5 rounded-xl transition-all shadow-lg hover:shadow-xl">
+            להורדת המדריך עכשיו
+          </a>
+        ) : (
+          <p class="text-red-500">חל עיכוב קל בקובץ, המתן רגע או צור קשר.</p>
+        )}
+        
+        <a href="/" class="block text-slate-400 hover:text-slate-600 text-lg transition-all pt-4">
+          חזרה לאתר הבית
+        </a>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>
