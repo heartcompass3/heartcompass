@@ -22,7 +22,6 @@ if (!pageData) {
 }
 
 const formSubmitEmail = "yossi1974@outlook.co.il"; 
-// תיקון הכתובת לכתובת הורסל הפעילה שלך
 const nextUrl = "https://heartcompass.vercel.app/guide/thanks"; 
 ---
 
@@ -30,20 +29,20 @@ const nextUrl = "https://heartcompass.vercel.app/guide/thanks";
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{pageData.title}</title>
+  <title>{pageData.title} | מצפן הלב</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap" rel="stylesheet">
   <script is:inline src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-50 text-slate-900 font-['Assistant',sans-serif] antialiased text-right">
+<body class="bg-slate-50 text-slate-900 font-['Assistant',sans-serif] antialiased">
 
-  <main class="min-h-screen flex items-center justify-center p-4 md:p-8 text-right">
-    <div class="max-w-6xl w-full bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row border border-slate-100">
+  <main class="min-h-screen flex items-center justify-center p-4 md:p-8">
+    <div class="max-w-6xl w-full bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row border border-slate-100 text-right">
       
-      <div class="w-full lg:w-1/2 p-8 md:p-12 lg:p-16 flex flex-col justify-center">
+      <div class="w-full lg:w-1/2 p-8 md:p-12 lg:p-16 flex flex-col justify-center order-2 lg:order-1">
         
-        <header class="mb-10 text-right">
+        <header class="mb-10">
           <h1 class="text-4xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
             {pageData.title}
           </h1>
@@ -55,15 +54,15 @@ const nextUrl = "https://heartcompass.vercel.app/guide/thanks";
         </header>
 
         {pageData.content && (
-          <div class="prose prose-lg text-slate-700 mb-8 text-right">
+          <div class="prose prose-lg text-slate-700 mb-8 leading-relaxed">
             <PortableText value={pageData.content} />
           </div>
         )}
 
         {pageData.bullets && pageData.bullets.length > 0 && (
-          <section class="mb-10 text-right">
+          <section class="mb-10">
             <ul class="space-y-4">
-              {pageData.bullets.map((bullet: string) => (
+              {pageData.bullets.map((bullet) => (
                 <li class="flex items-start text-lg text-slate-800">
                   <span class="text-slate-400 ml-4 mt-1">—</span>
                   <span>{bullet}</span>
@@ -99,7 +98,7 @@ const nextUrl = "https://heartcompass.vercel.app/guide/thanks";
       </div>
 
       {pageData.imageUrl && (
-        <div class="w-full lg:w-1/2 bg-slate-100 hidden lg:block relative">
+        <div class="w-full lg:w-1/2 bg-slate-100 order-1 lg:order-2 relative h-64 lg:h-auto">
           <img 
             src={pageData.imageUrl} 
             alt={pageData.title} 
