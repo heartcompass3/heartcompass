@@ -22,8 +22,8 @@ if (!pageData) {
 }
 
 const formSubmitEmail = "yossi1974@outlook.co.il"; 
-// שימוש בכתובת הורסל המדויקת והפעילה שלך [cite: 3, 16]
-const nextUrl = "https://heartcompass.vercel.app/guide/thanks"; 
+// כאן הקסם: אנחנו שולחים את הגולש לדף התודה בתוספת מזהה המדריך הספציפי
+const nextUrl = `https://heartcompass.vercel.app/guide/thanks?guide=${slug}`; 
 ---
 
 <html lang="he" dir="rtl">
@@ -51,6 +51,23 @@ const nextUrl = "https://heartcompass.vercel.app/guide/thanks";
           <div class="prose prose-lg text-slate-700 mb-8 leading-relaxed">
             <PortableText value={pageData.content} />
           </div>
+        )}
+
+        {pageData.bullets && pageData.bullets.length > 0 && (
+          <section class="mb-10">
+            <ul class="space-y-4">
+              {pageData.bullets.map((bullet: string) => (
+                <li class="flex items-start text-lg text-slate-800">
+                  <span class="text-green-500 ml-3 mt-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </span>
+                  <span>{bullet}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
         )}
 
         <section class="bg-slate-50 p-6 md:p-8 rounded-2xl border border-slate-100">
