@@ -5,10 +5,9 @@ const projectId =
   import.meta.env.PUBLIC_SANITY_PROJECT_ID || process.env.PUBLIC_SANITY_PROJECT_ID
 const dataset =
   import.meta.env.PUBLIC_SANITY_DATASET || process.env.PUBLIC_SANITY_DATASET
-const apiVersion =
-  import.meta.env.PUBLIC_SANITY_API_VERSION ||
-  process.env.PUBLIC_SANITY_API_VERSION ||
-  '2024-01-01'
+
+// עדכון גרסת ה-API להיום כדי למנוע בעיות תאימות
+const apiVersion = '2026-04-23' 
 
 if (!projectId) throw new Error('Missing PUBLIC_SANITY_PROJECT_ID')
 if (!dataset) throw new Error('Missing PUBLIC_SANITY_DATASET')
@@ -17,10 +16,8 @@ export const sanity = createClient({
   projectId,
   dataset,
   apiVersion,
-
-  // בלוקאל: רוצים לראות שינוי מיד, בלי קאש
-  // בפרודקשן: אפשר להחזיר ל-true בשביל ביצועים
-  useCdn: import.meta.env.DEV ? false : true,
+  // סילוק ה-CDN כדי להכריח קריאה ישירה של הנתונים המעודכנים (כולל שורת ההסכמה)
+  useCdn: false,
 })
 
 const builder = imageUrlBuilder(sanity)
