@@ -89,6 +89,17 @@ export default defineType({
     }),
 
     defineField({
+      name: 'tags',
+      title: 'תגיות (Tags)',
+      type: 'array',
+      of: [{type: 'string'}],
+      options: {
+        layout: 'tags',
+      },
+      description: 'תגיות למשיכת המאמר לדפי קטגוריה (למשל: זוגיות, הורים, נוער). הקלד ולחץ אנטר.',
+    }),
+
+    defineField({
       name: 'body',
       title: 'גוף המאמר',
       type: 'blockContent',
