@@ -5,7 +5,7 @@ import { sanity } from '../../lib/sanity'
 import { buildBreadcrumbListSchema } from '../../lib/breadcrumbs'
 import { ARTICLES_QUERY } from '../../lib/sanityQueries'
 
-const SLUG = 'specialties/couples'
+const SLUG = 'specialties/youth'
 
 const page = await sanity.fetch(
   `*[_type=="page" && slug.current == $slug][0]{
@@ -33,30 +33,30 @@ const page = await sanity.fetch(
 )
 
 const fallback = {
-  title: 'אימון זוגי בשיטת מ.ס.ע',
-  gold: 'כשיש אהבה אבל משהו ביניכם ננעל. תגובות אוטומטיות, פגיעות ישנות ותחושה שאתם מפספסים אחד את השנייה.',
+  title: 'אימון וטיפול בנוער בשיטת מ.ס.ע',
+  gold: 'לחלץ מתבגרים ממעגלים של הסתגרות, חרדה או כעס. להחזיר להם את תחושת הערך והשליטה על חייהם.',
   intro:
-    'ברוב הזוגות הבעיה היא לא “מה אמרת” אלא מה זה הפעיל. מ.ס.ע הופכת את זה למסע ברור: קודם מבינים את המנגנון, אחר כך משחררים את האוטומט, ואז בונים דרך חדשה לתקשורת יציבה.',
-  stagesTitle: 'איך עובד תהליך אימון וייעוץ זוגי',
+    'גיל ההתבגרות מביא איתו עומס עצום: לחץ חברתי, חוסר ודאות והצפה רגשית. לפעמים זה מתבטא בהסתגרות בחדר, לפעמים בהתפרצויות זעם, ולפעמים בחרדה משתקת. תהליך מ.ס.ע מותאם במיוחד לנוער - מדברים תכלס, בגובה העיניים, בלי חפירות. המטרה היא לתת להם כלים להבין מה קורה להם בראש, ולשחרר את התקיעות בעצמם.',
+  stagesTitle: 'שלבי התהליך: אימון רגשי וטיפול בנוער',
   stages: [
     {
       key: 'mapping',
       title: 'מיפוי',
-      text: 'מזהים מה מפעיל אתכם ברגע האמת: איפה אתם נסגרים, תוקפים, נעלבים או מתרחקים, ומה הפרשנות שמדליקה את זה.',
+      text: 'מזהים את ה"לופ" הפנימי: מה מפחיד אותו באמת? ממה הוא נמנע? (פחד מכישלון, חרדה חברתית, תחושת חוסר שייכות) בלי לשפוט, רק להבין את המנגנון.',
     },
     {
       key: 'removal',
       title: 'סילוק',
-      text: 'משחררים את “הטריגר הקבוע” שמייצר אוטומט: מי צודק, מי נפגע יותר, ומי יישבר ראשון. כשהאוטומט יורד, אפשר לדבר אחרת.',
+      text: 'מפרקים את האמונה המגבילה ("אני לא טוב מספיק", "כולם נגדי", "אין לי סיכוי"). ברגע שהמתבגר מבין שהמחשבה הזו היא רק "באג" במערכת, הלחץ יורד משמעותית.',
     },
     {
       key: 'autonomy',
       title: 'עצמאות',
-      text: 'בונים שפה והרגלים חדשים בבית: גבולות, תיקון, בקשה ברורה, ותקשורת שמכבדת גם רגש וגם היגיון.',
+      text: 'החזרת השליטה. במקום להגיד לו מה לעשות, בונים יחד איתו מנגנונים קטנים לפעולה שנותנים לו ניצחונות מהירים ותחושת מסוגלות מול חברים, לימודים ומשפחה.',
     },
   ],
   closing:
-    'המטרה היא לא “לנצח בוויכוח”. המטרה היא לחזור להיות צוות, מתוך בהירות, רכות ועוצמה.',
+    'המטרה היא לייצר מתבגר חזק מבפנים, שלא נבהל מעצמו ויודע לנהל את הרגשות שלו במקום שהם ינהלו אותו.',
 }
 
 const title = page?.seo?.title || page?.title || `${fallback.title} | ${site.brand}`
@@ -83,12 +83,8 @@ const breadcrumbSchema = buildBreadcrumbListSchema({
 
 // === HUB MAGIC: Fetch articles for this category ===
 const allArticles = await sanity.fetch(ARTICLES_QUERY)
-// סינון מאמרים שמתויגים בזוגיות (כולל שתי הדוגמאות שביקשת לראות)
-const categoryArticles = allArticles?.filter((a) => 
-  (a.tags && (a.tags.includes('זוגיות') || a.tags.includes('אימון זוגי') || a.tags.includes('זוגות'))) ||
-  a.slug?.current === 'arguing-same-things-relationship-patterns' ||
-  a.slug?.current === 'attraction-vs-love-brain-science-patterns'
-) || []
+// הסינון מתבצע כאן: כל מאמר שמתויג עם 'נוער' או 'מתבגרים'
+const categoryArticles = allArticles?.filter((a) => a.tags && (a.tags.includes('נוער') || a.tags.includes('מתבגרים'))) || []
 
 const collectionSchema = {
   '@context': 'https://schema.org',
@@ -174,13 +170,13 @@ if (categoryArticles.length > 0) {
       <!-- === Articles Hub Section === -->
       <div class="pt-8 border-t border-accent/10">
         <h2 class="text-3xl font-black text-primary font-display mb-6 text-center">
-          מאמרים ומדריכים בנושא זוגיות
+          מאמרים ומדריכים לנוער
         </h2>
         
         {categoryArticles.length === 0 ? (
           <div class="text-center bg-white rounded-3xl p-10 border border-white/50 shadow-sm">
             <p class="text-primary/60 font-body text-lg">
-              מאמרים מקצועיים בנושא אימון זוגי ומערכות יחסים יעלו לכאן בקרוב.
+              מאמרים מקצועיים בנושא אימון נוער ומתבגרים יעלו לכאן בקרוב.
             </p>
           </div>
         ) : (
