@@ -1,0 +1,218 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import site from '../../content/pages/site.json'
+import { sanity } from '../../lib/sanity'
+import { buildBreadcrumbListSchema } from '../../lib/breadcrumbs'
+import { ARTICLES_QUERY } from '../../lib/sanityQueries'
+
+const SLUG = 'specialties/youth'
+
+const page = await sanity.fetch(
+  `*[_type=="page" && slug.current == $slug][0]{
+    title,
+    excerpt,
+    specialty{
+      intro,
+      stagesTitle,
+      stages[]{
+        key, title, text
+      },
+      closing
+    },
+    seo{
+      title,
+      description,
+      canonical,
+      noindex,
+      ogImage{
+        asset->{url}
+      }
+    }
+  }`,
+  { slug: SLUG }
+)
+
+const fallback = {
+  title: 'אימון וטיפול בנוער בשיטת מ.ס.ע',
+  gold: 'לחלץ מתבגרים ממעגלים של הסתגרות, חרדה או כעס. להחזיר להם את תחושת הערך והשליטה על חייהם.',
+  intro:
+    'גיל ההתבגרות מביא איתו עומס עצום: לחץ חברתי, חוסר ודאות והצפה רגשית. לפעמים זה מתבטא בהסתגרות בחדר, לפעמים בהתפרצויות זעם, ולפעמים בחרדה משתקת. תהליך מ.ס.ע מותאם במיוחד לנוער - מדברים תכלס, בגובה העיניים, בלי חפירות. המטרה היא לתת להם כלים להבין מה קורה להם בראש, ולשחרר את התקיעות בעצמם.',
+  stagesTitle: 'שלבי התהליך: אימון רגשי וטיפול בנוער',
+  stages: [
+    {
+      key: 'mapping',
+      title: 'מיפוי',
+      text: 'מזהים את ה"לופ" הפנימי: מה מפחיד אותו באמת? ממה הוא נמנע? (פחד מכישלון, חרדה חברתית, תחושת חוסר שייכות) בלי לשפוט, רק להבין את המנגנון.',
+    },
+    {
+      key: 'removal',
+      title: 'סילוק',
+      text: 'מפרקים את האמונה המגבילה ("אני לא טוב מספיק", "כולם נגדי", "אין לי סיכוי"). ברגע שהמתבגר מבין שהמחשבה הזו היא רק "באג" במערכת, הלחץ יורד משמעותית.',
+    },
+    {
+      key: 'autonomy',
+      title: 'עצמאות',
+      text: 'החזרת השליטה. במקום להגיד לו מה לעשות, בונים יחד איתו מנגנונים קטנים לפעולה שנותנים לו ניצחונות מהירים ותחושת מסוגלות מול חברים, לימודים ומשפחה.',
+    },
+  ],
+  closing:
+    'המטרה היא לייצר מתבגר חזק מבפנים, שלא נבהל מעצמו ויודע לנהל את הרגשות שלו במקום שהם ינהלו אותו.',
+}
+
+const title = page?.seo?.title || page?.title || `${fallback.title} | ${site.brand}`
+const description = page?.seo?.description || page?.excerpt || fallback.gold
+const canonical = page?.seo?.canonical || new URL(Astro.url.pathname, site.siteUrl).toString()
+const noindex = page?.seo?.noindex || false
+const ogImage = page?.seo?.ogImage?.asset?.url || undefined
+
+const h1 = page?.title || fallback.title
+const gold = page?.excerpt || fallback.gold
+const intro = page?.specialty?.intro || fallback.intro
+const stagesTitle = page?.specialty?.stagesTitle || fallback.stagesTitle
+const stages = (page?.specialty?.stages?.length ? page.specialty.stages : fallback.stages)
+const closing = page?.specialty?.closing || fallback.closing
+
+const breadcrumbSchema = buildBreadcrumbListSchema({
+  siteUrl: site.siteUrl,
+  brandName: site.brand,
+  crumbs: [
+    { name: 'תחומי התמחות', item: `${site.siteUrl}/specialties` },
+    { name: h1, item: canonical },
+  ],
+})
+
+// === HUB MAGIC: Fetch articles for this category ===
+const allArticles = await sanity.fetch(ARTICLES_QUERY)
+// הסינון מתבצע כאן: כל מאמר שמתויג עם 'נוער' או 'מתבגרים'
+const categoryArticles = allArticles?.filter((a) => a.tags && (a.tags.includes('נוער') || a.tags.includes('מתבגרים'))) || []
+
+const collectionSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  headline: h1,
+  description: description,
+  url: canonical,
+}
+
+const itemListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: categoryArticles.map((article, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    url: `${site.siteUrl}/articles/${article.slug?.current}`,
+    name: article.title,
+  }))
+}
+
+const schemaArray = [breadcrumbSchema, collectionSchema]
+if (categoryArticles.length > 0) {
+  schemaArray.push(itemListSchema)
+}
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  noindex={noindex}
+  ogImage={ogImage}
+  schema={schemaArray}
+>
+  <section class="animate-fade-in py-24 bg-background min-h-screen">
+    <div class="max-w-4xl mx-auto px-6">
+      <header class="mb-10 text-center">
+        <h1 class="text-5xl md:text-6xl font-black text-primary font-display mb-6">
+          {h1}
+        </h1>
+
+        <p class="text-xl text-accent font-body font-bold max-w-3xl mx-auto">
+          {gold}
+        </p>
+
+        <p class="mt-8 text-lg text-primary/70 font-body leading-relaxed max-w-3xl mx-auto">
+          {intro}
+        </p>
+      </header>
+
+      <div class="bg-white p-10 md:p-16 rounded-[3rem] shadow-elegant border border-white mb-16">
+        <h2 class="text-2xl font-black text-primary font-display mb-10">
+          {stagesTitle}
+        </h2>
+
+        <div class="space-y-8">
+          {stages.map((s) => (
+            <div class="bg-background p-8 rounded-2xl border border-accent/10">
+              <div class="font-black text-accent mb-2">{s.title}</div>
+              <div class="text-primary/80 font-body leading-relaxed">
+                {s.text}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {closing && (
+          <div class="mt-10 text-primary/75 font-body leading-relaxed">
+            {closing}
+          </div>
+        )}
+
+        <div class="mt-10">
+          <a
+            href={site.primaryCtaHref}
+            class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl gradient-gold text-white font-bold shadow-gold"
+          >
+            {site.primaryCtaLabel} <span aria-hidden="true">←</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- === Articles Hub Section === -->
+      <div class="pt-8 border-t border-accent/10">
+        <h2 class="text-3xl font-black text-primary font-display mb-6 text-center">
+          מאמרים ומדריכים לנוער
+        </h2>
+        
+        {categoryArticles.length === 0 ? (
+          <div class="text-center bg-white rounded-3xl p-10 border border-white/50 shadow-sm">
+            <p class="text-primary/60 font-body text-lg">
+              מאמרים מקצועיים בנושא אימון נוער ומתבגרים יעלו לכאן בקרוב.
+            </p>
+          </div>
+        ) : (
+          <div class="grid gap-8 md:grid-cols-2 mt-10">
+            {categoryArticles.map((a) => (
+              <a
+                href={`/articles/${a.slug?.current}`}
+                class="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border border-white/50 flex flex-col h-full overflow-hidden hover:-translate-y-2 group"
+              >
+                <div class="h-48 overflow-hidden relative w-full">
+                  <img
+                    src={a.mainImage?.asset?.url || '/assets/yossi-hero.jpg'}
+                    alt={a.mainImage?.alt || a.title}
+                    class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="p-8 flex-1 flex flex-col items-start w-full">
+                  <h3 class="text-xl font-black text-primary mb-3 font-display leading-tight group-hover:text-gold-dark transition-colors">
+                    {a.title}
+                  </h3>
+                  {a.excerpt && (
+                    <p class="text-primary/70 font-body leading-relaxed mb-6 line-clamp-2 text-base">
+                      {a.excerpt}
+                    </p>
+                  )}
+                  <div class="mt-auto text-accent font-bold text-sm flex items-center group-hover:gap-2 transition-all">
+                    קרא עוד <span class="mr-2">←</span>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+
+    </div>
+  </section>
+</BaseLayout>
