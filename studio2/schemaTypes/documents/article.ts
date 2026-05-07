@@ -42,7 +42,7 @@ export default defineType({
       rows: 3,
       validation: (Rule) => Rule.required().max(300),
       description:
-        'תקציר אינפורמטיבי: על מה המאמר, למי הוא רלוונטי, ומה הקורא יבין בסופו. לא טיזר רגשי.',
+        'תקציר אינפורמטיבי: על מה המאמר, למי הוא רלוונטי, ומה הקורא יבין בסופו.',
     }),
 
     defineField({
@@ -58,8 +58,7 @@ export default defineType({
           title: 'Alt',
           type: 'string',
           validation: (Rule) => Rule.required(),
-          description:
-            'תיאור ענייני של התמונה לטובת נגישות והקשר תוכני. לא פרשנות ולא שיווק.',
+          description: 'תיאור נגישות לתמונה.',
         }),
       ],
     }),
@@ -85,7 +84,34 @@ export default defineType({
       type: 'string',
       validation: (Rule) => Rule.required(),
       description:
-        'שורת מיצוב מקצועית שמופיעה לקורא. לדוגמה: יוסי מדלסי · מורה דרך לשחרור דפוסים',
+        'לדוגמה: יוסי מדלסי · מורה דרך לשחרור דפוסים',
+    }),
+
+    defineField({
+      name: 'tags',
+      title: 'תחומים',
+      type: 'array',
+
+      of: [
+        {
+          type: 'string',
+        },
+      ],
+
+      options: {
+        list: [
+          { title: 'זוגיות', value: 'זוגיות' },
+          { title: 'הורות', value: 'הורות' },
+          { title: 'נוער', value: 'נוער' },
+          { title: 'קריירה', value: 'קריירה' },
+          { title: 'התפתחות אישית', value: 'התפתחות אישית' },
+        ],
+
+        layout: 'grid',
+      },
+
+      description:
+        'בחירת תחומים תציג את המאמר אוטומטית בדפים המתאימים באתר.',
     }),
 
     defineField({
@@ -94,7 +120,7 @@ export default defineType({
       type: 'blockContent',
       validation: (Rule) => Rule.required(),
       description:
-        'מאמר מקצועי, מבוסס תובנות ומחקר. אפשר חיבור אנושי, לא כתיבה פואטית.',
+        'תוכן המאמר.',
     }),
   ],
 
