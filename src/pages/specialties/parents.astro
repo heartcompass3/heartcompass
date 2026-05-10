@@ -13,9 +13,9 @@ const page = await sanity.fetch(
     excerpt,
     specialty{
       intro,
-      stagesTitle,
-      stages[]{
-        key, title, text
+      faqTitle,
+      faqs[]{
+        question, answer
       },
       closing
     },
@@ -32,45 +32,18 @@ const page = await sanity.fetch(
   { slug: SLUG }
 )
 
-const fallback = {
-  title: 'הדרכת הורים והורות בשיטת מ.ס.ע',
-  gold: 'לבנות סמכות ושקט פנימי בבית. שחרור תגובות אוטומטיות מול הילדים, וחיבור אמיתי במקום מאבקי כוח.',
-  intro:
-    'הורות היא אחד המקומות הכי פגיעים שלנו. הרבה פעמים אנחנו מגיבים לא למה שהילד עשה, אלא לפחד או לחוסר אונים שזה הפעיל בנו. תהליך מ.ס.ע עוזר להורים להבין את המנגנון הזה, לשחרר את הטריגרים הכי קשים, ולחזור להוביל את המשפחה ממקום בטוח ורגוע.',
-  stagesTitle: 'איך עובד תהליך הדרכת הורים בשיטת מ.ס.ע',
-  stages: [
-    {
-      key: 'mapping',
-      title: 'מיפוי',
-      text: 'מזהים את האזורים הרגישים: מתי אתה מאבד סבלנות, מתי עולה תחושת אשמה או חוסר אונים, ומה הטריגר הקבוע (למשל חוסר הקשבה, ויכוחים, בכי).',
-    },
-    {
-      key: 'removal',
-      title: 'סילוק',
-      text: 'משחררים את העומס הרגשי האוטומטי: החרדה ש״אני לא הורה מספיק טוב״ או הלחץ ש״אם לא אחמיר עכשיו, המצב יחמיר בעתיד״. מחזירים את הפרופורציה.',
-    },
-    {
-      key: 'autonomy',
-      title: 'עצמאות',
-      text: 'בונים שגרה של סמכות בריאה, הצבת גבולות מתוך רוגע (ולא מתוך עצבים), ותקשורת פתוחה ומקרבת עם הילד.',
-    },
-  ],
-  closing:
-    'המטרה היא לא ״ילד מושלם״ אלא הורות שמבוססת על ביטחון, עוגן ונוכחות יציבה.',
-}
-
-const title = page?.seo?.title || page?.title || `${fallback.title} | ${site.brand}`
-const description = page?.seo?.description || page?.excerpt || fallback.gold
+const title = page?.seo?.title || page?.title || site.brand
+const description = page?.seo?.description || page?.excerpt || ''
 const canonical = page?.seo?.canonical || new URL(Astro.url.pathname, site.siteUrl).toString()
 const noindex = page?.seo?.noindex || false
 const ogImage = page?.seo?.ogImage?.asset?.url || undefined
 
-const h1 = page?.title || fallback.title
-const gold = page?.excerpt || fallback.gold
-const intro = page?.specialty?.intro || fallback.intro
-const stagesTitle = page?.specialty?.stagesTitle || fallback.stagesTitle
-const stages = (page?.specialty?.stages?.length ? page.specialty.stages : fallback.stages)
-const closing = page?.specialty?.closing || fallback.closing
+const h1 = page?.title || ''
+const gold = page?.excerpt || ''
+const intro = page?.specialty?.intro || ''
+const faqTitle = page?.specialty?.faqTitle || ''
+const faqs = page?.specialty?.faqs || []
+const closing = page?.specialty?.closing || ''
 
 const breadcrumbSchema = buildBreadcrumbListSchema({
   siteUrl: site.siteUrl,
@@ -81,9 +54,8 @@ const breadcrumbSchema = buildBreadcrumbListSchema({
   ],
 })
 
-// === HUB MAGIC: Fetch articles for this category ===
+// השארתי את משיכת המאמרים כפי שהייתה, כיוון שהיא מתבססת על תיוג חיצוני
 const allArticles = await sanity.fetch(ARTICLES_QUERY)
-// סינון מאמרים שמתויגים בהורות
 const categoryArticles = allArticles?.filter((a) => a.tags && a.tags.includes('הורות')) || []
 
 const collectionSchema = {
@@ -122,61 +94,70 @@ if (categoryArticles.length > 0) {
   <section class="animate-fade-in py-24 bg-background min-h-screen">
     <div class="max-w-4xl mx-auto px-6">
       <header class="mb-10 text-center">
-        <h1 class="text-5xl md:text-6xl font-black text-primary font-display mb-6">
-          {h1}
-        </h1>
-
-        <p class="text-xl text-accent font-body font-bold max-w-3xl mx-auto">
-          {gold}
-        </p>
-
-        <p class="mt-8 text-lg text-primary/70 font-body leading-relaxed max-w-3xl mx-auto">
-          {intro}
-        </p>
-      </header>
-
-      <div class="bg-white p-10 md:p-16 rounded-[3rem] shadow-elegant border border-white mb-16">
-        <h2 class="text-2xl font-black text-primary font-display mb-10">
-          {stagesTitle}
-        </h2>
-
-        <div class="space-y-8">
-          {stages.map((s) => (
-            <div class="bg-background p-8 rounded-2xl border border-accent/10">
-              <div class="font-black text-accent mb-2">{s.title}</div>
-              <div class="text-primary/80 font-body leading-relaxed">
-                {s.text}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {closing && (
-          <div class="mt-10 text-primary/75 font-body leading-relaxed">
-            {closing}
-          </div>
+        {h1 && (
+          <h1 class="text-5xl md:text-6xl font-black text-primary font-display mb-6">
+            {h1}
+          </h1>
         )}
 
-        <div class="mt-10">
-          <a
-            href={site.primaryCtaHref}
-            class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl gradient-gold text-white font-bold shadow-gold"
-          >
-            {site.primaryCtaLabel} <span aria-hidden="true">←</span>
-          </a>
-        </div>
-      </div>
+        {gold && (
+          <p class="text-xl text-accent font-body font-bold max-w-3xl mx-auto">
+            {gold}
+          </p>
+        )}
 
-      <!-- === Articles Hub Section === -->
+        {intro && (
+          <p class="mt-8 text-lg text-primary/70 font-body leading-relaxed max-w-3xl mx-auto">
+            {intro}
+          </p>
+        )}
+      </header>
+
+      {faqs.length > 0 && (
+        <div class="bg-white p-10 md:p-16 rounded-[3rem] shadow-elegant border border-white mb-16">
+          {faqTitle && (
+            <h2 class="text-2xl font-black text-primary font-display mb-10">
+              {faqTitle}
+            </h2>
+          )}
+
+          <div class="space-y-8">
+            {faqs.map((faq) => (
+              <div class="bg-background p-8 rounded-2xl border border-accent/10">
+                <div class="font-black text-accent mb-2">{faq.question}</div>
+                <div class="text-primary/80 font-body leading-relaxed">
+                  {faq.answer}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {closing && (
+            <div class="mt-10 text-primary/75 font-body leading-relaxed">
+              {closing}
+            </div>
+          )}
+
+          <div class="mt-10">
+            <a
+              href={site.primaryCtaHref}
+              class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl gradient-gold text-white font-bold shadow-gold"
+            >
+              {site.primaryCtaLabel} <span aria-hidden="true">←</span>
+            </a>
+          </div>
+        </div>
+      )}
+
       <div class="pt-8 border-t border-accent/10">
         <h2 class="text-3xl font-black text-primary font-display mb-6 text-center">
-          מאמרים ומדריכים להורים
+          מאמרים ומדריכים
         </h2>
         
         {categoryArticles.length === 0 ? (
           <div class="text-center bg-white rounded-3xl p-10 border border-white/50 shadow-sm">
             <p class="text-primary/60 font-body text-lg">
-              מאמרים מקצועיים בנושא הורות ומשפחה יעלו לכאן בקרוב.
+              מאמרים מקצועיים יעלו לכאן בקרוב.
             </p>
           </div>
         ) : (
@@ -188,7 +169,7 @@ if (categoryArticles.length > 0) {
               >
                 <div class="h-48 overflow-hidden relative w-full">
                   <img
-                    src={a.mainImage?.asset?.url || '/assets/yossi-hero.jpg'}
+                    src={a.mainImage?.asset?.url || ''}
                     alt={a.mainImage?.alt || a.title}
                     class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
                     loading="lazy"
