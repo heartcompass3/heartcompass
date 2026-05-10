@@ -7,7 +7,6 @@ import { buildBreadcrumbListSchema } from '../../lib/breadcrumbs'
 
 const { slug } = Astro.params
 
-// מחפשים דף לפי שלוש אפשרויות כדי לתפוס גם תצורות שונות של slugs
 const page = await sanity.fetch(
   `*[_type=="page" && (
       slug.current == $plain
@@ -17,12 +16,28 @@ const page = await sanity.fetch(
     title,
     excerpt,
     body,
+
+    specialty{
+      intro,
+
+      faqTitle,
+
+      faq[]{
+        question,
+        answer
+      },
+
+      closing
+    },
+
     seo{
       title,
       description,
       canonical,
       noindex,
-      ogImage{ asset->{url} }
+      ogImage{
+        asset->{url}
+      }
     }
   }`,
   {
@@ -36,21 +51,97 @@ if (!page) {
   return new Response(null, { status: 404 })
 }
 
-const title = page?.seo?.title || page.title || `מצפן הלב | ${site.brand}`
-const description = page?.seo?.description || page.excerpt || ''
-const canonical = page?.seo?.canonical || new URL(Astro.url.pathname, site.siteUrl).toString()
-const noindex = page?.seo?.noindex || false
-const ogImage = page?.seo?.ogImage?.asset?.url || undefined
-const body = Array.isArray(page?.body) ? page.body : []
+const title =
+  page?.seo?.title ||
+  page.title ||
+  `מצפן הלב | ${site.brand}`
 
-const breadcrumbSchema = buildBreadcrumbListSchema({
-  siteUrl: site.siteUrl,
-  brandName: site.brand,
-  crumbs: [
-    { name: 'תחומי התמחות', item: `${site.siteUrl}/specialties` },
-    { name: page.title, item: canonical },
-  ],
-})
+const description =
+  page?.seo?.description ||
+  page.excerpt ||
+  ''
+
+const canonical =
+  page?.seo?.canonical ||
+  new URL(Astro.url.pathname, site.siteUrl).toString()
+
+const noindex =
+  page?.seo?.noindex || false
+
+const ogImage =
+  page?.seo?.ogImage?.asset?.url || undefined
+
+const body =
+  Array.isArray(page?.body)
+    ? page.body
+    : []
+
+const faq =
+  Array.isArray(page?.specialty?.faq)
+    ? page.specialty.faq
+    : []
+
+const faqTitle =
+  page?.specialty?.faqTitle ||
+  'שאלות שאנשים שואלים את עצמם בשקט'
+
+const intro =
+  page?.specialty?.intro || ''
+
+const closing =
+  page?.specialty?.closing || ''
+
+const breadcrumbSchema =
+  buildBreadcrumbListSchema({
+    siteUrl: site.siteUrl,
+    brandName: site.brand,
+
+    crumbs: [
+      {
+        name: 'תחומי התמחות',
+        item: `${site.siteUrl}/specialties`,
+      },
+
+      {
+        name: page.title,
+        item: canonical,
+      },
+    ],
+  })
+
+const faqSchema =
+  faq.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+
+        mainEntity: faq.map((item) => ({
+          '@type': 'Question',
+
+          name: item.question,
+
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: item.answer,
+          },
+        })),
+      }
+    : null
+
+const serviceSchema = {
+  '@context': 'https://schema.org',
+
+  '@type': 'Service',
+
+  name: page.title,
+
+  description,
+
+  provider: {
+    '@type': 'Person',
+    name: 'יוסי מדלסי',
+  },
+}
 ---
 
 <BaseLayout
@@ -59,7 +150,18 @@ const breadcrumbSchema = buildBreadcrumbListSchema({
   canonical={canonical}
   noindex={noindex}
   ogImage={ogImage}
-  schema={[breadcrumbSchema]}
+  schema={
+    faqSchema
+      ? [
+          breadcrumbSchema,
+          serviceSchema,
+          faqSchema,
+        ]
+      : [
+          breadcrumbSchema,
+          serviceSchema,
+        ]
+  }
 >
   <section class="container mx-auto px-6 py-16">
     <header class="max-w-4xl mx-auto text-center">
@@ -72,12 +174,56 @@ const breadcrumbSchema = buildBreadcrumbListSchema({
           {page.excerpt}
         </p>
       )}
+
+      {intro && (
+        <p class="mt-8 text-lg leading-relaxed text-primary/80 font-body">
+          {intro}
+        </p>
+      )}
     </header>
 
-    <article class="max-w-4xl mx-auto mt-12 bg-white rounded-[36px] border border-foreground/5 shadow-lg p-8 md:p-12">
-      <div class="prose prose-lg max-w-none prose-headings:font-display prose-p:font-body prose-p:text-foreground/80 prose-a:text-accent">
-        <PortableText value={body} />
-      </div>
-    </article>
+    {body.length > 0 && (
+      <article class="max-w-4xl mx-auto mt-12 bg-white rounded-[36px] border border-foreground/5 shadow-lg p-8 md:p-12">
+        <div class="prose prose-lg max-w-none prose-headings:font-display prose-p:font-body prose-p:text-foreground/80 prose-a:text-accent">
+          <PortableText value={body} />
+        </div>
+      </article>
+    )}
+
+    {faq.length > 0 && (
+      <section class="max-w-4xl mx-auto mt-12 bg-white rounded-[36px] border border-foreground/5 shadow-lg p-8 md:p-12">
+        <h2 class="text-3xl font-black text-primary font-display text-center mb-10">
+          {faqTitle}
+        </h2>
+
+        <div class="space-y-5">
+          {faq.map((item) => (
+            <details class="group rounded-2xl border border-primary/10 bg-background p-6">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4">
+                <span class="text-lg font-black text-primary leading-relaxed">
+                  {item.question}
+                </span>
+
+                <span class="text-2xl text-accent transition-transform duration-300 group-open:rotate-45">
+                  +
+                </span>
+              </summary>
+
+              <div class="pt-5 text-base leading-relaxed text-primary/80">
+                {item.answer}
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {closing && (
+      <section class="max-w-4xl mx-auto mt-12 text-center">
+        <p class="text-lg leading-relaxed text-primary/80 font-body">
+          {closing}
+        </p>
+      </section>
+    )}
   </section>
 </BaseLayout>

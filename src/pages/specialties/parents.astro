@@ -83,8 +83,8 @@ const breadcrumbSchema = buildBreadcrumbListSchema({
 
 // === HUB MAGIC: Fetch articles for this category ===
 const allArticles = await sanity.fetch(ARTICLES_QUERY)
-// הסינון מתבצע כאן: כל מאמר שמתויג עם 'הורים' או 'הורות'
-const categoryArticles = allArticles?.filter((a) => a.tags && (a.tags.includes('הורים') || a.tags.includes('הורות'))) || []
+// סינון מאמרים שמתויגים בהורות
+const categoryArticles = allArticles?.filter((a) => a.tags && a.tags.includes('הורות')) || []
 
 const collectionSchema = {
   '@context': 'https://schema.org',

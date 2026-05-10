@@ -162,3 +162,21 @@ export const ARTICLE_BY_SLUG_QUERY = /* groq */ `
   body
 }
 `
+export const CATEGORY_QUERY = /* groq */ `
+*[_type == "category" && slug.current == $slug][0]{
+  _id,
+
+  title,
+  slug,
+  description,
+  heroText,
+
+  faqTitle,
+
+  faq[]{
+    question,
+    answer
+  }
+}
+`
+
