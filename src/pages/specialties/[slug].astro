@@ -3,7 +3,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 import PortableText from '../../components/PortableText.astro'
 import { sanity } from '../../lib/sanity'
 import site from '../../content/pages/site.json'
-import { buildBreadcrumbListSchema } from '../../lib/breadcrumbs'
 
 const { slug } = Astro.params
 
@@ -13,7 +12,6 @@ const page = await sanity.fetch(
       || slug.current == $prefixed
       || slug.current == $methodOld
     )][0]{
-    _type,
     title,
     excerpt,
     body,
@@ -24,16 +22,19 @@ const page = await sanity.fetch(
         question,
         answer
       },
+      stagesTitle,
+      stages[]{
+        key,
+        title,
+        text
+      },
       closing
     },
     seo{
       title,
       description,
       canonical,
-      noindex,
-      ogImage{
-        asset->{url}
-      }
+      noindex
     }
   }`,
   {
@@ -43,133 +44,66 @@ const page = await sanity.fetch(
   }
 )
 
-if (!page) {
-  return new Response(null, { status: 404 })
-}
+if (!page) return new Response(null, { status: 404 })
 
-const title = page?.seo?.title || page.title || `מצפן הלב | ${site.brand}`
-const description = page?.seo?.description || page.excerpt || ''
-const canonical = page?.seo?.canonical || new URL(Astro.url.pathname, site.siteUrl).toString()
-const noindex = page?.seo?.noindex || false
-const ogImage = page?.seo?.ogImage?.asset?.url || undefined
-
-const body = Array.isArray(page?.body) ? page.body : []
 const faq = Array.isArray(page?.specialty?.faq) ? page.specialty.faq : []
+const stages = Array.isArray(page?.specialty?.stages) ? page.specialty.stages : []
 const faqTitle = page?.specialty?.faqTitle || 'שאלות שאנשים שואלים את עצמם בשקט'
-const intro = page?.specialty?.intro || ''
-const closing = page?.specialty?.closing || ''
-
-const breadcrumbSchema = buildBreadcrumbListSchema({
-  siteUrl: site.siteUrl,
-  brandName: site.brand,
-  crumbs: [
-    {
-      name: 'תחומי התמחות',
-      item: `${site.siteUrl}/specialties`,
-    },
-    {
-      name: page.title,
-      item: canonical,
-    },
-  ],
-})
-
-const faqSchema = faq.length > 0
-  ? {
-      '@context': 'https://schema.org',
-      '@type': 'FAQPage',
-      mainEntity: faq.map((item) => ({
-        '@type': 'Question',
-        name: item.question,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: item.answer,
-        },
-      })),
-    }
-  : null
-
-const serviceSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Service',
-  name: page.title,
-  description,
-  provider: {
-    '@type': 'Person',
-    name: 'יוסי מדלסי',
-  },
-}
+const stagesTitle = page?.specialty?.stagesTitle || 'מה קורה בפועל'
 ---
 
-<BaseLayout
-  title={title}
-  description={description}
-  canonical={canonical}
-  noindex={noindex}
-  ogImage={ogImage}
-  schema={faqSchema ? [breadcrumbSchema, serviceSchema, faqSchema] : [breadcrumbSchema, serviceSchema]}
+<BaseLayout 
+  title={page.seo?.title || page.title} 
+  description={page.seo?.description || page.excerpt}
 >
-  <section class="container mx-auto px-6 py-16">
-    <header class="max-w-4xl mx-auto text-center">
-      <h1 class="text-4xl md:text-5xl font-black text-primary font-display leading-tight">
-        {page.title}
-      </h1>
-
-      {page.excerpt && (
-        <p class="mt-5 text-lg md:text-xl text-primary/70 font-body leading-relaxed">
-          {page.excerpt}
-        </p>
-      )}
-
-      {intro && (
-        <p class="mt-8 text-lg leading-relaxed text-primary/80 font-body">
-          {intro}
-        </p>
-      )}
+  <section class="container mx-auto px-6 py-16 max-w-4xl">
+    <header class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-black text-primary font-display">{page.title}</h1>
+      {page.excerpt && <p class="mt-6 text-xl text-primary/70 font-bold">{page.excerpt}</p>}
+      {page?.specialty?.intro && <p class="mt-4 text-lg text-primary/80">{page.specialty.intro}</p>}
     </header>
 
-    {body.length > 0 && (
-      <article class="max-w-4xl mx-auto mt-12 bg-white rounded-[36px] border border-foreground/5 shadow-lg p-8 md:p-12">
-        <div class="prose prose-lg max-w-none prose-headings:font-display prose-p:font-body prose-p:text-foreground/80 prose-a:text-accent">
-          <PortableText value={body} />
-        </div>
+    {page.body && (
+      <article class="prose prose-lg max-w-none bg-white rounded-[36px] shadow-lg p-8 md:p-12 border border-foreground/5 mb-16">
+        <PortableText value={page.body} />
       </article>
     )}
 
+    {stages.length > 0 && (
+      <section class="mb-16">
+        <h2 class="text-3xl font-black text-primary text-center mb-10">{stagesTitle}</h2>
+        <div class="grid gap-6 md:grid-cols-3">
+          {stages.map((stage: any, index: number) => (
+            <div class="bg-white rounded-2xl p-6 shadow-md border border-primary/10">
+              <div class="text-accent font-black text-xl mb-2">{index + 1}. {stage.title}</div>
+              <p class="text-primary/80 leading-relaxed">{stage.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
     {faq.length > 0 && (
-      <section class="max-w-4xl mx-auto mt-12 bg-white rounded-[36px] border border-foreground/5 shadow-lg p-8 md:p-12">
-        <h2 class="text-3xl font-black text-primary font-display text-center mb-10">
-          {faqTitle}
-        </h2>
-
-        <div class="space-y-5">
-          {faq.map((item) => (
-            <details class="group rounded-2xl border border-primary/10 bg-background p-6">
-              <summary class="flex cursor-pointer list-none items-center justify-between gap-4">
-                <span class="text-lg font-black text-primary leading-relaxed">
-                  {item.question}
-                </span>
-
-                <span class="text-2xl text-accent transition-transform duration-300 group-open:rotate-45">
-                  +
-                </span>
+      <section class="bg-white rounded-[36px] shadow-lg p-8 md:p-12 border border-foreground/5 mb-16">
+        <h2 class="text-3xl font-black text-primary text-center mb-10">{faqTitle}</h2>
+        <div class="space-y-4">
+          {faq.map((item: any) => (
+            <details class="group border border-primary/10 rounded-2xl p-6 bg-background cursor-pointer">
+              <summary class="flex justify-between items-center list-none font-black text-lg text-primary">
+                {item.question}
+                <span class="text-2xl text-accent transition-transform group-open:rotate-45">+</span>
               </summary>
-
-              <div class="pt-5 text-base leading-relaxed text-primary/80">
-                {item.answer}
-              </div>
+              <p class="mt-4 text-primary/80 leading-relaxed">{item.answer}</p>
             </details>
           ))}
         </div>
       </section>
     )}
 
-    {closing && (
-      <section class="max-w-4xl mx-auto mt-12 text-center">
-        <p class="text-lg leading-relaxed text-primary/80 font-body">
-          {closing}
-        </p>
-      </section>
+    {page?.specialty?.closing && (
+      <div class="text-center text-lg text-primary/80 font-bold bg-white rounded-2xl p-8 shadow-md">
+        {page.specialty.closing}
+      </div>
     )}
   </section>
 </BaseLayout>
