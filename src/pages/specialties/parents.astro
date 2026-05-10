@@ -14,7 +14,7 @@ const page = await sanity.fetch(
     specialty{
       intro,
       faqTitle,
-      faqs[]{
+      faq[]{
         question, answer
       },
       closing
@@ -41,8 +41,8 @@ const ogImage = page?.seo?.ogImage?.asset?.url || undefined
 const h1 = page?.title || ''
 const gold = page?.excerpt || ''
 const intro = page?.specialty?.intro || ''
-const faqTitle = page?.specialty?.faqTitle || ''
-const faqs = page?.specialty?.faqs || []
+const faqTitle = page?.specialty?.faqTitle || 'שאלות ותשובות'
+const faqs = page?.specialty?.faq || []
 const closing = page?.specialty?.closing || ''
 
 const breadcrumbSchema = buildBreadcrumbListSchema({
@@ -54,33 +54,10 @@ const breadcrumbSchema = buildBreadcrumbListSchema({
   ],
 })
 
-// השארתי את משיכת המאמרים כפי שהייתה, כיוון שהיא מתבססת על תיוג חיצוני
 const allArticles = await sanity.fetch(ARTICLES_QUERY)
 const categoryArticles = allArticles?.filter((a) => a.tags && a.tags.includes('הורות')) || []
 
-const collectionSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'CollectionPage',
-  headline: h1,
-  description: description,
-  url: canonical,
-}
-
-const itemListSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'ItemList',
-  itemListElement: categoryArticles.map((article, index) => ({
-    '@type': 'ListItem',
-    position: index + 1,
-    url: `${site.siteUrl}/articles/${article.slug?.current}`,
-    name: article.title,
-  }))
-}
-
-const schemaArray = [breadcrumbSchema, collectionSchema]
-if (categoryArticles.length > 0) {
-  schemaArray.push(itemListSchema)
-}
+const schemaArray = [breadcrumbSchema]
 ---
 
 <BaseLayout
@@ -115,30 +92,29 @@ if (categoryArticles.length > 0) {
 
       {faqs.length > 0 && (
         <div class="bg-white p-10 md:p-16 rounded-[3rem] shadow-elegant border border-white mb-16">
-          {faqTitle && (
-            <h2 class="text-2xl font-black text-primary font-display mb-10">
-              {faqTitle}
-            </h2>
-          )}
+          <h2 class="text-2xl font-black text-primary font-display mb-10 text-center">
+            {faqTitle}
+          </h2>
 
-          <div class="space-y-8">
-            {faqs.map((faq) => (
-              <div class="bg-background p-8 rounded-2xl border border-accent/10">
-                <div class="font-black text-accent mb-2">{faq.question}</div>
-                <div class="text-primary/80 font-body leading-relaxed">
-                  {faq.answer}
-                </div>
-              </div>
+          <div class="space-y-4">
+            {faqs.map((item) => (
+              <details class="group border border-primary/10 rounded-2xl p-6 bg-background cursor-pointer">
+                <summary class="flex justify-between items-center list-none font-black text-lg text-primary">
+                  {item.question}
+                  <span class="text-2xl text-accent transition-transform group-open:rotate-45">+</span>
+                </summary>
+                <p class="mt-4 text-primary/80 leading-relaxed">{item.answer}</p>
+              </details>
             ))}
           </div>
 
           {closing && (
-            <div class="mt-10 text-primary/75 font-body leading-relaxed">
+            <div class="mt-10 text-primary/75 font-body leading-relaxed text-center font-bold">
               {closing}
             </div>
           )}
 
-          <div class="mt-10">
+          <div class="mt-10 text-center">
             <a
               href={site.primaryCtaHref}
               class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl gradient-gold text-white font-bold shadow-gold"
@@ -172,18 +148,12 @@ if (categoryArticles.length > 0) {
                     src={a.mainImage?.asset?.url || ''}
                     alt={a.mainImage?.alt || a.title}
                     class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
-                    loading="lazy"
                   />
                 </div>
                 <div class="p-8 flex-1 flex flex-col items-start w-full">
                   <h3 class="text-xl font-black text-primary mb-3 font-display leading-tight group-hover:text-gold-dark transition-colors">
                     {a.title}
                   </h3>
-                  {a.excerpt && (
-                    <p class="text-primary/70 font-body leading-relaxed mb-6 line-clamp-2 text-base">
-                      {a.excerpt}
-                    </p>
-                  )}
                   <div class="mt-auto text-accent font-bold text-sm flex items-center group-hover:gap-2 transition-all">
                     קרא עוד <span class="mr-2">←</span>
                   </div>
@@ -193,7 +163,6 @@ if (categoryArticles.length > 0) {
           </div>
         )}
       </div>
-
     </div>
   </section>
 </BaseLayout>
