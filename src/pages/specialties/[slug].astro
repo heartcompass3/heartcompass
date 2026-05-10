@@ -8,28 +8,31 @@ import { buildBreadcrumbListSchema } from '../../lib/breadcrumbs'
 const { slug } = Astro.params
 
 const page = await sanity.fetch(
-  `*[_type=="page" && (
+  `*[( _type == "page" || _type == "category" ) && (
       slug.current == $plain
       || slug.current == $prefixed
       || slug.current == $methodOld
     )][0]{
+    _type,
     title,
     excerpt,
+    description,
     body,
-
+    heroText,
+    faqTitle,
+    faq[]{
+      question,
+      answer
+    },
     specialty{
       intro,
-
       faqTitle,
-
       faq[]{
         question,
         answer
       },
-
       closing
     },
-
     seo{
       title,
       description,
@@ -51,6 +54,8 @@ if (!page) {
   return new Response(null, { status: 404 })
 }
 
+const isCategory = page._type === 'category'
+
 const title =
   page?.seo?.title ||
   page.title ||
@@ -59,6 +64,7 @@ const title =
 const description =
   page?.seo?.description ||
   page.excerpt ||
+  page.description ||
   ''
 
 const canonical =
@@ -69,39 +75,39 @@ const noindex =
   page?.seo?.noindex || false
 
 const ogImage =
-  page?.seo?.ogImage?.asset?.url || undefined
+  page?.seo?.ogImage?.asset?.url ||
+  undefined
 
 const body =
   Array.isArray(page?.body)
     ? page.body
     : []
 
-const faq =
-  Array.isArray(page?.specialty?.faq)
-    ? page.specialty.faq
-    : []
+const faq = isCategory 
+  ? (Array.isArray(page.faq) ? page.faq : []) 
+  : (Array.isArray(page?.specialty?.faq) ? page.specialty.faq : [])
 
-const faqTitle =
-  page?.specialty?.faqTitle ||
-  'שאלות שאנשים שואלים את עצמם בשקט'
+const faqTitle = isCategory
+  ? (page.faqTitle || 'שאלות שאנשים שואלים את עצמם בשקט')
+  : (page?.specialty?.faqTitle || 'שאלות שאנשים שואלים את עצמם בשקט')
 
-const intro =
-  page?.specialty?.intro || ''
+const intro = isCategory
+  ? (page.heroText || '')
+  : (page?.specialty?.intro || '')
 
 const closing =
-  page?.specialty?.closing || ''
+  page?.specialty?.closing ||
+  ''
 
 const breadcrumbSchema =
   buildBreadcrumbListSchema({
     siteUrl: site.siteUrl,
     brandName: site.brand,
-
     crumbs: [
       {
         name: 'תחומי התמחות',
         item: `${site.siteUrl}/specialties`,
       },
-
       {
         name: page.title,
         item: canonical,
@@ -114,12 +120,9 @@ const faqSchema =
     ? {
         '@context': 'https://schema.org',
         '@type': 'FAQPage',
-
         mainEntity: faq.map((item) => ({
           '@type': 'Question',
-
           name: item.question,
-
           acceptedAnswer: {
             '@type': 'Answer',
             text: item.answer,
@@ -130,13 +133,9 @@ const faqSchema =
 
 const serviceSchema = {
   '@context': 'https://schema.org',
-
   '@type': 'Service',
-
   name: page.title,
-
   description,
-
   provider: {
     '@type': 'Person',
     name: 'יוסי מדלסי',
@@ -169,9 +168,9 @@ const serviceSchema = {
         {page.title}
       </h1>
 
-      {page.excerpt && (
+      {(page.excerpt || page.description) && (
         <p class="mt-5 text-lg md:text-xl text-primary/70 font-body leading-relaxed">
-          {page.excerpt}
+          {page.excerpt || page.description}
         </p>
       )}
 

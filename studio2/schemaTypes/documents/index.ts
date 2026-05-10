@@ -6,6 +6,7 @@ import contactPage from './contactPage'
 
 import article from './article'
 import author from './author'
+import category from './category'
 
 export const documents = [
   siteSettings,
@@ -16,6 +17,7 @@ export const documents = [
   // Content
   article,
   author,
+  category,
 
   // Generic pages
   page,

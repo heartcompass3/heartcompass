@@ -1,4 +1,16 @@
 import { defineField, defineType } from 'sanity'
+
+export default defineType({
+  name: 'category',
+  title: 'קטגוריה',
+  type: 'document',
+  fields: [
+    defineField({
+      name: 'title',
+      title: 'שם הקטגוריה',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
     defineField({
       name: 'slug',
       title: 'Slug',
@@ -9,28 +21,24 @@ import { defineField, defineType } from 'sanity'
       },
       validation: (Rule) => Rule.required(),
     }),
-
     defineField({
       name: 'description',
       title: 'תיאור קצר',
       type: 'text',
       rows: 3,
     }),
-
     defineField({
       name: 'heroText',
       title: 'טקסט פתיחה',
       type: 'text',
       rows: 5,
     }),
-
     defineField({
       name: 'faqTitle',
       title: 'כותרת שאלות ותשובות',
       type: 'string',
       initialValue: 'שאלות שאנשים שואלים את עצמם בשקט',
     }),
-
     defineField({
       name: 'faq',
       title: 'שאלות ותשובות',
@@ -53,21 +61,8 @@ import { defineField, defineType } from 'sanity'
               validation: (Rule) => Rule.required(),
             }),
           ],
-          preview: {
-            select: {
-              title: 'question',
-              subtitle: 'answer',
-            },
-          },
         },
       ],
     }),
   ],
-
-  preview: {
-    select: {
-      title: 'title',
-      subtitle: 'description',
-    },
-  },
 })
