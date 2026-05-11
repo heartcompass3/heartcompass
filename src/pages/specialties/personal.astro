@@ -4,10 +4,11 @@ import site from '../../content/pages/site.json'
 import { sanity } from '../../lib/sanity'
 import { buildBreadcrumbListSchema } from '../../lib/breadcrumbs'
 
-const SLUG = 'specialties/personal'
+const SLUG_FULL = 'specialties/personal'
+const SLUG_SHORT = 'personal'
 
 const page = await sanity.fetch(
-  `*[_type=="page" && slug.current == $slug][0]{
+  `*[_type=="page" && slug.current in [$full, $short]][0]{
     title,
     excerpt,
     specialty{
@@ -28,21 +29,29 @@ const page = await sanity.fetch(
       }
     }
   }`,
-  { slug: SLUG }
+  { full: SLUG_FULL, short: SLUG_SHORT }
 )
 
-const title = page?.seo?.title || page?.title || site.brand
-const description = page?.seo?.description || page?.excerpt || ''
+const fallback = {
+  title: 'התפתחות אישית בשיטת מ.ס.ע',
+  gold: 'כשהרעש הפנימי מנהל את הבחירות שלך. שחרור מדפוסים אוטומטיים, חוסר ביטחון וקשרים רעילים.',
+  intro: 'התפתחות אישית היא לא פרויקט של "תיקון עצמי", אלא מסע של גילוי המנגנונים שמנהלים אותך מבלי ששמת לב. תהליך מ.ס.ע מפרק את הלופים הרגשיים בדיוק בנקודות הכואבות: איפה שאיבדת את הביטחון ואיפה שהפחד מנהל את הבחירות שלך.',
+  faqTitle: 'שאלות ותשובות',
+  closing: 'ברגע שמפרקים את התגובות האוטומטיות, הזוגיות הופכת לנכונה יותר, הביטחון נובע מבפנים, והבחירות שלך הופכות להיות שלך באמת.'
+}
+
+const title = page?.seo?.title || page?.title || `${fallback.title} | ${site.brand}`
+const description = page?.seo?.description || page?.excerpt || fallback.gold
 const canonical = page?.seo?.canonical || new URL(Astro.url.pathname, site.siteUrl).toString()
 const noindex = page?.seo?.noindex || false
 const ogImage = page?.seo?.ogImage?.asset?.url || undefined
 
-const h1 = page?.title || ''
-const gold = page?.excerpt || ''
-const intro = page?.specialty?.intro || ''
-const faqTitle = page?.specialty?.faqTitle || 'שאלות ותשובות'
+const h1 = page?.title || fallback.title
+const gold = page?.excerpt || fallback.gold
+const intro = page?.specialty?.intro || fallback.intro
+const faqTitle = page?.specialty?.faqTitle || fallback.faqTitle
 const faqs = page?.specialty?.faq || []
-const closing = page?.specialty?.closing || ''
+const closing = page?.specialty?.closing || fallback.closing
 
 const breadcrumbSchema = buildBreadcrumbListSchema({
   siteUrl: site.siteUrl,
@@ -103,23 +112,26 @@ const schemaArray = [breadcrumbSchema]
               </details>
             ))}
           </div>
+        </div>
+      )}
 
-          {closing && (
-            <div class="mt-10 text-primary/75 font-body leading-relaxed text-center font-bold">
-              {closing}
-            </div>
-          )}
-
-          <div class="mt-10 text-center">
-            <a
-              href={site.primaryCtaHref}
-              class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl gradient-gold text-white font-bold shadow-gold"
-            >
-              {site.primaryCtaLabel} <span aria-hidden="true">←</span>
-            </a>
+      {closing && (
+        <div class="mt-10 mb-16 bg-white p-8 rounded-2xl shadow-sm border border-accent/10">
+          <div class="text-primary/85 font-body leading-relaxed text-center text-lg font-bold">
+            {closing}
           </div>
         </div>
       )}
+
+      <div class="text-center pb-16">
+        <a
+          href={site.primaryCtaHref}
+          class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl gradient-gold text-white font-bold shadow-gold"
+        >
+          {site.primaryCtaLabel} <span aria-hidden="true">←</span>
+        </a>
+      </div>
+
     </div>
   </section>
 </BaseLayout>
