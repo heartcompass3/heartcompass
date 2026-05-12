@@ -16,11 +16,31 @@ const warmups =
   Array.isArray(settings?.whatsappWarmups) && settings.whatsappWarmups.length > 0
     ? settings.whatsappWarmups
         .filter((w) => w?.label && w?.message)
-        .slice(0, 3)
+        .slice(0, 4)
     : [
-        { label: 'אני תקוע/ה בדפוס שחוזר', message: 'היי יוסי, אני מרגיש/ה תקוע/ה בדפוס שחוזר על עצמו. אפשר לשאול כמה שאלות?' },
-        { label: 'זוגיות שמפעילה אותי', message: 'היי יוסי, יש לי עניין בזוגיות שמפעיל אותי רגשית. אשמח להבין אם זה מתאים לתהליך איתך.' },
-        { label: 'כיוון בקריירה ובחיים', message: 'היי יוסי, אני מרגיש/ה בלבול לגבי כיוון בקריירה ובחיים. אפשר לשמוע איך אתה עובד?' },
+        {
+          label: 'קושי מול הילד/ה שלי',
+          message:
+            'היי יוסי, הגעתי דרך האתר. אני מרגיש/ה קושי בתקשורת או ריחוק מול הילד/ה שלי ורוצה לשמוע איך התהליך עובד.'
+        },
+
+        {
+          label: 'בן/בת נוער שמסתגר',
+          message:
+            'היי יוסי, הגעתי דרך האתר. אני מחפש/ת ליווי רגשי לבן/בת נוער שמתמודד/ת עם הסתגרות, חרדה או חוסר ביטחון.'
+        },
+
+        {
+          label: 'זוגיות שמפעילה אותי',
+          message:
+            'היי יוסי, יש לי קושי בזוגיות שמפעיל אותי רגשית. אשמח להבין איך עובד  התהליך איתך.'
+        },
+
+        {
+          label: 'אני תקוע/ה בדפוס שחוזר',
+          message:
+            'היי יוסי, אני מרגיש/ה תקוע/ה בדפוס שחוזר על עצמו ורוצה להבין איך אפשר להשתחרר ממנו.'
+        },
       ]
 
 const buildWhatsAppLink = (msg) => {
@@ -38,7 +58,6 @@ const whatsappSvg = `
 ---
 
 <div class="fixed bottom-6 left-6 z-[150]" data-wa-root>
-  <!-- Warmups bubble -->
   <div
     class="hidden mb-3 w-72 rounded-2xl bg-white shadow-elegant border border-accent/10 overflow-hidden"
     data-wa-panel
@@ -72,7 +91,6 @@ const whatsappSvg = `
     </div>
   </div>
 
-  <!-- Floating WhatsApp round button -->
   <button
     type="button"
     class="w-14 h-14 rounded-full bg-[#25D366] text-white shadow-elegant hover:brightness-95 transition flex items-center justify-center"
@@ -90,7 +108,6 @@ const whatsappSvg = `
 
       const btn = root.querySelector('[data-wa-button]');
       const panel = root.querySelector('[data-wa-panel]');
-
       const close = () => {
         if (!panel || !btn) return;
         panel.classList.add('hidden');

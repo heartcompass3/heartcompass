@@ -3,11 +3,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 import site from '../../content/pages/site.json'
 import { sanity } from '../../lib/sanity'
 import { buildBreadcrumbListSchema } from '../../lib/breadcrumbs'
+import { ARTICLES_QUERY } from '../../lib/sanityQueries'
 
-const SLUG = 'specialties/career'
+const SLUG_FULL = 'specialties/career'
+const SLUG_SHORT = 'career'
 
 const page = await sanity.fetch(
-  `*[_type=="page" && slug.current == $slug][0]{
+  `*[_type=="page" && slug.current in [$full, $short]][0]{
     title,
     excerpt,
     specialty{
@@ -28,21 +30,71 @@ const page = await sanity.fetch(
       }
     }
   }`,
-  { slug: SLUG }
+  { full: SLUG_FULL, short: SLUG_SHORT }
 )
 
-const title = page?.seo?.title || page?.title || site.brand
-const description = page?.seo?.description || page?.excerpt || ''
+const fallback = {
+  title: 'קריירה ועסקים בשיטת מ.ס.ע',
+  gold: 'עומס פנימי, דחיינות, שחיקה או חוסר החלטה. לא כי אין יכולת, אלא כי משהו בפנים מנהל אותך.',
+  intro: 'ברוב המקרים הבעיה היא לא ידע ולא מוטיבציה. זו תגובה רגשית שמפעילה לופ: חשיבת יתר, פרפקציוניזם, הימנעות או ריצוי. ההחלטה לצאת לעצמאות או להתקדם בקריירה דורשת פירוק של המנגנון הזה, כדי שתוכל לפעול מתוך שקט וביטחון אמיתי ולא מתוך הישרדות.',
+  faqTitle: 'התשובות לשאלות שעוצרות אותך: קריירה עסקים ודחיינות',
+  faq: [
+    {
+      question: 'למה אני יודע בדיוק מה צריך לעשות אבל לא מצליח לגרום לעצמי לבצע?',
+      answer: 'דחיינות היא כמעט אף פעם לא בעיה של ניהול זמן אלא מנגנון הגנה. כשהמשימה קשורה לערך העצמי שלך המוח מעדיף להימנע ממנה כדי לא לפגוש חוויה של חוסר מסוגלות או כישלון. ברגע שנפריד בין הפעולה העסקית לבין מי שאתה באמת תוכל לחזור לעשייה טבעית.'
+    },
+    {
+      question: 'למה אני מרגיש כל הזמן שאנשים עומדים לגלות שאני לא מספיק טוב?',
+      answer: 'תחושת הזיוף או "תסמונת המתחזה" נובעת מפער בין היכולות האמיתיות שלך לבין חוסר הביטחון הפנימי שמנהל אותך. כשאתה תלוי לחלוטין באישור חיצוני כל הצלחה מרגישה מקרית וכל טעות מרגישה כמו הוכחה לאפסותך. העבודה שלנו היא לבסס עוגן פנימי יציב שלא קורס מול כל אתגר.'
+    },
+    {
+      question: 'איך אני מפסיק לעבוד סביב השעון ולהרגיש שאני תמיד בפיגור?',
+      answer: 'שחיקה נוצרת כשהעבודה משמשת כמנגנון לוויסות חרדה או להשגת תחושת ערך. כשהגבולות הפנימיים חלשים הרצון לרצות אחרים ולייצר שליטה מוחלטת גורם לך לרוקן את עצמך. התהליך מאפשר לזהות את הפחד שמריץ אותך וללמוד להציב גבולות מבלי להרגיש אשמה.'
+    },
+    {
+      question: 'למה כל פעם שאני מתקרב להצלחה אני עושה משהו שהורס אותה?',
+      answer: 'חבלה עצמית היא תגובה של מערכת שמזהה מצב חדש וטוב כסכנה. אם בעבר למדת שהצלחה או בולטות מושכות אש או ציפיות שאי אפשר לעמוד בהן תת המודע שלך יכשיל אותך כדי לשמור עליך במקום מוכר ובטוח. הטיפול מפרק את הקישור השגוי הזה מהשורש.'
+    },
+    {
+      question: 'איך מחליטים על שינוי מקצועי כשהפחד לטעות משתק אותי?',
+      answer: 'הפחד לטעות אינו קשור לקריירה עצמה אלא למשמעות שאתה נותן לטעות. כשטעות נתפסת כאסון בלתי הפיך שיוכיח שאתה כישלון המוח קופא. כשתלמד לנהל את הפחד מהשלכות השיפוט החברתי והפנימי קבלת ההחלטות תהפוך לפרקטית וממוקדת.'
+    },
+    {
+      question: 'למה קשה לי לדרוש תגמול ראוי על העבודה שלי או להעלות מחירים?',
+      answer: 'הקושי לדבר על כסף נובע מחוסר הפרדה בין הערך של השירות לערך שלך כאדם. כשאתה פוחד שהצבת מחיר ראוי תוביל לדחייה או נטישה אתה מוריד את עצמך כדי לשמר את הלקוח. נזהה את הלולאה שגורמת לך להתכווץ מול כסף ונחזיר לך את היכולת לעמוד מאחורי הערך שלך.'
+    },
+    {
+      question: 'איך משחררים את חשיבת היתר שמונעת ממני להתחיל פרויקטים?',
+      answer: 'חשיבת יתר היא ניסיון עקר לייצר שליטה במציאות שאין בה ודאות. אתה מעסיק את עצמך בתכנונים אינסופיים כדי לדחות את רגע החשיפה וההתמודדות האמיתית. כשנפחית את הצורך בשליטה מוחלטת יתפנה לך מקום לפעולה זורמת ואפקטיבית.'
+    },
+    {
+      question: 'למה אני נמנע מלשווק את עצמי למרות שאני מעולה במה שאני עושה?',
+      answer: 'הפחד מחשיפה מבוסס על אמונה עמוקה שאם יראו אותך באמת משהו רע יקרה. השיווק הופך לסכנה הישרדותית כי הוא מזמין ביקורת. המטרה היא להפריד בין הזהות שלך לבין הנוכחות העסקית שלך כך שתוכל להיות בפרונט מבלי להרגיש חשוף לפגיעה.'
+    },
+    {
+      question: 'למה אני לוקח ביקורת מקצועית בצורה שמרסקת לי את היום?',
+      answer: 'כשהערך העצמי שלך תלוי לחלוטין בתוצאות חיצוניות כל הערה עניינית נחווית כמתקפה אישית על הקיום שלך. התגובה הזו מתישה אותך ומונעת ממך לצמוח. תהליך מדויק יאפשר לך לשמוע ביקורת כמידע מקצועי ולא כפסק דין על מי שאתה.'
+    },
+    {
+      question: 'איך עוצרים את הצורך להיות מושלם שלא משאיר לי אוויר?',
+      answer: 'פרפקציוניזם הוא מנגנון הגנה חזק שנועד להבטיח שלעולם לא יבקרו או ידחו אותך. המחיר הוא מתח תמידי ופחד משתק מטעויות. העבודה שלנו היא לפרק את האמונה שרק שלמות מייצרת ביטחון כדי שתוכל לפעול בעולם גם כשלא הכל סגור עד הסוף.'
+    }
+  ],
+  closing: 'ההצלחה שלך לא תלויה בעוד קורס עסקי או טכניקת ניהול זמן חדשה אלא בפירוק המנגנון שמחבל בעשייה שלך. ברגע שננטרל את התגובות האוטומטיות העשייה תהפוך לפשוטה ומדויקת יותר.'
+}
+
+const title = page?.seo?.title || page?.title || `${fallback.title} | ${site.brand}`
+const description = page?.seo?.description || page?.excerpt || fallback.gold
 const canonical = page?.seo?.canonical || new URL(Astro.url.pathname, site.siteUrl).toString()
 const noindex = page?.seo?.noindex || false
 const ogImage = page?.seo?.ogImage?.asset?.url || undefined
 
-const h1 = page?.title || ''
-const gold = page?.excerpt || ''
-const intro = page?.specialty?.intro || ''
-const faqTitle = page?.specialty?.faqTitle || 'שאלות ותשובות'
-const faqs = page?.specialty?.faq || []
-const closing = page?.specialty?.closing || ''
+const h1 = page?.title || fallback.title
+const gold = page?.excerpt || fallback.gold
+const intro = page?.specialty?.intro || fallback.intro
+const faqTitle = page?.specialty?.faqTitle || fallback.faqTitle
+const faqs = (page?.specialty?.faq?.length ? page.specialty.faq : fallback.faq)
+const closing = page?.specialty?.closing || fallback.closing
 
 const breadcrumbSchema = buildBreadcrumbListSchema({
   siteUrl: site.siteUrl,
@@ -53,7 +105,36 @@ const breadcrumbSchema = buildBreadcrumbListSchema({
   ],
 })
 
-const schemaArray = [breadcrumbSchema]
+// === Hub: Fetch Articles ===
+const allArticles = await sanity.fetch(ARTICLES_QUERY)
+// סינון מאמרים שמתויגים סביב עולמות הקריירה, עסקים ודחיינות
+const categoryArticles = allArticles?.filter((a) => 
+  a.tags && (a.tags.includes('קריירה') || a.tags.includes('עסקים') || a.tags.includes('התפתחות עסקית') || a.tags.includes('עצמאיים') || a.tags.includes('יזמות'))
+) || []
+
+const collectionSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  headline: h1,
+  description: description,
+  url: canonical,
+}
+
+const itemListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: categoryArticles.map((article, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    url: `${site.siteUrl}/articles/${article.slug?.current}`,
+    name: article.title,
+  }))
+}
+
+const schemaArray = [breadcrumbSchema, collectionSchema]
+if (categoryArticles.length > 0) {
+  schemaArray.push(itemListSchema)
+}
 ---
 
 <BaseLayout
@@ -67,23 +148,17 @@ const schemaArray = [breadcrumbSchema]
   <section class="animate-fade-in py-24 bg-background min-h-screen">
     <div class="max-w-4xl mx-auto px-6">
       <header class="mb-10 text-center">
-        {h1 && (
-          <h1 class="text-5xl md:text-6xl font-black text-primary font-display mb-6">
-            {h1}
-          </h1>
-        )}
-
-        {gold && (
-          <p class="text-xl text-accent font-body font-bold max-w-3xl mx-auto">
-            {gold}
-          </p>
-        )}
-
-        {intro && (
-          <p class="mt-8 text-lg text-primary/70 font-body leading-relaxed max-w-3xl mx-auto">
-            {intro}
-          </p>
-        )}
+        <h1 class="text-5xl md:text-6xl font-black text-primary font-display mb-6">
+          {h1}
+        </h1>
+        
+        <p class="text-xl text-accent font-body font-bold max-w-3xl mx-auto">
+          {gold}
+        </p>
+        
+        <p class="mt-8 text-lg text-primary/70 font-body leading-relaxed max-w-3xl mx-auto">
+          {intro}
+        </p>
       </header>
 
       {faqs.length > 0 && (
@@ -103,23 +178,71 @@ const schemaArray = [breadcrumbSchema]
               </details>
             ))}
           </div>
+        </div>
+      )}
 
-          {closing && (
-            <div class="mt-10 text-primary/75 font-body leading-relaxed text-center font-bold">
-              {closing}
-            </div>
-          )}
-
-          <div class="mt-10 text-center">
-            <a
-              href={site.primaryCtaHref}
-              class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl gradient-gold text-white font-bold shadow-gold"
-            >
-              {site.primaryCtaLabel} <span aria-hidden="true">←</span>
-            </a>
+      {closing && (
+        <div class="mt-10 mb-16 bg-white p-8 rounded-2xl shadow-sm border border-accent/10">
+          <div class="text-primary/85 font-body leading-relaxed text-center text-lg font-bold">
+            {closing}
           </div>
         </div>
       )}
+
+      <div class="text-center pb-16">
+        <a
+          href={site.primaryCtaHref}
+          class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl gradient-gold text-white font-bold shadow-gold"
+        >
+          {site.primaryCtaLabel} <span aria-hidden="true">←</span>
+        </a>
+      </div>
+
+      <div class="pt-8 border-t border-accent/10">
+        <h2 class="text-3xl font-black text-primary font-display mb-6 text-center">
+          מאמרים ומדריכים
+        </h2>
+        
+        {categoryArticles.length === 0 ? (
+          <div class="text-center bg-white rounded-3xl p-10 border border-white/50 shadow-sm">
+            <p class="text-primary/60 font-body text-lg">
+              מאמרים מקצועיים יעלו לכאן בקרוב.
+            </p>
+          </div>
+        ) : (
+          <div class="grid gap-8 md:grid-cols-2 mt-10">
+            {categoryArticles.map((a) => (
+              <a
+                href={`/articles/${a.slug?.current}`}
+                class="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border border-white/50 flex flex-col h-full overflow-hidden hover:-translate-y-2 group"
+              >
+                <div class="h-48 overflow-hidden relative w-full">
+                  <img
+                    src={a.mainImage?.asset?.url || '/assets/yossi-hero.jpg'}
+                    alt={a.mainImage?.alt || a.title}
+                    class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="p-8 flex-1 flex flex-col items-start w-full">
+                  <h3 class="text-xl font-black text-primary mb-3 font-display leading-tight group-hover:text-gold-dark transition-colors">
+                    {a.title}
+                  </h3>
+                  {a.excerpt && (
+                    <p class="text-primary/70 font-body leading-relaxed mb-6 line-clamp-2 text-base">
+                      {a.excerpt}
+                    </p>
+                  )}
+                  <div class="mt-auto text-accent font-bold text-sm flex items-center group-hover:gap-2 transition-all">
+                    קרא עוד <span class="mr-2">←</span>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+
     </div>
   </section>
 </BaseLayout>

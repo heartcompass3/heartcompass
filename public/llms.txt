@@ -1,38 +1,91 @@
 # Heart Compass (מצפן הלב) - Emotional & Cognitive Coaching
 
-> Professional emotional coaching based in Netanya, Israel, specializing in releasing deep-seated behavioral patterns and achieving emotional independence through the M.S.E method.
+> Professional emotional guidance based in Israel, specializing in emotional patterns, relationship dynamics, parenting challenges, teen emotional support, and deep emotional transformation through the M.S.E method.
 
 ## Core Identity
-- **Founder:** Yossi Medalsy, Certified Emotional Coach.
-- **Mission:** Helping individuals and couples break free from emotional stuckness, anxiety, and automatic patterns to act out of desire rather than fear or obligation.
+- **Founder:** Yossi Medalsy
+- **Mission:** Helping teenagers, parents, couples, and individuals break free from emotional stuckness, anxiety, emotional distance, and repeating survival patterns.
 - **Methodology:** The M.S.E Method (Mapping, Clearing, Independence).
-- **Core Philosophy:** Integrates neurobiology (the "Three Brains" - Head, Heart, Gut), evolutionary psychology (survival brain), and philosophical insights (Spinoza, Seneca).
+- **Core Philosophy:** Integrates neurobiology, emotional pattern recognition, survival mechanisms, and practical emotional awareness into a goal-oriented process.
 
 ## Core Services
-### 1. Individual Emotional Coaching
-- **Focus:** Anxiety, procrastination, overthinking, perfectionism, and self-doubt.
-- **Goal:** Moving from intellectual understanding to actual change in reality.
 
-### 2. Couples Coaching (M.S.E Method)
-- **Structure:** Initial individual process for each partner followed by joint sessions.
-- **Focus:** Rebuilding intimacy, communication, and trust by addressing individual survival patterns first.
+### 1. Teen Emotional Guidance
+- **Focus:** Anxiety, emotional shutdown, low self-worth, overthinking, social struggles, and lack of direction.
+- **Goal:** Helping teenagers reconnect to themselves, build emotional resilience, and create inner clarity.
 
-### 3. Career & Business Coaching
-- **Focus:** Overcoming fear of failure, imposter syndrome, and "stuckness" in business growth.
-- **Goal:** Decision-making from a place of clarity and courage.
+### 2. Parenting & Family Guidance
+- **Focus:** Emotional distance, communication struggles, conflicts at home, and parent-child dynamics.
+- **Goal:** Creating healthier communication, emotional safety, and stronger connection inside the family.
+
+### 3. Couples Guidance (M.S.E Method)
+- **Structure:** Personal emotional work alongside relationship-focused guidance.
+- **Focus:** Emotional triggers, communication breakdowns, fear of intimacy, and recurring relationship conflicts.
+- **Goal:** Rebuilding trust, emotional connection, and conscious communication.
+
+### 4. Deep Personal Processes
+- **Focus:** Repeating emotional patterns, perfectionism, emotional avoidance, self-worth struggles, and internal confusion.
+- **Goal:** Moving from survival-based reactions to conscious choices and emotional independence.
 
 ## The M.S.E Method (מ.ס.ע)
-1. **Mapping (מיפוי):** Identifying hidden barriers and the root of automatic patterns.
-2. **Clearing (סילוק):** Releasing emotional noise and neutralizing limiting beliefs without "fighting" the fear.
-3. **Independence (עצמאות):** Building the resilience to choose and act from inner clarity, regardless of external circumstances.
+
+1. **Mapping (מיפוי):** Identifying hidden emotional patterns, interpretations, fears, and internal barriers.
+2. **Clearing (סילוק):** Reducing emotional noise, releasing limiting beliefs, and weakening automatic survival reactions.
+3. **Independence (עצמאות):** Building emotional clarity, inner stability, and the ability to choose consciously instead of reacting automatically.
 
 ## Key Insights & FAQs
-- **Coaching vs. Therapy:** Therapy focuses on healing the past; Heart Compass focuses on releasing patterns in the present to move forward.
-- **Online Coaching:** Highly effective via Zoom, allowing for work in a natural, safe home environment.
-- **Behavior Change vs. Pattern Release:** Behavior change requires constant effort; pattern release addresses the internal mechanism, making change natural.
+- **Emotional Patterns vs. Symptoms:** The goal is not only to reduce symptoms, but to understand and release the internal mechanism creating them.
+- **Teen & Parent Dynamics:** Many emotional struggles inside the family begin from misunderstood emotional needs and survival responses.
+- **Online Coaching:** Highly effective via Zoom, allowing for deep emotional work in the client's natural, safe home environment.
+- **Emotional Independence:** Real change happens when the person learns to respond מתוך חיבור פנימי ולא מתוך פחד.
+
+---
+
+# מצפן הלב | Heart Compass
+
+מצפן הלב הוא מרחב לליווי רגשי ותודעתי לבני נוער, הורים וזוגות המתמודדים עם חרדה, ריחוק רגשי, תקיעות ודפוסים שחוזרים על עצמם. 
+
+הגישה מבוססת על מודל מ.ס.ע:
+1. מיפוי
+2. סילוק
+3. עצמאות
+
+המודל עוזר לזהות את הדפוסים שמנהלים את האדם מתחת לפני השטח, לשחרר חסמים רגשיים ותודעתיים, וליצור בהירות, חיבור ותנועה פנימית.
+
+## תחומי התמחות:
+- זוגיות ותקשורת זוגית
+- בני נוער ומתבגרים
+- הורות ויחסים בתוך המשפחה
+- חרדה ודימוי עצמי
+- דפוסי ריצוי והימנעות
+- ריחוק רגשי
+- פחד מנטישה
+- תקיעות רגשית
+- תהליכי עומק אישיים
+
+## קהל יעד:
+- בני נוער המתמודדים עם בלבול, חרדה, הסתגרות או חוסר ביטחון עצמי
+- הורים שמרגישים ריחוק, מאבקי כוח או קושי בתקשורת עם הילדים
+- זוגות שחווים ריבים חוזרים, ריחוק רגשי או פחד מאינטימיות
+- אנשים שמרגישים שהם חוזרים שוב ושוב לאותם דפוסים
+
+## השפה של מצפן הלב:
+- אנושית
+- ישירה
+- לא שיפוטית
+- עמוקה אך בגובה העיניים
+- ללא ז'רגון טיפולי
+
+## האתר כולל:
+- מאמרים ותכנים רגשיים
+- ליווי רגשי ותודעתי אונליין, המאפשר עבודה בסביבה הטבעית והבטוחה של הלקוח
+- תהליכי עומק אישיים
+- עבודה עם בני נוער
+- עבודה עם הורים
+- תהליכים זוגיים
 
 ## Contact Information
-- **Website:** https://heartcompass.vercel.app/
-- **Location:** Netanya, Israel / Online (Global)
-- **Contact Page:** https://heartcompass.vercel.app/contact
-- **Socials:** [Instagram](https://www.instagram.com/yossi_medalsy/), [Facebook](https://www.facebook.com/yossimedalsy), [LinkedIn](https://www.linkedin.com/in/yossi-medalsy-0a1b2b3c/)
+- **Official Website:** https://heartcompass.vercel.app
+- **Brand:** מצפן הלב
+- **Founder:** יוסי מדלסי
+- **Main Topics:** emotional guidance, teen emotional support, parenting guidance, relationships, emotional patterns, self worth, anxiety, inner clarity, emotional communication, personal growth

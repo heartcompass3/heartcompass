@@ -6,26 +6,24 @@
 
     <div class="grid grid-cols-1 md:grid-cols-6 gap-12">
 
-      <!-- מותג -->
       <div>
         <h3 class="text-2xl font-bold mb-4">מצפן הלב</h3>
         <p class="text-white/70 leading-relaxed">
-          לבחור מתוך תשוקה ולא מתוך פחד.  
+          לבחור מתוך תשוקה ולא מתוך פחד.
           תהליך עומק לזיהוי חסמים, שחרור דפוסים ובניית דרך מדויקת.
         </p>
       </div>
 
-      <!-- תחומי ליווי -->
       <div>
-        <h4 class="text-lg font-semibold mb-4">תחומי ליווי</h4>
+        <h4 class="text-lg font-semibold mb-4">תחומי אימון</h4>
         <ul class="space-y-2 text-white/70">
           <li><a href="/specialties/couples" class="hover:text-white">אימון זוגי</a></li>
           <li><a href="/specialties/parents" class="hover:text-white">הדרכת הורים</a></li>
           <li><a href="/specialties/youth" class="hover:text-white">אימון לנוער</a></li>
+          <li><a href="/specialties/personal" class="hover:text-white">התפתחות אישית</a></li>
         </ul>
       </div>
 
-      <!-- השיטה -->
       <div>
         <h4 class="text-lg font-semibold mb-4">השיטה</h4>
         <ul class="space-y-2 text-white/70">
@@ -33,7 +31,6 @@
         </ul>
       </div>
 
-      <!-- ניווט -->
       <div>
         <h4 class="text-lg font-semibold mb-4">ניווט</h4>
         <ul class="space-y-2 text-white/70">
@@ -44,82 +41,39 @@
         </ul>
       </div>
 
-      <!-- סושיאל -->
       <div>
         <h4 class="text-lg font-semibold mb-4">עקבו אחרי</h4>
         <div class="flex flex-col gap-2 text-white/70">
-
-          <a href="https://www.instagram.com/heartcompass3/" target="_blank" class="hover:text-white">
-            Instagram
-          </a>
-
-          <a href="https://www.facebook.com/share/1AGLnvhmiF/" target="_blank" class="hover:text-white">
-            Facebook
-          </a>
-
-          <a href="https://www.linkedin.com/in/yossi-medalsi-2a643a397/" target="_blank" class="hover:text-white">
-            LinkedIn
-          </a>
-
-          <a href="https://wa.me/972544580285" target="_blank" class="hover:text-white">
-            WhatsApp
-          </a>
-
+          <a href="https://www.instagram.com/heartcompass3/" target="_blank" class="hover:text-white">Instagram</a>
+          <a href="https://www.facebook.com/share/1AGLnvhmiF/" target="_blank" class="hover:text-white">Facebook</a>
+          <a href="https://www.linkedin.com/in/yossi-medalsi-2a643a397/" target="_blank" class="hover:text-white">LinkedIn</a>
+          <a href="https://wa.me/972544580285" target="_blank" class="hover:text-white">WhatsApp</a>
         </div>
       </div>
 
-      <!-- ניוזלטר -->
       <div>
         <h4 class="text-lg font-semibold mb-2">
           אם הגעת עד לכאן – כנראה שמשהו בך כבר מחפש שינוי
         </h4>
-
         <p class="text-white/70 text-sm leading-relaxed mb-4">
-          אני לא שולח ספאם.  
-          רק תובנות חדות על דפוסים, פחדים והבחירות שאנחנו עושים מתחת לרדאר.  
+          אני לא שולח ספאם. רק תובנות חדות על דפוסים, פחדים והבחירות שאנחנו עושים מתחת לרדאר.  
           דברים שיכולים להזיז אותך מבפנים.
         </p>
-
         <form action="https://formsubmit.co/yossi1974@outlook.co.il" method="POST" class="flex flex-col gap-2">
-
-          <input 
-            type="text" 
-            name="name" 
-            placeholder="איך קוראים לך?" 
-            required 
-            class="p-2 rounded text-black"
-          />
-
-          <input 
-            type="email" 
-            name="email" 
-            placeholder="לאן לשלוח לך את זה?" 
-            required 
-            class="p-2 rounded text-black"
-          />
-
+          <input type="text" name="name" placeholder="איך קוראים לך?" required class="p-2 rounded text-black" />
+          <input type="email" name="email" placeholder="לאן לשלוח לך את זה?" required class="p-2 rounded text-black" />
           <input type="hidden" name="_captcha" value="false">
           <input type="hidden" name="_subject" value="ליד חדש מהאתר מצפן הלב">
-
-          <!-- ⚠️ זה התיקון הקריטי -->
           <input type="hidden" name="_next" value="https://heartcompass.vercel.app/thank-you">
-
-          <button 
-            type="submit" 
-            class="bg-white text-black py-2 rounded hover:bg-gray-200"
-          >
+          <button type="submit" class="bg-white text-black py-2 rounded hover:bg-gray-200">
             כן, שלח לי תובנות
           </button>
-
         </form>
       </div>
-
     </div>
 
-    <!-- תחתית -->
     <div class="border-t border-white/10 mt-12 pt-6 text-center text-white/50 text-sm">
       © {new Date().getFullYear()} מצפן הלב. כל הזכויות שמורות.
     </div>
-
   </div>
 </footer>
