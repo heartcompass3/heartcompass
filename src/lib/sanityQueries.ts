@@ -180,3 +180,16 @@ export const CATEGORY_QUERY = /* groq */ `
 }
 `
 
+export const TOOLS_QUERY = /* groq */ `
+*[_type == "landingPage" && defined(toolCategory)]
+| order(coalesce(toolOrder, 99) asc)
+{
+  _id,
+  title,
+  slug,
+  toolCategory,
+  toolTagline,
+  externalUrl,
+  "imageUrl": mainImage.asset->url,
+}
+`
