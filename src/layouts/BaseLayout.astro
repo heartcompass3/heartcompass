@@ -89,6 +89,27 @@ const defaultServiceSchema = {
   areaServed: 'IL',
 }
 
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  '@id': `${site.siteUrl}/#person`,
+  name: site.fullName,
+  url: site.siteUrl,
+  jobTitle: 'מאמן רגשי מוסמך ICF',
+  sameAs: [
+    site.instagramUrl,
+    site.facebookUrl,
+    'https://www.linkedin.com/in/yossi-medalsi-2a643a397/',
+    `https://wa.me/${site.whatsAppPhone}`,
+  ],
+  image: `${site.siteUrl}/assets/yossi-hero.jpg`,
+  worksFor: {
+    '@type': 'Organization',
+    name: site.brand,
+    url: site.siteUrl,
+  },
+}
+
 // Do not inject ProfessionalService on article pages.
 // Also: if page already provides its own service schema, do not duplicate.
 const alreadyHasService = schemaArray.some(
@@ -99,7 +120,7 @@ const mergedSchema = isArticlePage
   ? schemaArray
   : alreadyHasService
   ? schemaArray
-  : [defaultServiceSchema, ...schemaArray]
+  : [defaultServiceSchema, personSchema, ...schemaArray]
 ---
 
 <!doctype html>
