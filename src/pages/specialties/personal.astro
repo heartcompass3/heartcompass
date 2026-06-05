@@ -88,9 +88,26 @@ const itemListSchema = {
   }))
 }
 
+const faqSchema = faqs.length > 0 ? {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${canonical}#faq`,
+  mainEntity: faqs.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer,
+    },
+  })),
+} : null
+
 const schemaArray = [breadcrumbSchema, collectionSchema]
 if (categoryArticles.length > 0) {
   schemaArray.push(itemListSchema)
+}
+if (faqSchema) {
+  schemaArray.push(faqSchema)
 }
 ---
 

@@ -57,7 +57,21 @@ const breadcrumbSchema = buildBreadcrumbListSchema({
 const allArticles = await sanity.fetch(ARTICLES_QUERY)
 const categoryArticles = allArticles?.filter((a) => a.tags && (a.tags.includes('נוער') || a.tags.includes('מתבגרים'))) || []
 
-const schemaArray = [breadcrumbSchema]
+const faqSchema = faqs.length > 0 ? {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${canonical}#faq`,
+  mainEntity: faqs.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer,
+    },
+  })),
+} : null
+
+const schemaArray = [breadcrumbSchema, ...(faqSchema ? [faqSchema] : [])]
 ---
 
 <BaseLayout
