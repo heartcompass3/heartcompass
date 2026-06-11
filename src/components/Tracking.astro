@@ -1,10 +1,44 @@
 ---
-const enabled =
-  (import.meta.env.PUBLIC_TRACKING_ENABLED ?? '').toString().toLowerCase() === 'true';
+import { sanity } from '../lib/sanity'
 
-const gaId = (import.meta.env.PUBLIC_GA_ID ?? '').toString().trim();
-const gtmId = (import.meta.env.PUBLIC_GTM_ID ?? '').toString().trim();
-const metaPixelId = (import.meta.env.PUBLIC_META_PIXEL_ID ?? '').toString().trim();
+type TrackingSettings = {
+  enabled?: boolean
+  gaMeasurementId?: string
+  metaPixelId?: string
+  tiktokPixelId?: string
+}
+
+// הגדרות הטראקינג מגיעות מסאניטי (הגדרות אתר → Tracking).
+// משתני הסביבה משמשים כגיבוי אם סאניטי לא זמין או שהשדות ריקים.
+// cache קצר כדי לא לשלוף מסאניטי בכל צפייה בעמוד.
+const CACHE_TTL_MS = 5 * 60 * 1000
+const g = globalThis as typeof globalThis & {
+  __trackingCache?: { value: TrackingSettings | null; fetchedAt: number }
+}
+
+let tracking: TrackingSettings | null = null
+if (g.__trackingCache && Date.now() - g.__trackingCache.fetchedAt < CACHE_TTL_MS) {
+  tracking = g.__trackingCache.value
+} else {
+  try {
+    tracking = await sanity.fetch<TrackingSettings | null>(
+      `*[_type == "siteSettings"][0].tracking`
+    )
+  } catch {
+    tracking = null
+  }
+  g.__trackingCache = { value: tracking, fetchedAt: Date.now() }
+}
+
+const clean = (v?: unknown) => (typeof v === 'string' ? v.trim() : '')
+
+const envEnabled =
+  (import.meta.env.PUBLIC_TRACKING_ENABLED ?? '').toString().toLowerCase() === 'true'
+const enabled = tracking?.enabled === true || envEnabled
+
+const gaId = clean(tracking?.gaMeasurementId) || clean(import.meta.env.PUBLIC_GA_ID)
+const gtmId = clean(import.meta.env.PUBLIC_GTM_ID)
+const metaPixelId = clean(tracking?.metaPixelId) || clean(import.meta.env.PUBLIC_META_PIXEL_ID)
 ---
 
 {enabled && (gaId || gtmId || metaPixelId) ? (
