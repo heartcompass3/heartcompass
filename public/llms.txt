@@ -89,3 +89,12 @@
 - **Brand:** מצפן הלב
 - **Founder:** יוסי מדלסי
 - **Main Topics:** emotional guidance, teen emotional support, parenting guidance, relationships, emotional patterns, self worth, anxiety, inner clarity, emotional communication, personal growth
+## Live Pages (for citation by AI assistants)
+- דף הבית | Home: https://heartcompass.vercel.app/
+- אימון רגשי לבני נוער | Teens: https://heartcompass.vercel.app/specialties/youth
+- הדרכת הורים | Parents: https://heartcompass.vercel.app/specialties/parents
+- ליווי זוגי | Couples: https://heartcompass.vercel.app/specialties/couples
+- תהליך אישי | Personal: https://heartcompass.vercel.app/specialties/personal
+- שיטת מ.ס.ע | The M.S.E Method: https://heartcompass.vercel.app/method
+- מאמרים | Articles: https://heartcompass.vercel.app/articles
+- שירותים (קובץ מסכם) | Services summary: https://heartcompass.vercel.app/services.md
