@@ -78,6 +78,19 @@ const isArticlePage =
   Astro.url.pathname.startsWith('/articles/') ||
   hasArticleSchema
 
+// WebSite schema — אומר לגוגל את שם האתר (במקום "Vercel").
+// כשנעבור לדומיין משלנו: לעדכן רק את siteUrl ב-site.json — הכל מתעדכן אוטומטית.
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${site.siteUrl}/#website`,
+  name: site.brand,
+  alternateName: [site.siteName, site.fullName],
+  url: site.siteUrl,
+  inLanguage: 'he',
+  publisher: { '@id': `${site.siteUrl}/#person` },
+}
+
 const defaultServiceSchema = {
   '@context': 'https://schema.org',
   '@type': 'ProfessionalService',
@@ -87,6 +100,21 @@ const defaultServiceSchema = {
   description: resolvedDescription,
   founder: { '@type': 'Person', name: site.fullName },
   areaServed: 'IL',
+  slogan: site.tagline,
+  email: site.email,
+  telephone: `+${site.whatsAppPhone}`,
+  image: `${site.siteUrl}/assets/yossi-hero.jpg`,
+  logo: `${site.siteUrl}/assets/logo.png`,
+  sameAs: [site.instagramUrl, site.facebookUrl],
+  knowsAbout: [
+    'אימון רגשי',
+    'אינטליגנציה רגשית',
+    'אימון רגשי לבני נוער',
+    'הדרכת הורים',
+    'זוגיות ותקשורת',
+    'שחרור דפוסים רגשיים',
+    'שיטת מ.ס.ע',
+  ],
 }
 
 const personSchema = {
@@ -96,6 +124,14 @@ const personSchema = {
   name: site.fullName,
   url: site.siteUrl,
   jobTitle: 'מאמן רגשי מוסמך ICF',
+  email: site.email,
+  knowsAbout: [
+    'אימון רגשי',
+    'אינטליגנציה רגשית',
+    'הדרכת הורים',
+    'ליווי זוגות',
+    'בני נוער ומתבגרים',
+  ],
   sameAs: [
     site.instagramUrl,
     site.facebookUrl,
@@ -116,11 +152,12 @@ const alreadyHasService = schemaArray.some(
   (s) => s && s['@type'] === 'ProfessionalService'
 )
 
+// WebSite נכנס לכל עמוד (כולל מאמרים) — פעם אחת בלבד.
 const mergedSchema = isArticlePage
-  ? schemaArray
+  ? [websiteSchema, ...schemaArray]
   : alreadyHasService
-  ? schemaArray
-  : [defaultServiceSchema, personSchema, ...schemaArray]
+  ? [websiteSchema, ...schemaArray]
+  : [websiteSchema, defaultServiceSchema, personSchema, ...schemaArray]
 ---
 
 <!doctype html>
