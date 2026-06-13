@@ -1,5 +1,6 @@
 ---
 import { toHTML } from '@portabletext/to-html'
+import { urlFor } from '../lib/sanity'
 
 const { value } = Astro.props
 
@@ -9,6 +10,28 @@ const components = {
       const size = value?.size || 'md'
       return `<div class="hc-spacer hc-spacer--${size}" aria-hidden="true"></div>`
     },
+
+    // ─── תמונה בגוף המאמר ─────────────────────────────────────────
+    image: ({ value }) => {
+      if (!value?.asset) return ''
+
+      const src = urlFor(value).width(900).url()
+      const alt = value.alt || ''
+      const caption = value.caption || ''
+
+      return `
+        <figure class="hc-inline-image">
+          <img
+            src="${src}"
+            alt="${alt}"
+            loading="lazy"
+            decoding="async"
+          />
+          ${caption ? `<figcaption>${caption}</figcaption>` : ''}
+        </figure>
+      `
+    },
+    // ──────────────────────────────────────────────────────────────
   },
   marks: {
     highlight: ({ children }) => `<mark class="hc-highlight">${children}</mark>`,
@@ -28,13 +51,12 @@ const html = value ? toHTML(value, { components }) : ''
 {html ? <div class="portabletext" set:html={html} /> : null}
 
 <style>
-  /* Enter = פסקה חדשה, אבל עם רווח קטן */
+  /* פסקאות */
   .portabletext :global(p) {
     margin: 0;
     line-height: 1.85;
   }
 
-  /* רק בין פסקאות יש רווח קטן */
   .portabletext :global(p + p) {
     margin-top: 0.55rem;
   }
@@ -80,11 +102,32 @@ const html = value ? toHTML(value, { components }) : ''
     text-underline-offset: 3px;
   }
 
-  /* רווחים גדולים בכוונה (לא ע"י Enter כפול) */
-  .portabletext :global(.hc-spacer) {
-    width: 100%;
-  }
+  /* רווחים גדולים בכוונה */
+  .portabletext :global(.hc-spacer) { width: 100%; }
   .portabletext :global(.hc-spacer--sm) { height: 0.6rem; }
   .portabletext :global(.hc-spacer--md) { height: 1.2rem; }
   .portabletext :global(.hc-spacer--lg) { height: 2rem; }
+
+  /* ─── תמונה בגוף המאמר ─────────────────────────────────────── */
+  .portabletext :global(.hc-inline-image) {
+    margin: 2rem 0;
+    text-align: center;
+  }
+
+  .portabletext :global(.hc-inline-image img) {
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    display: block;
+  }
+
+  .portabletext :global(.hc-inline-image figcaption) {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: rgba(41, 81, 87, 0.55);
+    font-style: italic;
+    text-align: center;
+  }
+  /* ─────────────────────────────────────────────────────────── */
 </style>

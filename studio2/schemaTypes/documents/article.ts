@@ -114,14 +114,108 @@ export default defineType({
         'בחירת תחומים תציג את המאמר אוטומטית בדפים המתאימים באתר.',
     }),
 
+    // ─── חדש: נקודות מפתח / תקציר מהיר (אופציונלי) ───────────────
+    defineField({
+      name: 'keyTakeaways',
+      title: 'נקודות מפתח (תקציר מהיר)',
+      type: 'object',
+      description:
+        'תיבה בראש המאמר עם הנקודות העיקריות. מצוין ל-Google (Featured Snippets) ולקורא. אופציונלי — אם משאירים ריק, התיבה לא תופיע.',
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        {
+          name: 'heading',
+          title: 'כותרת התיבה',
+          type: 'string',
+          description: 'למשל: "מה תלמדו במאמר". אם ריק — תוצג כותרת ברירת מחדל.',
+        },
+        {
+          name: 'items',
+          title: 'נקודות',
+          type: 'array',
+          of: [{ type: 'string' }],
+        },
+      ],
+    }),
+    // ─────────────────────────────────────────────────────────────
+
     defineField({
       name: 'body',
       title: 'גוף המאמר',
       type: 'blockContent',
       validation: (Rule) => Rule.required(),
       description:
-        'תוכן המאמר.',
+        'תוכן המאמר. ניתן להוסיף תמונות בתוך הטקסט דרך כפתור "הוסף תמונה".',
     }),
+
+    // ─── חדש: בלוק קריאה לפעולה (אופציונלי) ──────────────────────
+    defineField({
+      name: 'cta',
+      title: 'בלוק קריאה לפעולה (CTA)',
+      type: 'object',
+      description:
+        'תיבה מודגשת בתחתית המאמר שמזמינה את הקורא לפעולה. אופציונלי — אם משאירים ריק, לא תופיע.',
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        {
+          name: 'heading',
+          title: 'כותרת',
+          type: 'string',
+        },
+        {
+          name: 'text',
+          title: 'טקסט',
+          type: 'text',
+          rows: 3,
+        },
+        {
+          name: 'buttonLabel',
+          title: 'תווית כפתור',
+          type: 'string',
+        },
+        {
+          name: 'buttonHref',
+          title: 'קישור כפתור',
+          type: 'url',
+        },
+      ],
+    }),
+    // ─────────────────────────────────────────────────────────────
+
+    // ─── חדש: שאלות נפוצות ───────────────────────────────────────
+    defineField({
+      name: 'faqItems',
+      title: 'שאלות נפוצות (FAQ)',
+      type: 'array',
+      description:
+        'שאלות אלה יופיעו בסוף המאמר ויקבלו Schema אוטומטי ב-Google (Rich Snippets).',
+      of: [
+        {
+          name: 'qa',
+          title: 'שאלה ותשובה',
+          type: 'object',
+          fields: [
+            {
+              name: 'question',
+              title: 'שאלה',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: 'answer',
+              title: 'תשובה',
+              type: 'text',
+              rows: 4,
+              validation: (Rule) => Rule.required(),
+            },
+          ],
+          preview: {
+            select: { title: 'question' },
+          },
+        },
+      ],
+    }),
+    // ─────────────────────────────────────────────────────────────
   ],
 
   preview: {
