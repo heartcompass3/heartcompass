@@ -43,19 +43,19 @@ export default {
       }
     },
     {
-      name: 'content',
-      title: 'תוכן',
-      type: 'array',
-      group: 'content',
-      of: [{ type: 'block' }]
-    },
-    {
       name: 'bullets',
       title: 'נקודות',
       type: 'array',
       group: 'content',
       of: [{ type: 'string' }],
       description: 'הנקודות שמתארות את הכאב והפתרון'
+    },
+    {
+      name: 'content',
+      title: 'תוכן',
+      type: 'array',
+      group: 'content',
+      of: [{ type: 'block' }]
     },
     {
       name: 'seoDescription',
