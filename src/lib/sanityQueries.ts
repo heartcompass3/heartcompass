@@ -1,4 +1,5 @@
 // src/lib/sanityQueries.ts
+// ─── עדכון: ARTICLE_BY_SLUG_QUERY כולל עכשיו faqItems ───────────
 
 export const HOME_PAGE_QUERY = /* groq */ `
 *[_type == "homePage"][0]{
@@ -159,9 +160,43 @@ export const ARTICLE_BY_SLUG_QUERY = /* groq */ `
     name
   },
   tags,
-  body
+  keyTakeaways{
+    heading,
+    items
+  },
+  body,
+  cta{
+    heading,
+    text,
+    buttonLabel,
+    buttonHref
+  },
+  faqItems[]{
+    question,
+    answer
+  }
 }
 `
+
+// מאמרים נוספים — אוטומטי לפי תגיות משותפות, ללא המאמר הנוכחי
+export const RELATED_ARTICLES_QUERY = /* groq */ `
+*[_type == "article" && slug.current != $slug && count(tags[@ in $tags]) > 0]
+| order(coalesce(publishedAt, _createdAt) desc)[0...3]{
+  _id,
+  title,
+  goldLine,
+  slug,
+  excerpt,
+  publishedAt,
+  mainImage{
+    alt,
+    asset->{
+      url
+    }
+  }
+}
+`
+
 export const CATEGORY_QUERY = /* groq */ `
 *[_type == "category" && slug.current == $slug][0]{
   _id,
