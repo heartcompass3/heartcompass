@@ -66,6 +66,41 @@ export default {
       description: 'הטקסט הקצר שיופיע כשישתפו את הקישור בוואטסאפ או בפייסבוק מומלץ עד 160 תווים'
     },
 
+    // ── שאלות נפוצות (אופציונלי) ───────────────────────────
+    {
+      name: 'faqItems',
+      title: 'שאלות נפוצות (FAQ)',
+      type: 'array',
+      group: 'content',
+      description:
+        'שאלות שיופיעו בתחתית דף הנחיתה ויקבלו Schema אוטומטי ב-Google (Rich Snippets). אופציונלי — אם ריק, לא יופיע.',
+      of: [
+        {
+          name: 'qa',
+          title: 'שאלה ותשובה',
+          type: 'object',
+          fields: [
+            {
+              name: 'question',
+              title: 'שאלה',
+              type: 'string',
+              validation: (Rule: any) => Rule.required(),
+            },
+            {
+              name: 'answer',
+              title: 'תשובה',
+              type: 'text',
+              rows: 4,
+              validation: (Rule: any) => Rule.required(),
+            },
+          ],
+          preview: {
+            select: { title: 'question' },
+          },
+        },
+      ],
+    },
+
     // ── טופס ──────────────────────────────────────────────
     {
       name: 'cta',
