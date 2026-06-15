@@ -144,6 +144,7 @@ export const ARTICLES_QUERY = /* groq */ `
 export const ARTICLE_BY_SLUG_QUERY = /* groq */ `
 *[_type == "article" && slug.current == $slug][0]{
   _id,
+  _updatedAt,
   title,
   goldLine,
   slug,

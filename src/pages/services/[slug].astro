@@ -50,11 +50,9 @@ const serviceSchema = {
   name: doc.title,
   description: description || undefined,
   url: canonical,
-  provider: {
-    '@type': 'Person',
-    name: site.fullName,
-  },
-  areaServed: 'IL',
+  provider: { '@id': `${site.siteUrl}/#person` },
+  areaServed: [{ '@type': 'Country', name: 'ישראל' }, 'Online'],
+  availableLanguage: 'he',
 }
 ---
 

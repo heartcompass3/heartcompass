@@ -91,15 +91,28 @@ const websiteSchema = {
   publisher: { '@id': `${site.siteUrl}/#person` },
 }
 
+// כתובת בסיס — נתניה (העסק מתנהל אונליין; כשתיפתח קליניקה נעדכן כאן בלבד).
+const businessAddress = {
+  '@type': 'PostalAddress',
+  addressLocality: 'נתניה',
+  addressRegion: 'מחוז המרכז',
+  addressCountry: 'IL',
+}
+
+// ProfessionalService הוא תת-סוג של LocalBusiness — מספיק כדי לקבל "כרטיס מקומי".
+// @id יציב (לא תלוי-עמוד) כדי שכל האתר יצביע לאותה ישות עסקית אחת.
 const defaultServiceSchema = {
   '@context': 'https://schema.org',
   '@type': 'ProfessionalService',
-  '@id': `${resolvedCanonical}#service`,
+  '@id': `${site.siteUrl}/#business`,
   name: site.brand,
-  url: resolvedCanonical,
+  url: site.siteUrl,
   description: resolvedDescription,
-  founder: { '@type': 'Person', name: site.fullName },
-  areaServed: 'IL',
+  founder: { '@id': `${site.siteUrl}/#person` },
+  address: businessAddress,
+  areaServed: [{ '@type': 'Country', name: 'ישראל' }, 'Online'],
+  availableLanguage: 'he',
+  priceRange: '₪₪',
   slogan: site.tagline,
   email: site.email,
   telephone: `+${site.whatsAppPhone}`,
@@ -125,6 +138,26 @@ const personSchema = {
   url: site.siteUrl,
   jobTitle: 'מאמן רגשי מוסמך ICF',
   email: site.email,
+  address: businessAddress,
+  worksFor: { '@id': `${site.siteUrl}/#business` },
+  // הסמכות = אות E-E-A-T מרכזי בגוגל.
+  hasCredential: [
+    {
+      '@type': 'EducationalOccupationalCredential',
+      credentialCategory: 'Professional Certification',
+      name: 'מאמן רגשי מוסמך – ICF (International Coaching Federation)',
+      recognizedBy: {
+        '@type': 'Organization',
+        name: 'International Coaching Federation',
+        url: 'https://coachingfederation.org',
+      },
+    },
+    {
+      '@type': 'EducationalOccupationalCredential',
+      credentialCategory: 'Specialized Training',
+      name: 'השתלמות מקצועית – אימון רגשי לבני נוער ומתבגרים',
+    },
+  ],
   knowsAbout: [
     'אימון רגשי',
     'אינטליגנציה רגשית',
@@ -139,11 +172,6 @@ const personSchema = {
     `https://wa.me/${site.whatsAppPhone}`,
   ],
   image: `${site.siteUrl}/assets/yossi-hero.jpg`,
-  worksFor: {
-    '@type': 'Organization',
-    name: site.brand,
-    url: site.siteUrl,
-  },
 }
 
 // Do not inject ProfessionalService on article pages.
@@ -152,12 +180,19 @@ const alreadyHasService = schemaArray.some(
   (s) => s && s['@type'] === 'ProfessionalService'
 )
 
+// אם העמוד מספק Person משלו (למשל דף "אודות" עם ביוגרפיה) — לא מזריקים את הגנרי.
+const alreadyHasPerson = schemaArray.some((s) => s && s['@type'] === 'Person')
+
 // WebSite נכנס לכל עמוד (כולל מאמרים) — פעם אחת בלבד.
-const mergedSchema = isArticlePage
-  ? [websiteSchema, ...schemaArray]
-  : alreadyHasService
-  ? [websiteSchema, ...schemaArray]
-  : [websiteSchema, defaultServiceSchema, personSchema, ...schemaArray]
+let mergedSchema
+if (isArticlePage) {
+  mergedSchema = [websiteSchema, ...schemaArray]
+} else {
+  const injected = [websiteSchema]
+  if (!alreadyHasService) injected.push(defaultServiceSchema)
+  if (!alreadyHasPerson) injected.push(personSchema)
+  mergedSchema = [...injected, ...schemaArray]
+}
 ---
 
 <!doctype html>

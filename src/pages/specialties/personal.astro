@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 import site from '../../content/pages/site.json'
 import { sanity } from '../../lib/sanity'
 import { buildBreadcrumbListSchema } from '../../lib/breadcrumbs'
+import { buildServiceSchema } from '../../lib/schema'
 import { ARTICLES_QUERY } from '../../lib/sanityQueries'
 
 const SLUG_FULL = 'specialties/personal'
@@ -102,7 +103,15 @@ const faqSchema = faqs.length > 0 ? {
   })),
 } : null
 
-const schemaArray = [breadcrumbSchema, collectionSchema]
+const serviceSchema = buildServiceSchema({
+  siteUrl: site.siteUrl,
+  name: h1,
+  url: canonical,
+  description,
+  serviceType: 'תהליך עומק אישי בשיטת מ.ס.ע',
+})
+
+const schemaArray = [serviceSchema, breadcrumbSchema, collectionSchema]
 if (categoryArticles.length > 0) {
   schemaArray.push(itemListSchema)
 }

@@ -35,8 +35,18 @@ const articleSchema = {
     '@type': 'Person',
     name: article.author?.name || article.authorLine || site.fullName,
   },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${site.siteUrl}/#business`,
+    name: site.brand,
+    logo: {
+      '@type': 'ImageObject',
+      url: `${site.siteUrl}/assets/logo.png`,
+    },
+  },
   datePublished: article.publishedAt || undefined,
-  dateModified: article.publishedAt || undefined,
+  // תאריך עדכון אמיתי מ-Sanity (freshness signal); נופל חזרה לתאריך הפרסום.
+  dateModified: article._updatedAt || article.publishedAt || undefined,
   mainEntityOfPage: {
     '@type': 'WebPage',
     '@id': canonical,
