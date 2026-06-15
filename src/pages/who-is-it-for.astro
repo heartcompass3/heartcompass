@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import site from '../content/pages/site.json'
+import { sanity, urlFor } from '../lib/sanity'
+import { buildBreadcrumbListSchema } from '../lib/breadcrumbs'
+import PortableText from '../components/PortableText.astro'
+
+const SLUG = 'who-is-it-for'
+
+const page = await sanity.fetch(
+  `*[_type == "page" && slug.current == $slug][0]{
+    title,
+    excerpt,
+    body,
+    specialty{
+      intro,
+      closing
+    },
+    seo{
+      title,
+      description,
+      noindex,
+      canonical,
+      ogImage
+    }
+  }`,
+  { slug: SLUG }
+)
+
+const metaTitle = page?.seo?.title || page?.title || `למי זה מתאים | ${site.brand}`
+const metaDescription =
+  page?.seo?.description ||
+  page?.excerpt ||
+  'למי מתאים אימון רגשי בשיטת מ.ס.ע במצפן הלב.'
+
+const canonical =
+  page?.seo?.canonical || new URL(Astro.url.pathname, site.siteUrl).toString()
+
+const ogImageUrl = page?.seo?.ogImage
+  ? urlFor(page.seo.ogImage).width(1200).height(630).fit('crop').url()
+  : undefined
+
+const heading = page?.title?.trim() || 'למי מתאים אימון רגשי במצפן הלב'
+const opening = page?.excerpt?.trim() || page?.specialty?.intro?.trim() || ''
+const closing = page?.specialty?.closing?.trim() || ''
+
+const breadcrumbSchema = buildBreadcrumbListSchema({
+  siteUrl: site.siteUrl,
+  brandName: site.brand,
+  crumbs: [{ name: heading, item: canonical }],
+})
+---
+
+<BaseLayout
+  title={metaTitle}
+  description={metaDescription}
+  canonical={canonical}
+  noindex={page?.seo?.noindex}
+  ogImage={ogImageUrl}
+  schema={[breadcrumbSchema]}
+>
+  <article class="animate-fade-in py-24 bg-background min-h-screen">
+    <div class="max-w-4xl mx-auto px-6">
+      <header class="text-center mb-12">
+        <h1 class="text-5xl md:text-6xl font-black text-primary font-display leading-tight">
+          {heading}
+        </h1>
+
+        {opening && (
+          <p class="mt-8 text-xl text-accent font-body font-bold max-w-3xl mx-auto leading-relaxed">
+            {opening}
+          </p>
+        )}
+      </header>
+
+      <div class="bg-white p-10 md:p-16 rounded-[3rem] shadow-2xl border border-white">
+        <div class="prose prose-xl max-w-none text-primary/80 font-body leading-9">
+          {page?.body?.length ? (
+            <PortableText value={page.body} />
+          ) : (
+            <p>עדיין אין תוכן לעמוד זה.</p>
+          )}
+        </div>
+
+        {closing && (
+          <div class="mt-12 bg-accent/10 border-r-4 border-accent rounded-2xl p-7 md:p-8 text-primary/85 font-body font-bold leading-relaxed text-center">
+            {closing}
+          </div>
+        )}
+
+        <div class="mt-12 text-center">
+          <a
+            href={site.primaryCtaHref}
+            class="inline-flex items-center gap-3 px-10 py-4 rounded-2xl gradient-gold text-white font-bold shadow-gold hover:scale-105 transition-transform"
+          >
+            {site.primaryCtaLabel} <span aria-hidden="true">←</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
