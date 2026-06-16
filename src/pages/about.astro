@@ -165,11 +165,12 @@ const aboutPersonSchema = {
         <!-- טקסט -->
         <div class="w-full md:w-7/12 relative z-10 text-center md:text-right">
 
-          <!-- בדסקטופ: כותרת + ציטוט זהב בתוך הטקסט (כמו שהיה) -->
+          <!-- בדסקטופ: כותרת + ציטוט זהב בתוך הטקסט (כמו שהיה).
+             זו אינה h1 כדי שלא יהיו שני h1 בעמוד (ה-h1 היחיד הוא גרסת המובייל). -->
           <div class="hidden md:block">
-            <h1 class="text-6xl md:text-7xl font-black text-primary font-display mb-10 leading-tight">
+            <div role="heading" aria-level="1" class="text-6xl md:text-7xl font-black text-primary font-display mb-10 leading-tight">
               {heading}
-            </h1>
+            </div>
 
             <div class="prose prose-xl text-primary/80 font-body leading-9 max-w-none">
               <p class="mb-8 font-bold text-gold-dark text-2xl border-r-4 border-accent pr-4 bg-white/50 p-4 rounded-l-xl">

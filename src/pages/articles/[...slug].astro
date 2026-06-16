@@ -147,11 +147,8 @@ const schemas = faqSchema
             {article.authorLine && <span>{article.authorLine}</span>}
           </div>
 
-          {article.excerpt && (
-            <p class="mt-10 text-xl text-primary/70 font-body leading-relaxed mx-auto max-w-3xl">
-              {article.excerpt}
-            </p>
-          )}
+          {/* excerpt לא מוצג כאן בכוונה: הוא משמש כ-meta description ובכרטיסים,
+             ואין צורך לחזור עליו מעל תיבת "בקצרה". */}
         </header>
 
         {/* ─── בקצרה: משפט תשובה (AEO) + נקודות מפתח, בתיבה אחת ─────── */}
