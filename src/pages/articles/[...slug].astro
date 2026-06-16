@@ -30,6 +30,7 @@ const articleSchema = {
   '@type': 'Article',
   headline: article.title,
   description,
+  abstract: article.aiCitation || undefined,
   image: ogImage ? [ogImage] : undefined,
   author: {
     '@type': 'Person',
@@ -152,6 +153,17 @@ const schemas = faqSchema
             </p>
           )}
         </header>
+
+        {/* ─── תשובה במשפט (ציטוט למנועי AI / AEO) ─────────────────── */}
+        {article.aiCitation && (
+          <aside class="mt-10 bg-gradient-to-br from-accent/10 to-gold-dark/5 border-r-4 border-accent rounded-2xl p-6 md:p-7 max-w-3xl mx-auto text-right">
+            <p class="text-accent font-display font-black text-sm tracking-wide mb-2">בקצרה</p>
+            <p class="text-primary font-body font-semibold text-lg md:text-xl leading-relaxed">
+              {article.aiCitation}
+            </p>
+          </aside>
+        )}
+        {/* ───────────────────────────────────────────────────────── */}
 
         {/* ─── נקודות מפתח (תקציר מהיר) ───────────────────────────── */}
         {article.keyTakeaways?.items?.length > 0 && (
