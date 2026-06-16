@@ -19,7 +19,8 @@ export default defineConfig({
   adapter: vercel(),
   redirects: {
     '/sitemap-index.xml': '/sitemap.xml',
-    '/sitemap-0.xml': '/sitemap.xml'
+    '/sitemap-0.xml': '/sitemap.xml',
+    '/the-method': '/method'
   },
   integrations: [
     sitemap({
