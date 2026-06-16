@@ -154,31 +154,27 @@ const schemas = faqSchema
           )}
         </header>
 
-        {/* ─── תשובה במשפט (ציטוט למנועי AI / AEO) ─────────────────── */}
-        {article.aiCitation && (
-          <aside class="mt-10 bg-gradient-to-br from-accent/10 to-gold-dark/5 border-r-4 border-accent rounded-2xl p-6 md:p-7 max-w-3xl mx-auto text-right">
-            <p class="text-accent font-display font-black text-sm tracking-wide mb-2">בקצרה</p>
-            <p class="text-primary font-body font-semibold text-lg md:text-xl leading-relaxed">
-              {article.aiCitation}
-            </p>
-          </aside>
-        )}
-        {/* ───────────────────────────────────────────────────────── */}
+        {/* ─── בקצרה: משפט תשובה (AEO) + נקודות מפתח, בתיבה אחת ─────── */}
+        {(article.aiCitation || article.keyTakeaways?.items?.length > 0) && (
+          <aside class="mt-10 bg-accent/10 border-r-4 border-accent rounded-2xl p-6 md:p-8 max-w-3xl mx-auto text-right">
+            <p class="text-accent font-display font-black text-sm tracking-wide mb-3">בקצרה</p>
 
-        {/* ─── נקודות מפתח (תקציר מהיר) ───────────────────────────── */}
-        {article.keyTakeaways?.items?.length > 0 && (
-          <aside class="mt-12 bg-accent/10 border-r-4 border-accent rounded-2xl p-7 md:p-8">
-            <p class="font-black text-primary font-display text-lg mb-4">
-              {article.keyTakeaways.heading || 'נקודות מפתח'}
-            </p>
-            <ul class="space-y-3">
-              {article.keyTakeaways.items.map((point: string) => (
-                <li class="flex items-start gap-3 text-primary/80 font-body leading-relaxed">
-                  <span class="text-accent font-black mt-0.5">✓</span>
-                  <span>{point}</span>
-                </li>
-              ))}
-            </ul>
+            {article.aiCitation && (
+              <p class="text-primary font-body font-semibold text-lg leading-relaxed">
+                {article.aiCitation}
+              </p>
+            )}
+
+            {article.keyTakeaways?.items?.length > 0 && (
+              <ul class={`space-y-3 ${article.aiCitation ? 'mt-5 pt-5 border-t border-accent/20' : ''}`}>
+                {article.keyTakeaways.items.map((point: string) => (
+                  <li class="flex items-start gap-3 text-primary/80 font-body leading-relaxed">
+                    <span class="text-accent font-black mt-0.5">✓</span>
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </aside>
         )}
         {/* ───────────────────────────────────────────────────────── */}
