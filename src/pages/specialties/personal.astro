@@ -21,6 +21,9 @@ const page = await sanity.fetch(
       },
       closing
     },
+    aiCitation,
+    painTags,
+    aiContext,
     seo{
       title,
       description,
@@ -111,7 +114,13 @@ const serviceSchema = buildServiceSchema({
   serviceType: 'תהליך עומק אישי בשיטת מ.ס.ע',
 })
 
-const schemaArray = [serviceSchema, breadcrumbSchema, collectionSchema]
+const serviceSchemaAeo = {
+  ...serviceSchema,
+  ...(page?.aiCitation ? { abstract: page.aiCitation } : {}),
+  ...(page?.aiContext ? { disambiguatingDescription: page.aiContext } : {}),
+  ...(page?.painTags?.length ? { keywords: page.painTags.join(', ') } : {}),
+}
+const schemaArray = [serviceSchemaAeo, breadcrumbSchema, collectionSchema]
 if (categoryArticles.length > 0) {
   schemaArray.push(itemListSchema)
 }
