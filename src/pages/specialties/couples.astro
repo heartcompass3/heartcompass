@@ -20,6 +20,9 @@ const page = await sanity.fetch(
       },
       closing
     },
+    aiCitation,
+    painTags,
+    aiContext,
     seo{
       title,
       description,
@@ -84,7 +87,13 @@ const serviceSchema = buildServiceSchema({
   serviceType: 'ליווי וייעוץ זוגי',
 })
 
-const schemaArray = [serviceSchema, breadcrumbSchema, ...(faqSchema ? [faqSchema] : [])]
+const serviceSchemaAeo = {
+  ...serviceSchema,
+  ...(page?.aiCitation ? { abstract: page.aiCitation } : {}),
+  ...(page?.aiContext ? { disambiguatingDescription: page.aiContext } : {}),
+  ...(page?.painTags?.length ? { keywords: page.painTags.join(', ') } : {}),
+}
+const schemaArray = [serviceSchemaAeo, breadcrumbSchema, ...(faqSchema ? [faqSchema] : [])]
 ---
 
 <BaseLayout
