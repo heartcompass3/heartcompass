@@ -88,15 +88,15 @@ const searchIndex = (articles ?? []).map((a) => ({
                 </div>
 
                 <div class="p-10 flex-1 flex flex-col text-center items-center w-full">
+                  <h2 class="text-2xl font-black text-primary mb-2 font-display leading-tight group-hover:text-gold-dark transition-colors">
+                    {a.title}
+                  </h2>
+
                   {a.goldLine && (
                     <p class="text-accent font-bold tracking-wide mb-4 font-display text-sm">
                       {a.goldLine}
                     </p>
                   )}
-
-                  <h2 class="text-2xl font-black text-primary mb-4 font-display leading-tight group-hover:text-gold-dark transition-colors">
-                    {a.title}
-                  </h2>
 
                   {a.excerpt && (
                     <p class="text-primary/70 font-body leading-relaxed mb-8 font-medium line-clamp-3 text-lg">

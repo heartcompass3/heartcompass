@@ -130,16 +130,11 @@ const schemas = faqSchema ? [methodSchema, faqSchema] : [methodSchema]
           </p>
         )}
 
-        {intro && (
-          <p class="mt-8 text-lg text-primary/70 font-body leading-relaxed max-w-3xl mx-auto">
-            {intro}
-          </p>
-        )}
       </header>
 
-      <!-- בקצרה (AEO): לחישה ל-AI + נקודות מפתח -->
+      <!-- בקצרה (AEO): לחישה ל-AI + נקודות מפתח — לפני פסקת הפתיחה -->
       {(aiCitation || keyTakeaways.length > 0) && (
-        <aside class="max-w-3xl mx-auto mb-14 bg-accent/10 border-r-4 border-accent rounded-2xl p-6 md:p-8 text-right">
+        <aside class="max-w-3xl mx-auto mb-10 bg-accent/10 border-r-4 border-accent rounded-2xl p-6 md:p-8 text-right">
           <p class="text-accent font-display font-black text-sm tracking-wide mb-3">{ktHeading}</p>
           {aiCitation && (
             <p class="text-primary font-body font-semibold text-lg leading-relaxed">{aiCitation}</p>
@@ -155,6 +150,12 @@ const schemas = faqSchema ? [methodSchema, faqSchema] : [methodSchema]
             </ul>
           )}
         </aside>
+      )}
+
+      {intro && (
+        <p class="mb-14 text-lg text-primary/70 font-body leading-relaxed max-w-3xl mx-auto text-center">
+          {intro}
+        </p>
       )}
 
       <!-- מ.ס.ע – הליבה -->

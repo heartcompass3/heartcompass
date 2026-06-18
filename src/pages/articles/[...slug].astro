@@ -252,14 +252,14 @@ const schemas = faqSchema
                   </div>
                 )}
                 <div class="p-8 flex-1 flex flex-col text-center items-center">
+                  <h3 class="text-xl font-black text-primary mb-2 font-display leading-tight group-hover:text-gold-dark transition-colors">
+                    {a.title}
+                  </h3>
                   {a.goldLine && (
                     <p class="text-accent font-bold tracking-wide mb-3 font-display text-sm">
                       {a.goldLine}
                     </p>
                   )}
-                  <h3 class="text-xl font-black text-primary mb-3 font-display leading-tight group-hover:text-gold-dark transition-colors">
-                    {a.title}
-                  </h3>
                   {a.excerpt && (
                     <p class="text-primary/70 font-body leading-relaxed line-clamp-3 text-base">
                       {a.excerpt}
