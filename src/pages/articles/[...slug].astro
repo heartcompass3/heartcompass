@@ -131,15 +131,15 @@ const schemas = faqSchema
         )}
 
         <header class="text-center">
-          {article.goldLine && (
-            <p class="text-accent font-bold tracking-wide mb-5 font-display">
-              {article.goldLine}
-            </p>
-          )}
-
           <h1 class="text-4xl md:text-6xl font-black text-primary font-display leading-tight mx-auto max-w-[20ch]">
             {article.title}
           </h1>
+
+          {article.goldLine && (
+            <p class="text-accent font-bold tracking-wide mt-5 font-display">
+              {article.goldLine}
+            </p>
+          )}
 
           <div class="flex flex-wrap items-center justify-center gap-4 text-primary/60 font-body mt-6">
             {article.publishedAt && <span>{new Date(article.publishedAt).toLocaleDateString('he-IL')}</span>}
