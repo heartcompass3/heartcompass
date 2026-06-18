@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import PortableText from '../components/PortableText.astro'
 import { sanity, urlFor } from '../lib/sanity'
 import { HOME_PAGE_QUERY } from '../lib/sanityQueries'
+import site from '../content/pages/site.json'
 
 const home = await sanity.fetch(HOME_PAGE_QUERY)
 if (!home) throw new Error('HomePage not found')
@@ -70,6 +71,23 @@ const faqSchema =
       }
     : null
 
+// AEO (נסתר — JSON-LD בלבד)
+const aiCitation = home.aiCitation || ''
+const painTags = Array.isArray(home.painTags) ? home.painTags : []
+const aiContext = home.aiContext || ''
+const aeoSchema = (aiCitation || painTags.length > 0 || aiContext)
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      '@id': `${site.siteUrl}/#webpage`,
+      name: seoTitle || site.brand,
+      description: seoDescription || '',
+      ...(aiCitation ? { abstract: aiCitation } : {}),
+      ...(aiContext ? { disambiguatingDescription: aiContext } : {}),
+      ...(painTags.length > 0 ? { keywords: painTags.join(', ') } : {}),
+    }
+  : null
+
 // Bottom CTA
 const bottomCtaText = home.bottomCtaText
 const bottomCtaHref = home.bottomCtaHref
@@ -82,7 +100,7 @@ const brandDeep = '#295157'
   title={seoTitle}
   description={seoDescription}
   noindex={noindex}
-  schema={faqSchema ? [faqSchema] : []}
+  schema={[...(aeoSchema ? [aeoSchema] : []), ...(faqSchema ? [faqSchema] : [])]}
 >
   <!-- HERO -->
   <section class="relative overflow-hidden">

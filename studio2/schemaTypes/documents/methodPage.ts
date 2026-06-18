@@ -150,6 +150,61 @@ export default defineType({
       ],
     }),
 
+    // ─── AEO: תיבת "בקצרה" גלויה ─────────────────────────────────
+    defineField({
+      name: 'aiCitation',
+      title: 'לחישה ל-AI — תשובה במשפט',
+      type: 'text',
+      rows: 2,
+      description:
+        'משפט אחד עצמאי שעונה "מהי שיטת מ.ס.ע". יוצג בתיבת "בקצרה" בראש הדף, וזה מה שמנועי AI ישלפו לציטוט.',
+    }),
+    defineField({
+      name: 'keyTakeaways',
+      title: 'נקודות מפתח (תיבת "בקצרה")',
+      type: 'object',
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        { name: 'heading', title: 'כותרת התיבה', type: 'string' },
+        { name: 'items', title: 'נקודות', type: 'array', of: [{ type: 'string' }] },
+      ],
+    }),
+    defineField({
+      name: 'faqItems',
+      title: 'שאלות נפוצות (FAQ)',
+      type: 'array',
+      description: 'יופיעו בתחתית הדף ויקבלו FAQPage Schema אוטומטי.',
+      of: [
+        {
+          name: 'qa',
+          title: 'שאלה ותשובה',
+          type: 'object',
+          fields: [
+            { name: 'question', title: 'שאלה', type: 'string', validation: (Rule) => Rule.required() },
+            { name: 'answer', title: 'תשובה', type: 'text', rows: 4, validation: (Rule) => Rule.required() },
+          ],
+          preview: { select: { title: 'question' } },
+        },
+      ],
+    }),
+
+    // ─── AEO: נסתר (JSON-LD בלבד) ────────────────────────────────
+    defineField({
+      name: 'painTags',
+      title: 'תגיות כאב (נסתר — לזחלנים ו-AI)',
+      type: 'array',
+      of: [{ type: 'string' }],
+      options: { layout: 'tags' },
+      description: 'נשלפות כ-keywords ל-JSON-LD. אינן מוצגות לגולש.',
+    }),
+    defineField({
+      name: 'aiContext',
+      title: 'הקשר נוסף ל-AI (נסתר)',
+      type: 'text',
+      rows: 3,
+      description: 'מידע עובדתי נוסף ל-AI. נשלף ל-JSON-LD, לא מוצג בעמוד.',
+    }),
+
     defineField({
       name: 'seo',
       title: 'SEO',

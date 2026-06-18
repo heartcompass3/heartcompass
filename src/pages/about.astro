@@ -9,6 +9,9 @@ type AboutPage = {
   excerpt?: string
   heroImage?: any
   body?: any[]
+  aiCitation?: string
+  painTags?: string[]
+  aiContext?: string
   seo?: {
     title?: string
     description?: string
@@ -24,6 +27,9 @@ const QUERY = /* groq */ `
     excerpt,
     heroImage,
     body,
+    aiCitation,
+    painTags,
+    aiContext,
     seo{
       title,
       description,
@@ -119,6 +125,8 @@ const aboutPersonSchema = {
   ],
   worksFor: { '@id': `${site.siteUrl}/#business` },
   mainEntityOfPage: aboutUrl,
+  ...(page?.aiCitation ? { disambiguatingDescription: page.aiCitation } : {}),
+  ...(page?.painTags?.length ? { keywords: page.painTags.join(', ') } : {}),
 }
 ---
 

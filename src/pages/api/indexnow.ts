@@ -23,6 +23,8 @@ function json(data: unknown, status = 200) {
 }
 
 function authorized(request: Request, url: URL) {
+  // קריאות Vercel Cron הן פנימיות ומהימנות — מזוהות לפי ה-header הזה.
+  if (request.headers.get('x-vercel-cron')) return true
   if (!SECRET) return true
   const provided =
     request.headers.get('x-indexnow-secret') || url.searchParams.get('secret')
@@ -93,17 +95,19 @@ export const GET: APIRoute = async ({ request, url }) => {
     return json(result, result.ok ? 200 : 502)
   }
 
-  if (url.searchParams.get('all')) {
+  // Vercel Cron מפעיל את ה-endpoint ללא פרמטרים → דחיפת כל ה-sitemap.
+  const isCron = !!request.headers.get('x-vercel-cron')
+  if (isCron || url.searchParams.get('all')) {
     const sm = await fetch(`${site.siteUrl}/sitemap.xml`)
     const xml = await sm.text()
     const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1])
     const result = await submit(urls)
-    return json(result, result.ok ? 200 : 502)
+    return json({ ...result, trigger: isCron ? 'cron' : 'manual' }, result.ok ? 200 : 502)
   }
 
   return json({
     ok: true,
-    usage: 'GET ?url=<absolute-url> | GET ?all=1 | POST (Sanity webhook)',
+    usage: 'GET ?url=<absolute-url> | GET ?all=1 | POST (Sanity webhook) | Vercel Cron',
     host,
     keyLocation,
   })

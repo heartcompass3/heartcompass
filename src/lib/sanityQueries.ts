@@ -16,6 +16,9 @@ export const HOME_PAGE_QUERY = /* groq */ `
   methodIntro,
   msa,
   faq,
+  aiCitation,
+  painTags,
+  aiContext,
   bottomCtaText,
   bottomCtaHref
 }
